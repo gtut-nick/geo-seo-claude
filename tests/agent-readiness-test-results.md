@@ -1,46 +1,46 @@
-# Agent-Readiness Checks: Test Results
+# Agent-Readiness Checks：測試結果
 
-Tested against 2 URLs for the Content Signals check. All HTTP requests made via Playwright `page.request` (native Node.js context, not browser fetch) to capture real response headers.
+針對 Content Signals 檢查測試了 2 個 URL。所有 HTTP 請求都透過 Playwright `page.request`（原生 Node.js context，不是 browser fetch）發出，以擷取真實 response headers。
 
-## Test Sites
+## 測試網站
 
 | Site | Check | Result | Notes |
 |---|---|---|---|
-| contentsignals.org | Content Signals | Pass | `Content-Signal:` directive present with 3 key=value pairs |
-| tradewater.co | Content Signals | Recommendation | No `Content-Signal:` directive; standard WordPress robots.txt |
+| contentsignals.org | Content Signals | Pass | 存在 `Content-Signal:` 指令，含 3 組 key=value 配對 |
+| tradewater.co | Content Signals | Recommendation | 沒有 `Content-Signal:` 指令；標準 WordPress robots.txt |
 
 ---
 
-## Detailed Findings
+## 詳細發現
 
-### Content Signals
+### 內容訊號
 
 **contentsignals.org/robots.txt**
 
-Full directive found:
+找到完整指令：
 ```
 Content-Signal: ai-train=yes, search=yes, ai-input=yes
 ```
 
-Parsed values:
+解析後的值：
 | Signal Key | Value | Meaning | Valid per spec? |
 |---|---|---|---|
-| ai-train | yes | Permits use for AI model training | Yes |
-| search | yes | Permits use in AI-powered search results | Yes |
-| ai-input | yes | Permits use as AI input | Warning — `ai-input` is not in the known key set (`ai-train`, `search`, `ai-personalization`, `ai-retrieval`) |
+| ai-train | yes | 允許用於 AI model training | Yes |
+| search | yes | 允許用於 AI-powered search results | Yes |
+| ai-input | yes | 允許作為 AI input 使用 | Warning — `ai-input` 不在已知 key set（`ai-train`、`search`、`ai-personalization`、`ai-retrieval`）中 |
 
-Result: **Pass with warning** — directive is present and mostly valid. `ai-input` is an unknown key; the spec is still an IETF draft so unknown keys should be flagged but not treated as errors.
+結果：**Pass with warning** — 指令存在且大多有效。`ai-input` 是未知 key；規格仍是 IETF 草案，因此未知 key 應被標記為 warnings，但不應視為 errors。
 
 **tradewater.co/robots.txt**
 
-No `Content-Signal:` directive found. Standard WordPress configuration blocking admin paths, WooCommerce logs, and REST API endpoints. `Crawl-delay: 10` present. Sitemap referenced.
+未找到 `Content-Signal:` 指令。標準 WordPress 設定會封鎖 admin paths、WooCommerce logs 與 REST API endpoints。存在 `Crawl-delay: 10`。有引用 sitemap。
 
-Result: **Recommendation** — add `Content-Signal:` to declare AI usage preferences.
+結果：**Recommendation** — 加入 `Content-Signal:` 以宣告 AI 使用偏好。
 
 ---
 
-## Validation Notes
+## 驗證備註
 
-**`ai-input` key on contentsignals.org.** The spec author's own site uses `ai-input=yes`, which is not in the known key set defined in the spec (`ai-train`, `search`, `ai-personalization`, `ai-retrieval`). This is a real-world signal that the IETF draft is still evolving. The implementation correctly flags unknown keys as warnings without failing the check.
+**contentsignals.org 上的 `ai-input` key。** 規格作者自己的網站使用 `ai-input=yes`，而這不在規格中定義的已知 key set（`ai-train`、`search`、`ai-personalization`、`ai-retrieval`）內。這是真實世界訊號，顯示 IETF 草案仍在演進。實作正確地將未知 key 標記為 warnings，而不是讓檢查失敗。
 
-**WebFetch cannot capture HTTP response headers.** WebFetch only returns rendered body content. All header-level tests required Playwright `page.request` (native Node context). This is relevant for the aeo-scan skill — any implementation of these checks in production tools should use Playwright or direct HTTP requests, not WebFetch.
+**WebFetch 無法擷取 HTTP response headers。** WebFetch 只會回傳 rendered body content。所有 header-level tests 都需要 Playwright `page.request`（原生 Node context）。這與 aeo-scan skill 有關，任何在 production tools 中實作這些檢查的方式都應使用 Playwright 或 direct HTTP requests，而不是 WebFetch。

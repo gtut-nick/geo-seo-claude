@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Citability Scorer — Analyzes content blocks for AI citation readiness.
-Scores passages based on how likely AI models are to cite them.
+引用率評分器 (Citability Scorer) — 分析內容區塊的 AI 引用準備度。
+根據 AI 模型引用段落的可能性進行評分。
 
-Based on research showing optimal AI-cited passages are:
-- 134-167 words long
-- Self-contained (extractable without context)
-- Fact-rich with specific statistics
-- Structured with clear answer patterns
+基於研究顯示，最佳的 AI 引用段落具備以下特徵：
+- 長度介於 134-167 字之間
+- 獨立完整 (無需上下文即可獨立擷取)
+- 內容豐富且包含具體的統計數據
+- 結構化且具備清晰的答案模式
 """
 
 import sys
@@ -19,12 +19,12 @@ try:
     import requests
     from bs4 import BeautifulSoup
 except ImportError:
-    print("ERROR: Required packages not installed. Run: pip install -r requirements.txt")
+    print("錯誤：未安裝必要的套件。請執行：pip install -r requirements.txt")
     sys.exit(1)
 
 
 def score_passage(text: str, heading: Optional[str] = None) -> dict:
-    """Score a single passage for AI citability (0-100)."""
+    """為單一段落的 AI 引用率進行評分 (0-100)。"""
     words = text.split()
     word_count = len(words)
 
@@ -36,10 +36,10 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
         "uniqueness_signals": 0,
     }
 
-    # === 1. Answer Block Quality (30%) ===
+    # === 1. 答案區塊品質 (30%) ===
     abq_score = 0
 
-    # Check for definition patterns ("X is...", "X refers to...", "X means...")
+    # 檢查定義模式 ("X is...", "X refers to...", "X means...")
     definition_patterns = [
         r"\b\w+\s+is\s+(?:a|an|the)\s",
         r"\b\w+\s+refers?\s+to\s",
@@ -52,7 +52,7 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
             abq_score += 15
             break
 
-    # Check if answer appears early (first 60 words)
+    # 檢查答案是否及早出現 (前 60 個字)
     first_60_words = " ".join(words[:60])
     if any(
         re.search(p, first_60_words, re.IGNORECASE)
@@ -65,11 +65,11 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
     ):
         abq_score += 15
 
-    # Question-based heading bonus
+    # 問題導向標題加分
     if heading and heading.endswith("?"):
         abq_score += 10
 
-    # Clear, direct sentence structure
+    # 清晰直接的句子結構
     sentences = re.split(r"[.!?]+", text)
     short_clear_sentences = sum(
         1 for s in sentences if 5 <= len(s.split()) <= 25
@@ -78,7 +78,7 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
         clarity_ratio = short_clear_sentences / len(sentences)
         abq_score += int(clarity_ratio * 10)
 
-    # Has specific, quotable claim
+    # 包含具體、可引用的主張
     if re.search(
         r"(?:according to|research shows|studies? (?:show|indicate|suggest|found)|data (?:shows|indicates|suggests))",
         text,
@@ -88,10 +88,10 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
 
     scores["answer_block_quality"] = min(abq_score, 30)
 
-    # === 2. Self-Containment (25%) ===
+    # === 2. 獨立完整性 (25%) ===
     sc_score = 0
 
-    # Optimal word count (134-167 words)
+    # 最佳字數 (134-167 字)
     if 134 <= word_count <= 167:
         sc_score += 10
     elif 100 <= word_count <= 200:
@@ -103,7 +103,7 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
     else:
         sc_score += 2
 
-    # Low pronoun density (fewer pronouns = more self-contained)
+    # 低代名詞密度 (較少代名詞 = 較高的獨立完整性)
     pronoun_count = len(
         re.findall(
             r"\b(?:it|they|them|their|this|that|these|those|he|she|his|her)\b",
@@ -120,7 +120,7 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
         elif pronoun_ratio < 0.06:
             sc_score += 3
 
-    # Contains named entities (proper nouns, brands, specific terms)
+    # 包含命名實體 (專有名詞、品牌、特定術語)
     proper_nouns = len(re.findall(r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b", text))
     if proper_nouns >= 3:
         sc_score += 7
@@ -129,10 +129,10 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
 
     scores["self_containment"] = min(sc_score, 25)
 
-    # === 3. Structural Readability (20%) ===
+    # === 3. 結構可讀性 (20%) ===
     sr_score = 0
 
-    # Sentence count and length distribution
+    # 句子數量與長度分佈
     if sentences:
         avg_sentence_length = word_count / len(sentences)
         if 10 <= avg_sentence_length <= 20:
@@ -142,41 +142,41 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
         else:
             sr_score += 2
 
-    # Contains list-like structures
+    # 包含清單式結構
     if re.search(r"(?:first|second|third|finally|additionally|moreover|furthermore)", text, re.IGNORECASE):
         sr_score += 4
 
-    # Contains numbered items or bullet-like content
+    # 包含編號項目或列點內容
     if re.search(r"(?:\d+[\.\)]\s|\b(?:step|tip|point)\s+\d+)", text, re.IGNORECASE):
         sr_score += 4
 
-    # Paragraph breaks (indicates structure)
+    # 段落換行 (表示具備結構)
     if "\n" in text:
         sr_score += 4
 
     scores["structural_readability"] = min(sr_score, 20)
 
-    # === 4. Statistical Density (15%) ===
+    # === 4. 統計數據密度 (15%) ===
     sd_score = 0
 
-    # Percentages
+    # 百分比
     pct_count = len(re.findall(r"\d+(?:\.\d+)?%", text))
     sd_score += min(pct_count * 3, 6)
 
-    # Dollar amounts
+    # 金額
     dollar_count = len(re.findall(r"\$[\d,]+(?:\.\d+)?(?:\s*(?:million|billion|M|B|K))?", text))
     sd_score += min(dollar_count * 3, 5)
 
-    # Other numbers with context
+    # 其他帶有上下文的數字
     number_count = len(re.findall(r"\b\d+(?:,\d{3})*(?:\.\d+)?\s+(?:users|customers|pages|sites|companies|businesses|people|percent|times|x\b)", text, re.IGNORECASE))
     sd_score += min(number_count * 2, 4)
 
-    # Year references (indicates timeliness)
+    # 年份參考 (表示時效性)
     year_count = len(re.findall(r"\b20(?:2[3-6]|1\d)\b", text))
     if year_count > 0:
         sd_score += 2
 
-    # Named sources
+    # 具名來源
     source_patterns = [
         r"(?:according to|per|from|by)\s+[A-Z]",
         r"(?:Gartner|Forrester|McKinsey|Harvard|Stanford|MIT|Google|Microsoft|OpenAI|Anthropic)",
@@ -188,10 +188,10 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
 
     scores["statistical_density"] = min(sd_score, 15)
 
-    # === 5. Uniqueness Signals (10%) ===
+    # === 5. 獨特性訊號 (10%) ===
     us_score = 0
 
-    # Original data indicators
+    # 原創數據指標
     if re.search(
         r"(?:our (?:research|study|data|analysis|survey|findings)|we (?:found|discovered|analyzed|surveyed|measured))",
         text,
@@ -199,7 +199,7 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
     ):
         us_score += 5
 
-    # Case study or example indicators
+    # 案例研究或範例指標
     if re.search(
         r"(?:case study|for example|for instance|in practice|real-world|hands-on)",
         text,
@@ -207,31 +207,31 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
     ):
         us_score += 3
 
-    # Specific tool/product mentions (shows practical experience)
+    # 提及特定工具/產品 (展現實際經驗)
     if re.search(r"(?:using|with|via|through)\s+[A-Z][a-z]+", text):
         us_score += 2
 
     scores["uniqueness_signals"] = min(us_score, 10)
 
-    # === Calculate total ===
+    # === 計算總分 ===
     total = sum(scores.values())
 
-    # Determine grade
+    # 決定等級
     if total >= 80:
         grade = "A"
-        label = "Highly Citable"
+        label = "極高引用率"
     elif total >= 65:
         grade = "B"
-        label = "Good Citability"
+        label = "良好引用率"
     elif total >= 50:
         grade = "C"
-        label = "Moderate Citability"
+        label = "中等引用率"
     elif total >= 35:
         grade = "D"
-        label = "Low Citability"
+        label = "低引用率"
     else:
         grade = "F"
-        label = "Poor Citability"
+        label = "極差引用率"
 
     return {
         "heading": heading,
@@ -245,7 +245,7 @@ def score_passage(text: str, heading: Optional[str] = None) -> dict:
 
 
 def analyze_page_citability(url: str) -> dict:
-    """Analyze all content blocks on a page for citability."""
+    """分析頁面上所有內容區塊的引用率。"""
     try:
         response = requests.get(
             url,
@@ -256,24 +256,24 @@ def analyze_page_citability(url: str) -> dict:
         )
         response.raise_for_status()
     except Exception as e:
-        return {"error": f"Failed to fetch page: {str(e)}"}
+        return {"error": f"無法抓取頁面：{str(e)}"}
 
     soup = BeautifulSoup(response.text, "lxml")
 
-    # Remove non-content elements
+    # 移除非內容元素
     for element in soup.find_all(
         ["script", "style", "nav", "footer", "header", "aside", "form"]
     ):
         element.decompose()
 
-    # Extract content blocks
+    # 提取內容區塊
     blocks = []
-    current_heading = "Introduction"
+    current_heading = "簡介"
     current_paragraphs = []
 
     for element in soup.find_all(["h1", "h2", "h3", "h4", "p", "ul", "ol", "table"]):
         if element.name.startswith("h"):
-            # Save previous section
+            # 儲存前一個區塊
             if current_paragraphs:
                 combined = " ".join(current_paragraphs)
                 if len(combined.split()) >= 20:
@@ -287,25 +287,25 @@ def analyze_page_citability(url: str) -> dict:
             if text and len(text.split()) >= 5:
                 current_paragraphs.append(text)
 
-    # Last block
+    # 最後一個區塊
     if current_paragraphs:
         combined = " ".join(current_paragraphs)
         if len(combined.split()) >= 20:
             blocks.append({"heading": current_heading, "content": combined})
 
-    # Score each block
+    # 為每個區塊評分
     scored_blocks = []
     for block in blocks:
         score = score_passage(block["content"], block["heading"])
         scored_blocks.append(score)
 
-    # Calculate page-level metrics
+    # 計算頁面層級的指標
     if scored_blocks:
         avg_score = sum(b["total_score"] for b in scored_blocks) / len(scored_blocks)
         top_blocks = sorted(scored_blocks, key=lambda x: x["total_score"], reverse=True)[:5]
         bottom_blocks = sorted(scored_blocks, key=lambda x: x["total_score"])[:5]
 
-        # Optimal passage count (134-167 words)
+        # 最佳段落數量 (134-167 字)
         optimal_count = sum(
             1 for b in scored_blocks if 134 <= b["word_count"] <= 167
         )
@@ -315,7 +315,7 @@ def analyze_page_citability(url: str) -> dict:
         bottom_blocks = []
         optimal_count = 0
 
-    # Grade distribution
+    # 等級分佈
     grade_dist = {"A": 0, "B": 0, "C": 0, "D": 0, "F": 0}
     for block in scored_blocks:
         grade_dist[block["grade"]] += 1
@@ -334,8 +334,8 @@ def analyze_page_citability(url: str) -> dict:
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python citability_scorer.py <url>")
-        print("Returns JSON with citability analysis for all content blocks.")
+        print("用法: python citability_scorer.py <url>")
+        print("回傳包含所有內容區塊引用率分析的 JSON 格式資料。")
         sys.exit(1)
 
     url = sys.argv[1]

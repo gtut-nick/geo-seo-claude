@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-Brand Mention Scanner — Checks brand presence across AI-cited platforms.
+品牌提及掃描器 (Brand Mention Scanner) — 檢查品牌在 AI 引用平台上的存在感。
 
-Brand mentions correlate 3x more strongly with AI visibility than backlinks.
-(Ahrefs December 2025 study of 75,000 brands)
+品牌提及與 AI 可見度的相關性是反向連結 (backlinks) 的 3 倍。
+(Ahrefs 2025 年 12 月對 75,000 個品牌的研究)
 
-Platform importance for AI citations:
-1. YouTube mentions (~0.737 correlation - STRONGEST)
-2. Reddit mentions (high)
-3. Wikipedia presence (high)
-4. LinkedIn presence (moderate)
-5. Domain Rating/backlinks (~0.266 - weak)
+AI 引用平台的重要性：
+1. YouTube 提及 (~0.737 相關性 - 最強)
+2. Reddit 提及 (高)
+3. Wikipedia 存在感 (高)
+4. LinkedIn 存在感 (中)
+5. 網域評分/反向連結 (~0.266 - 弱)
 """
 
 import sys
@@ -22,7 +22,7 @@ try:
     import requests
     from bs4 import BeautifulSoup
 except ImportError:
-    print("ERROR: Required packages not installed. Run: pip install -r requirements.txt")
+    print("錯誤：未安裝必要的套件。請執行：pip install -r requirements.txt")
     sys.exit(1)
 
 DEFAULT_HEADERS = {
@@ -33,7 +33,7 @@ DEFAULT_HEADERS = {
 
 
 def check_youtube_presence(brand_name: str) -> dict:
-    """Check brand presence on YouTube."""
+    """檢查品牌在 YouTube 上的存在感。"""
     result = {
         "platform": "YouTube",
         "correlation": 0.737,
@@ -44,34 +44,34 @@ def check_youtube_presence(brand_name: str) -> dict:
         "recommendations": [],
     }
 
-    # Note: Actual YouTube API would be used in production
-    # This provides the framework for Claude Code to use WebFetch
+    # 注意：在生產環境中會使用實際的 YouTube API
+    # 這裡提供了讓 Claude Code 使用 WebFetch 的框架
     result["check_instructions"] = [
-        f"Search YouTube for '{brand_name}' and check:",
-        "1. Does the brand have an official YouTube channel?",
-        "2. Are there videos FROM the brand (tutorials, demos, thought leadership)?",
-        "3. Are there videos ABOUT the brand from other creators?",
-        "4. What's the view count on brand-related videos?",
-        "5. Are there positive reviews or demonstrations?",
+        f"在 YouTube 搜尋 '{brand_name}' 並檢查：",
+        "1. 該品牌是否有官方 YouTube 頻道？",
+        "2. 是否有來自該品牌的影片（教學、示範、思想領導）？",
+        "3. 是否有其他創作者製作關於該品牌的影片？",
+        "4. 與品牌相關影片的觀看次數是多少？",
+        "5. 是否有正面的評論或產品示範？",
     ]
 
     result["recommendations"] = [
-        "Create a YouTube channel if none exists",
-        "Publish educational/tutorial content related to your niche",
-        "Encourage customers to create review/demo videos",
-        "Optimize video titles and descriptions with brand name",
-        "Add timestamps and chapters to improve AI parseability",
-        "Include transcripts (YouTube auto-generates, but review for accuracy)",
+        "如果尚未建立，請建立一個 YouTube 頻道",
+        "發布與您的利基市場相關的教育/教學內容",
+        "鼓勵客戶製作評論/示範影片",
+        "使用品牌名稱最佳化影片標題和描述",
+        "加入時間戳記和章節以提高 AI 解析能力",
+        "包含逐字稿（YouTube 會自動產生，但需人工檢查準確性）",
     ]
 
     return result
 
 
 def check_reddit_presence(brand_name: str) -> dict:
-    """Check brand presence on Reddit."""
+    """檢查品牌在 Reddit 上的存在感。"""
     result = {
         "platform": "Reddit",
-        "correlation": "High",
+        "correlation": "高",
         "weight": "25%",
         "has_subreddit": False,
         "mentioned_in_discussions": False,
@@ -80,50 +80,50 @@ def check_reddit_presence(brand_name: str) -> dict:
     }
 
     result["check_instructions"] = [
-        f"Search Reddit for '{brand_name}' and check:",
-        "1. Does the brand have its own subreddit (r/brandname)?",
-        "2. Is the brand discussed in relevant industry subreddits?",
-        "3. What's the sentiment (positive, negative, neutral)?",
-        "4. Are there recommendation threads mentioning the brand?",
-        "5. Does the brand have an official Reddit presence?",
-        "6. Are mentions recent (within last 6 months)?",
+        f"在 Reddit 搜尋 '{brand_name}' 並檢查：",
+        "1. 該品牌是否有自己的 subreddit (r/brandname)？",
+        "2. 該品牌是否在相關產業的 subreddit 中被討論？",
+        "3. 討論的情感傾向為何（正面、負面、中立）？",
+        "4. 是否有推薦文章提及該品牌？",
+        "5. 該品牌是否有官方的 Reddit 帳號？",
+        "6. 提及是否為近期發生（過去 6 個月內）？",
     ]
 
     result["recommendations"] = [
-        "Monitor relevant subreddits for brand mentions",
-        "Participate authentically in industry discussions (no spam)",
-        "Create an official Reddit account for customer support",
-        "Share valuable content (not just self-promotion)",
-        "Respond to questions about your product/service category",
-        "Reddit authenticity matters — don't use marketing speak",
+        "監控相關 subreddit 中的品牌提及",
+        "真誠地參與產業討論（切勿發送垃圾訊息）",
+        "建立官方 Reddit 帳號以提供客戶支援",
+        "分享有價值的內容（而不僅僅是自我推銷）",
+        "回答有關您的產品/服務類別的問題",
+        "Reddit 非常看重真實性 — 請勿使用行銷術語",
     ]
 
     return result
 
 
 def check_wikipedia_presence(brand_name: str) -> dict:
-    """Check brand/entity presence on Wikipedia and Wikidata."""
+    """檢查品牌/實體在 Wikipedia 和 Wikidata 上的存在感。"""
     result = {
         "platform": "Wikipedia",
-        "correlation": "High",
+        "correlation": "高",
         "weight": "20%",
         "has_wikipedia_page": False,
         "has_wikidata_entry": False,
         "cited_in_articles": False,
-        "search_url": f"https://en.wikipedia.org/wiki/Special:Search?search={quote_plus(brand_name)}",
+        "search_url": f"https://zh.wikipedia.org/wiki/Special:Search?search={quote_plus(brand_name)}",
         "wikidata_url": f"https://www.wikidata.org/w/index.php?search={quote_plus(brand_name)}",
         "recommendations": [],
     }
 
-    # Check Wikipedia API
+    # 檢查 Wikipedia API
     try:
-        api_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={quote_plus(brand_name)}&format=json"
+        api_url = f"https://zh.wikipedia.org/w/api.php?action=query&list=search&srsearch={quote_plus(brand_name)}&format=json"
         response = requests.get(api_url, headers=DEFAULT_HEADERS, timeout=15)
         if response.status_code == 200:
             data = response.json()
             search_results = data.get("query", {}).get("search", [])
             if search_results:
-                # Check if top result is about the brand
+                # 檢查第一個結果是否與品牌相關
                 top_title = search_results[0].get("title", "").lower()
                 if brand_name.lower() in top_title:
                     result["has_wikipedia_page"] = True
@@ -131,9 +131,9 @@ def check_wikipedia_presence(brand_name: str) -> dict:
     except Exception:
         pass
 
-    # Check Wikidata
+    # 檢查 Wikidata
     try:
-        wikidata_url = f"https://www.wikidata.org/w/api.php?action=wbsearchentities&search={quote_plus(brand_name)}&language=en&format=json"
+        wikidata_url = f"https://www.wikidata.org/w/api.php?action=wbsearchentities&search={quote_plus(brand_name)}&language=zh&format=json"
         response = requests.get(wikidata_url, headers=DEFAULT_HEADERS, timeout=15)
         if response.status_code == 200:
             data = response.json()
@@ -146,22 +146,22 @@ def check_wikipedia_presence(brand_name: str) -> dict:
         pass
 
     result["recommendations"] = [
-        "If eligible, create a Wikipedia article (requires notability criteria)",
-        "Ensure Wikidata entry exists with complete structured data",
-        "Add sameAs links in schema markup pointing to Wikipedia/Wikidata",
-        "Get cited in existing Wikipedia articles as a source",
-        "Build notability through press coverage and independent reviews",
-        "Note: Wikipedia has strict notability guidelines — PR coverage helps establish this",
+        "如果符合資格，請建立 Wikipedia 條目（需要符合知名度標準）",
+        "確保 Wikidata 項目存在並具備完整的結構化資料",
+        "在 schema 標記中加入指向 Wikipedia/Wikidata 的 sameAs 連結",
+        "在現有的 Wikipedia 條目中被引用為來源",
+        "透過新聞報導和獨立評論建立知名度",
+        "注意：Wikipedia 有嚴格的知名度指南 — 公關報導有助於建立知名度",
     ]
 
     return result
 
 
 def check_linkedin_presence(brand_name: str) -> dict:
-    """Check brand presence on LinkedIn."""
+    """檢查品牌在 LinkedIn 上的存在感。"""
     result = {
         "platform": "LinkedIn",
-        "correlation": "Moderate",
+        "correlation": "中等",
         "weight": "15%",
         "has_company_page": False,
         "employee_thought_leadership": False,
@@ -170,31 +170,31 @@ def check_linkedin_presence(brand_name: str) -> dict:
     }
 
     result["check_instructions"] = [
-        f"Search LinkedIn for '{brand_name}' and check:",
-        "1. Does the company have a LinkedIn page?",
-        "2. How many followers?",
-        "3. Is the page active with recent posts?",
-        "4. Do employees post thought leadership content?",
-        "5. Are there LinkedIn articles about the brand?",
-        "6. Is there engagement on posts (likes, comments, shares)?",
+        f"在 LinkedIn 搜尋 '{brand_name}' 並檢查：",
+        "1. 公司是否有 LinkedIn 專頁？",
+        "2. 有多少追蹤者？",
+        "3. 專頁是否活躍並有近期貼文？",
+        "4. 員工是否發布思想領導內容？",
+        "5. 是否有關於該品牌的 LinkedIn 文章？",
+        "6. 貼文是否有互動（按讚、留言、分享）？",
     ]
 
     result["recommendations"] = [
-        "Create/optimize LinkedIn company page",
-        "Post regular thought leadership content",
-        "Encourage employees to share company content",
-        "Publish long-form LinkedIn articles",
-        "Engage with industry discussions and comments",
-        "Add company LinkedIn URL to schema sameAs property",
+        "建立/最佳化 LinkedIn 公司專頁",
+        "定期發布思想領導內容",
+        "鼓勵員工分享公司內容",
+        "發布長篇 LinkedIn 文章",
+        "參與產業討論並留言互動",
+        "將公司 LinkedIn 網址加入 schema 的 sameAs 屬性中",
     ]
 
     return result
 
 
 def check_other_platforms(brand_name: str) -> dict:
-    """Check brand presence on additional platforms."""
+    """檢查品牌在其他平台上的存在感。"""
     result = {
-        "platform": "Other Platforms",
+        "platform": "其他平台",
         "weight": "15%",
         "platforms_checked": {},
         "recommendations": [],
@@ -213,51 +213,51 @@ def check_other_platforms(brand_name: str) -> dict:
     result["platforms_checked"] = {
         name: {
             "search_url": url,
-            "check_instruction": f"Search for '{brand_name}' on {name}",
+            "check_instruction": f"在 {name} 上搜尋 '{brand_name}'",
         }
         for name, url in platforms.items()
     }
 
     result["recommendations"] = [
-        "Maintain profiles on industry-relevant platforms",
-        "Respond to questions on Quora and Stack Overflow",
-        "Encourage customer reviews on G2 and Trustpilot",
-        "Keep Crunchbase profile updated (important for B2B)",
-        "Open-source contributions on GitHub boost developer brand authority",
-        "Product Hunt launch can generate significant initial buzz",
+        "在與產業相關的平台上維護個人檔案/專頁",
+        "在 Quora 和 Stack Overflow 上回答問題",
+        "鼓勵客戶在 G2 和 Trustpilot 上留下評論",
+        "保持 Crunchbase 個人檔案更新（對 B2B 來說很重要）",
+        "在 GitHub 上貢獻開源專案能提升開發者品牌的權威性",
+        "在 Product Hunt 上發布可以產生巨大的初期迴響",
     ]
 
     return result
 
 
 def generate_brand_report(brand_name: str, domain: str = None) -> dict:
-    """Generate a comprehensive brand mention report."""
+    """產生全面的品牌提及報告。"""
     report = {
         "brand_name": brand_name,
         "domain": domain,
-        "analysis_date": "Generated by GEO-SEO Claude Tool",
-        "key_insight": "Brand mentions correlate 3x more strongly with AI visibility than backlinks (Ahrefs Dec 2025, 75K brands)",
+        "analysis_date": "由 GEO-SEO Claude 工具產生",
+        "key_insight": "關鍵洞察：品牌提及與 AI 可見度的相關性是反向連結的 3 倍 (Ahrefs 2025 年 12 月對 7.5 萬個品牌的研究)",
         "platforms": {},
         "overall_recommendations": [],
     }
 
-    # Check all platforms
+    # 檢查所有平台
     report["platforms"]["youtube"] = check_youtube_presence(brand_name)
     report["platforms"]["reddit"] = check_reddit_presence(brand_name)
     report["platforms"]["wikipedia"] = check_wikipedia_presence(brand_name)
     report["platforms"]["linkedin"] = check_linkedin_presence(brand_name)
     report["platforms"]["other"] = check_other_platforms(brand_name)
 
-    # Overall recommendations
+    # 整體建議
     report["overall_recommendations"] = [
-        "Priority 1: YouTube — highest correlation (0.737) with AI citations. Create educational content.",
-        "Priority 2: Reddit — build authentic presence in industry subreddits. No marketing speak.",
-        "Priority 3: Wikipedia — establish notability through press coverage, then create/improve entry.",
-        "Priority 4: LinkedIn — thought leadership content from founders and employees.",
-        "Priority 5: Review platforms — G2, Trustpilot, Capterra for social proof signals.",
-        "Cross-platform: Ensure consistent NAP (Name, Address, Phone) across all platforms.",
-        "Schema markup: Add sameAs property linking to ALL platform profiles.",
-        "Monitor: Set up brand mention alerts across all platforms.",
+        "優先事項 1: YouTube — 與 AI 引用的相關性最高 (0.737)。請建立教育內容。",
+        "優先事項 2: Reddit — 在產業 subreddit 中建立真實的存在感。切勿使用行銷術語。",
+        "優先事項 3: Wikipedia — 透過新聞報導建立知名度，然後建立/改善維基百科條目。",
+        "優先事項 4: LinkedIn — 來自創辦人和員工的思想領導內容。",
+        "優先事項 5: 評論平台 — G2、Trustpilot、Capterra 等提供社會認同訊號的平台。",
+        "跨平台：確保所有平台上的 NAP（名稱、地址、電話）保持一致。",
+        "Schema 標記：加入 sameAs 屬性，連結到「所有」平台設定檔。",
+        "監控：在所有平台上設定品牌提及通知 (alerts)。",
     ]
 
     return report
@@ -265,8 +265,8 @@ def generate_brand_report(brand_name: str, domain: str = None) -> dict:
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python brand_scanner.py <brand_name> [domain]")
-        print("Example: python brand_scanner.py 'Acme Corp' acmecorp.com")
+        print("用法: python brand_scanner.py <品牌名稱> [網域]")
+        print("範例: python brand_scanner.py 'Acme Corp' acmecorp.com")
         sys.exit(1)
 
     brand = sys.argv[1]

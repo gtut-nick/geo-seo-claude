@@ -1,6 +1,6 @@
 ---
 name: geo-llmstxt
-description: Analyzes and generates llms.txt files -- the emerging standard for helping AI systems understand website structure and content. Can validate existing llms.txt files or generate new ones from scratch by crawling the site.
+description: 分析並產生 llms.txt 檔案 — 這是協助 AI 系統理解網站結構與內容的新興標準。可驗證既有的 llms.txt 檔案，或透過爬取網站從零產生新檔。
 allowed-tools:
   - Read
   - Grep
@@ -10,123 +10,123 @@ allowed-tools:
   - Write
 ---
 
-# llms.txt Standard Analysis and Generation Skill
+# llms.txt 標準分析與產生技能
 
-## Purpose
+## 目的
 
-This skill handles everything related to the `llms.txt` standard -- an emerging convention (proposed by Jeremy Howard in September 2024, gaining adoption through 2025-2026) that allows websites to provide structured guidance to AI systems about their content, structure, and key information. It is analogous to `robots.txt` (which tells crawlers what NOT to access) but instead tells AI systems what IS most useful to understand about the site.
+此技能處理與 `llms.txt` 標準相關的所有事項。這是一個新興慣例（由 Jeremy Howard 於 2024 年 9 月提出，並在 2025-2026 年逐漸被採用），讓網站能為 AI 系統提供關於內容、結構與關鍵資訊的結構化引導。它類似於 `robots.txt`（告訴爬蟲什麼內容「不要」存取），但它告訴 AI 系統什麼內容「最值得」理解。
 
-## Why llms.txt Matters
+## 為何 llms.txt 至關重要
 
-AI language models face a fundamental challenge when processing websites: they must determine which pages are most important, what the site is about, and how content is organized -- typically by crawling many pages and inferring structure. `llms.txt` solves this by providing an explicit, machine-readable (and human-readable) summary.
+AI 語言模型在處理網站時面臨基本挑戰：它們必須判斷哪些頁面最重要、網站主題是什麼，以及內容如何組織；通常需要透過爬取許多頁面並推斷結構。`llms.txt` 透過提供明確、機器可讀（且人類可讀）的摘要來解決這個問題。
 
-**Benefits of having a well-crafted llms.txt:**
+**擁有良好 llms.txt 的好處：**
 
-1. **Faster AI comprehension:** AI systems can understand your site's purpose and structure from a single file rather than crawling dozens of pages.
-2. **Controlled narrative:** You choose which pages and facts AI systems see first, shaping how they represent your brand.
-3. **Higher citation accuracy:** AI systems that consult llms.txt can cite the correct, authoritative page for each topic.
-4. **Reduced misrepresentation:** Key facts (pricing, features, locations) are stated explicitly, reducing AI hallucination about your business.
-5. **Early adopter advantage:** As of early 2026, fewer than 5% of websites have an llms.txt file, making it a differentiator.
+1. **更快的 AI 理解 (Comprehension)：** AI 系統可從單一檔案理解網站目的與結構，而不用爬取數十頁。
+2. **控制敘事 (Controlled Narrative)：** 你能決定 AI 系統優先看到哪些頁面與事實，形塑它們呈現你品牌的方式。
+3. **更高的引用準確度：** 會參考 llms.txt 的 AI 系統可為每個主題引用正確且具權威性的頁面。
+4. **降低錯誤呈現 (Misrepresentation)：** 明確寫出關鍵事實（如定價、功能、位置），可降低 AI 對業務產生幻覺 (Hallucination) 的機率。
+5. **早期採用者優勢：** 截至 2026 年初，少於 5% 的網站擁有 llms.txt 檔案，這讓它成為一種市場區別因素 (Differentiator)。
 
 ---
 
-## The llms.txt Specification
+## llms.txt 規範
 
-### File Location
+### 檔案位置
 
-The file MUST be located at the root of the domain:
+檔案必須位於網域根目錄：
 ```
-https://example.com/llms.txt
+[https://example.com/llms.txt](https://example.com/llms.txt)
 ```
 
-### Format Specification
+### 格式規格
 
-The file uses Markdown formatting with specific conventions:
+檔案使用 Markdown 格式與特定慣例：
 
 ```markdown
-# [Site Name]
+# [網站名稱]
 
-> [One-sentence description of what the site/business does. Keep under 200 characters.]
+> [關於網站/業務功能的單句描述。保持在 200 字元以內。]
 
-## Docs
+## 文件 (Docs)
 
-- [Page Title](https://example.com/page-url): Concise description of what this page covers and why it matters.
-- [Another Page](https://example.com/another-page): Description of content.
+- [頁面標題](https://example.com/page-url): 簡要描述此頁面涵蓋的內容及其重要性。
+- [另一個頁面](https://example.com/another-page): 內容描述。
 
-## Optional
+## 選用 (Optional)
 
-- [Less Critical Page](https://example.com/optional-page): Description.
+- [較次要的頁面](https://example.com/optional-page): 描述。
 ```
 
-### Detailed Format Rules
+### 詳細格式規則
 
-**1. Title (Required)**
+**1. 標題 (Title)（必填）**
 ```markdown
-# Site Name
+# 網站名稱
 ```
-- Must be the first line of the file.
-- Should be the official business/site name.
-- Use the H1 heading format (single `#`).
+- 必須是檔案的第一行。
+- 應使用正式的業務/網站名稱。
+- 使用 H1 標題格式（單個 `#`）。
 
-**2. Description (Required)**
+**2. 描述 (Description)（必填）**
 ```markdown
-> Brief description of the site/business
+> 網站/業務的簡短描述
 ```
-- Must appear immediately after the title.
-- Use Markdown blockquote format (`>`).
-- Keep under 200 characters.
-- Should clearly state what the business does and who it serves.
-- Avoid marketing fluff -- be factual and specific.
+- 必須緊接在標題之後。
+- 使用 Markdown 引用區塊格式（`>`）。
+- 保持在 200 字元以內。
+- 應清楚說明業務內容及服務對象。
+- 避免行銷廢話，保持事實性且具體。
 
-**3. Main Sections (Required -- at least one)**
+**3. 主要區塊 (Main Sections)（必填 — 至少一個）**
 
-Use H2 headings (`##`) to organize pages by category. Common section names:
+使用 H2 標題（`##`）依類別組織頁面。常見的區塊名稱：
 
-| Section Name | Purpose | Example Content |
+| 區塊名稱 | 用途 | 範例內容 |
 |---|---|---|
-| `## Docs` | Primary documentation or key pages | Product pages, service descriptions, core content |
-| `## Optional` | Secondary pages worth knowing about | Blog posts, supplementary resources |
-| `## API` | API documentation | API reference, authentication guides |
-| `## Blog` | Blog or news content | Recent/popular articles |
-| `## Products` | Product catalog | Product pages, pricing |
-| `## Services` | Service offerings | Service descriptions, process pages |
-| `## About` | Company information | About page, team, mission |
-| `## Resources` | Educational/reference content | Guides, tutorials, whitepapers |
-| `## Legal` | Legal documents | Terms of service, privacy policy |
-| `## Contact` | Contact information | Contact page, support channels |
+| `## Docs` | 主要文件或關鍵頁面 | 產品頁面、服務描述、核心內容 |
+| `## Optional` | 值得了解的次要頁面 | 部落格文章、補充資源 |
+| `## API` | API 文件 | API 參考、身分驗證指南 |
+| `## Blog` | 部落格或新聞內容 | 近期/熱門文章 |
+| `## Products` | 產品目錄 | 產品頁面、定價 |
+| `## Services` | 服務項目 | 服務描述、流程頁面 |
+| `## About` | 公司資訊 | 關於頁面、團隊、使命 |
+| `## Resources` | 教育/參考內容 | 指南、教學、白皮書 |
+| `## Legal` | 法律文件 | 服務條款、隱私權政策 |
+| `## Contact` | 聯絡資訊 | 聯絡頁面、支援管道 |
 
-**4. Page Entries (Required)**
+**4. 頁面條目 (Page Entries)（必填）**
 
-Each entry follows the format:
+每個條目遵循格式：
 ```markdown
-- [Page Title](URL): Description of page content
+- [頁面標題](URL): 頁面內容描述
 ```
 
-Rules for page entries:
-- **Title:** Use the actual page title or a clear descriptive title.
-- **URL:** Must be a full, absolute URL (not relative paths).
-- **Description:** 10-30 words describing what the page covers. Be specific about the information available.
-- **Order:** List pages in order of importance within each section.
-- **Limit:** Include 10-30 page entries total. Prioritize your most authoritative and useful pages.
+頁面條目規則：
+- **標題：** 使用實際頁面標題或清楚的描述性標題。
+- **URL：** 必須是完整、絕對路徑的 URL（不可使用相對路徑）。
+- **描述：** 10-30 個字，描述頁面涵蓋內容。具體說明可取得的資訊。
+- **順序：** 依每個區塊內的重要性排序。
+- **數量限制：** 總共包含 10-30 個頁面條目。優先選擇最具權威性、最有用的頁面。
 
-**5. Key Facts Section (Recommended)**
+**5. 關鍵事實區塊 (Key Facts Section)（建議）**
 
 ```markdown
-## Key Facts
-- Founded in [year] by [founder(s)]
-- Headquarters: [City, Country]
+## 重要事實
+- Founded in [年份] by [創辦人]
+- Headquarters: [城市, 國家]
 - [X] customers/users in [Y] countries
-- Key products: [Product A], [Product B], [Product C]
-- Industry: [Industry classification]
+- Key products: [產品 A], [產品 B], [產品 C]
+- Industry: [產業分類]
 ```
 
-This section provides quick reference data that AI systems frequently need to answer user queries about your business.
+此區塊為 AI 系統提供經常需要的業務快速參考數據。
 
-**6. Contact Section (Recommended)**
+**6. 聯絡區塊 (Contact Section)（建議）**
 
 ```markdown
-## Contact
-- Website: https://example.com
+## 聯絡方式
+- Website: [https://example.com](https://example.com)
 - Email: hello@example.com
 - Support: support@example.com
 - Phone: +1-555-123-4567
@@ -135,298 +135,298 @@ This section provides quick reference data that AI systems frequently need to an
 
 ---
 
-## llms-full.txt (Extended Version)
+## llms-full.txt（擴充版本）
 
-In addition to `llms.txt`, sites can provide `/llms-full.txt` -- an extended version with more detail.
+除了 `llms.txt`，網站也能提供 `/llms-full.txt`，亦即包含更多細節的擴充版本。
 
-**Differences from llms.txt:**
+**與 llms.txt 的差異：**
 
-| Feature | llms.txt | llms-full.txt |
+| 特性 | llms.txt | llms-full.txt |
 |---|---|---|
-| **Length** | Concise (50-150 lines) | Comprehensive (150-500+ lines) |
-| **Page entries** | 10-30 key pages | 30-100+ pages |
-| **Descriptions** | 10-30 words per entry | 30-100 words per entry, may include key facts from each page |
-| **Audience** | Quick AI comprehension | Deep AI analysis |
-| **Sections** | 3-6 sections | 8-15 sections |
-| **Key facts** | Business-level facts | Page-level facts and data points |
+| **長度** | 簡潔（50-150 行） | 全面（150-500+ 行） |
+| **頁面條目** | 10-30 個關鍵頁面 | 30-100+ 個頁面 |
+| **描述** | 每個條目 10-30 字 | 每個條目 30-100 字，可包含各頁面的關鍵事實 |
+| **對象** | 快速的 AI 理解 | 深入的 AI 分析 |
+| **區塊** | 3-6 個區塊 | 8-15 個區塊 |
+| **關鍵事實** | 業務層級的事實 | 頁面層級的事實與數據點 |
 
-Both files can coexist. AI systems check for `llms.txt` first, then may optionally load `llms-full.txt` for deeper understanding.
+兩個檔案可共存。AI 系統會先檢查 `llms.txt`，接著可能選擇性載入 `llms-full.txt` 以進行更深入的理解。
 
 ---
 
-## Analysis Mode
+## 分析模式
 
-When checking an existing llms.txt file:
+檢查現有的 llms.txt 檔案時：
 
-### Step 1: Fetch the File
+### Step 1：擷取檔案
 
-1. Use WebFetch to retrieve `[domain]/llms.txt`.
-2. Also check for `[domain]/llms-full.txt`.
-3. Record HTTP status code:
-   - **200:** File exists -- proceed to validation.
-   - **404:** File does not exist -- recommend generation.
-   - **403:** File exists but is blocked -- flag as misconfiguration.
-   - **301/302:** Redirect -- follow and note the redirect.
+1. 使用 WebFetch 取得 `[domain]/llms.txt`。
+2. 同時檢查 `[domain]/llms-full.txt`。
+3. 記錄 HTTP 狀態碼：
+   - **200:** 檔案存在，繼續驗證。
+   - **404:** 檔案不存在，建議產生新檔。
+   - **403:** 檔案存在但被封鎖，標記為配置錯誤。
+   - **301/302:** 重新導向，追蹤並註明重新導向路徑。
 
-### Step 2: Validate Format
+### Step 2：格式驗證
 
-Check each structural element:
+檢查每個結構元素：
 
-| Element | Check | Severity if Missing |
+| 元素 | 檢查項 | 缺失時的嚴重程度 |
 |---|---|---|
-| H1 Title | Present, matches business name | Critical |
-| Blockquote description | Present, under 200 chars, factual | High |
-| At least one H2 section | Present | Critical |
-| Page entries with URLs | At least 5 entries present | High |
-| URLs are absolute | All URLs use full https:// paths | High |
-| URLs are valid | All URLs return 200 status | Medium |
-| Descriptions present | Every entry has a description after the colon | Medium |
-| Key Facts section | Present with business information | Medium |
-| Contact section | Present with at least email | Low |
-| Reasonable length | 30-200 lines | Low |
-| No broken Markdown | Proper formatting throughout | Medium |
+| H1 標題 | 存在，且符合業務名稱 | 關鍵 (Critical) |
+| 引用區塊描述 | 存在、少於 200 字元、事實性 | 高 (High) |
+| 至少一個 H2 區塊 | 存在 | 關鍵 (Critical) |
+| 帶 URL 的頁面條目 | 至少 5 個條目 | 高 (High) |
+| URL 為絕對路徑 | 所有 URL 都使用完整 https:// 路徑 | 高 (High) |
+| URL 有效性 | 所有 URL 回傳 200 狀態碼 | 中 (Medium) |
+| 描述存在 | 每個條目在冒號後都有描述 | 中 (Medium) |
+| 重要事實區塊 | 包含業務資訊 | 中 (Medium) |
+| 聯絡區塊 | 至少有電子郵件 | 低 (Low) |
+| 合理長度 | 30-200 行 | 低 (Low) |
+| Markdown 格式無損 | 整體格式化正確 | 中 (Medium) |
 
-### Step 3: Assess Content Quality
+### Step 3：評估內容品質
 
-Rate the llms.txt on these dimensions:
+依下列維度評估 llms.txt：
 
-**Completeness (0-100):**
-- Does it cover all major site sections visible in the navigation?
-- Are the most important/highest-traffic pages included?
-- Is the Key Facts section present with accurate business data?
-- Does it include recent/updated content?
+**完整性 (Completeness)（0-100）：**
+- 是否涵蓋導覽列中可見的所有主要網站區塊？
+- 是否包含最重要/最高流量的頁面？
+- 「重要事實」區塊是否存在且包含準確的業務數據？
+- 是否包含最近更新的內容？
 
-**Accuracy (0-100):**
-- Do descriptions accurately reflect page content?
-- Are URLs valid and pointing to the correct pages?
-- Are Key Facts verifiable and current?
-- Is the business description accurate?
+**準確性 (Accuracy)（0-100）：**
+- 描述是否準確反映頁面內容？
+- URL 是否有效且指向正確頁面？
+- 關鍵事實是否可驗證且為最新？
+- 業務描述是否準確？
 
-**Usefulness (0-100):**
-- Would an AI system understand the site's purpose from this file alone?
-- Are descriptions specific enough to differentiate pages?
-- Are the most citation-worthy pages highlighted?
-- Is the organization logical and intuitive?
+**有用性 (Usefulness)（0-100）：**
+- AI 系統是否能只靠此檔理解網站目的？
+- 描述是否足夠具體以區分不同頁面？
+- 最值得引用的頁面是否被強調？
+- 組織架構是否具邏輯性且直觀？
 
-**Overall llms.txt Score** = (Completeness * 0.40) + (Accuracy * 0.35) + (Usefulness * 0.25)
+**Overall llms.txt Score** = (完整性 * 0.40) + (準確性 * 0.35) + (有用性 * 0.25)
 
-### Step 4: Compare Against Site Content
+### Step 4：與網站內容比較
 
-1. Crawl the site's main navigation and sitemap.
-2. Identify important pages NOT listed in llms.txt.
-3. Check if any listed URLs are broken or redirected.
-4. Verify that the business description matches current homepage messaging.
-5. Flag stale entries (pages that have been significantly updated since the llms.txt was written).
+1. 爬取網站主導覽列與網站地圖 (Sitemap)。
+2. 找出 llms.txt 中未列出的重要頁面。
+3. 檢查列出的 URL 是否失效或被重新導向。
+4. 驗證業務描述是否符合目前首頁的傳達訊息。
+5. 標記過時條目（即 llms.txt 撰寫後內容已有大幅更新的頁面）。
 
 ---
 
-## Generation Mode
+## 產生模式
 
-When creating a new llms.txt file from scratch:
+從零建立 llms.txt 檔案時：
 
-### Step 1: Site Discovery
+### Step 1：網站探索 (Site Discovery)
 
-1. Fetch the homepage and extract:
-   - Site name (from `<title>`, `<meta property="og:site_name">`, or H1)
-   - Business description (from meta description or hero section)
-   - Main navigation links
-   - Footer links
-2. Fetch `/sitemap.xml` to discover all public pages.
-3. Identify the site's primary business type (SaaS, E-commerce, Local, Publisher, Agency).
+1. 抓取首頁並擷取：
+   - 網站名稱（從 `<title>`、`<meta property="og:site_name">` 或 H1）
+   - 業務描述（從 meta description 或主視覺區 block）
+   - 主導覽連結
+   - 頁尾連結
+2. 抓取 `/sitemap.xml` 以發現所有公開頁面。
+3. 識別網站主要業務類型（SaaS、電商、在地商家、出版商、代理商）。
 
-### Step 2: Page Prioritization
+### Step 2：頁面優先級排序 (Page Prioritization)
 
-Categorize all discovered pages and select the most important ones:
+分類所有發現的頁面並選出最重要的頁面：
 
-**Always Include:**
-- Homepage
-- About / Company page
-- Pricing page (if exists)
-- Primary product/service pages (top 3-5)
-- Contact page
-- Documentation landing page (if exists)
+**務必包含：**
+- 首頁 (Homepage)
+- 關於 / 公司頁面
+- 定價頁面（若存在）
+- 主要產品/服務頁面（前 3-5 個）
+- 聯絡頁面
+- 文件入口頁面（若存在）
 
-**Include if High Quality:**
-- Top blog posts (by apparent importance, recency, or comprehensiveness)
-- Case studies or customer stories
-- Key resource/guide pages
-- FAQ page
-- Careers page (for large companies)
+**具備高品質時包含：**
+- 熱門部落格文章（依顯著重要性、新近性或全面性判斷）
+- 案例研究或客戶故事
+- 關鍵資源/指南頁面
+- FAQ 頁面
+- 招募頁面（適用於大型公司）
 
-**Skip:**
-- Thin category/tag pages
-- Pagination pages
-- Login/signup pages
-- Legal boilerplate (unless specifically relevant)
-- Duplicate or near-duplicate content
-- Pages with minimal unique content
+**跳過：**
+- 內容貧乏的分類/標籤頁面
+- 分頁 (Pagination) 頁面
+- 登入/註冊頁面
+- 法律條文（除非特別相關）
+- 重複或近乎重複的內容
+- 獨特內容極少的頁面
 
-### Step 3: Write Descriptions
+### Step 3：撰寫描述 (Write Descriptions)
 
-For each selected page:
+針對每個選定的頁面：
 
-1. Fetch the page content using WebFetch.
-2. Read the H1, meta description, and first 2-3 paragraphs.
-3. Write a description that:
-   - Is 10-30 words long
-   - States what information is on the page
-   - Mentions specific topics, data, or features covered
-   - Avoids marketing language ("best," "leading," "revolutionary")
-   - Uses factual, informative language
+1. 使用 WebFetch 抓取頁面內容。
+2. 閱讀 H1、meta description 與前 2-3 段。
+3. 撰寫描述，要求：
+   - 10-30 個字長
+   - 說明頁面上的資訊
+   - 提及涵蓋的具體主題、數據或功能
+   - 避免使用行銷用語（如 "best," "leading," "revolutionary"）
+   - 使用事實性、資訊豐富的語言
 
-**Good description examples:**
-- `Explains the three pricing tiers (Free, Pro, Enterprise) with feature comparison and annual/monthly costs.`
-- `Details the company's founding in 2018, team of 45 employees, and office locations in Austin and London.`
-- `Covers integration setup for Slack, Salesforce, and HubSpot with step-by-step guides and API endpoints.`
+**好的描述範例：**
+- `說明三種定價層級（免費版、專業版、企業版），包含功能比較以及年繳/月繳成本。`
+- `詳述公司於 2018 年創立、45 名員工團隊，以及位於奧斯汀和倫敦的辦公室地點。`
+- `涵蓋 Slack、Salesforce 和 HubSpot 的整合設定，包含逐步指南與 API 端點。`
 
-**Bad description examples:**
-- `Our amazing pricing page!` (marketing language, no specifics)
-- `Learn more about our company.` (too vague)
-- `Click here for details.` (not descriptive)
+**不好的描述範例：**
+- `我們超棒的定價頁面！`（行銷用語、無具體資訊）
+- `了解更多關於我們公司的資訊。`（太過模糊）
+- `點擊此處查看詳情。`（不具描述性）
 
-### Step 4: Compile Key Facts
+### Step 4：彙整關鍵事實
 
-Gather key business facts from the site:
+從網站收集關鍵業務事實：
 
-- Year founded
-- Founder name(s)
-- Headquarters location
-- Number of employees (if public)
-- Number of customers/users (if public)
-- Key products or services (list top 3-5)
-- Industry classification
-- Notable clients or partnerships (if public)
-- Key differentiators (what makes this business unique)
-- Recent milestones or achievements (last 12 months)
+- 創立年份
+- 創辦人姓名
+- 總部位置
+- 員工人數（若已公開）
+- 客戶/使用者數量（若已公開）
+- 核心產品或服務（列出前 3-5 個）
+- 產業分類
+- 著名的客戶或合作夥伴（若已公開）
+- 核心差異化優勢（業務獨特之處）
+- 近期的里程碑或成就（過去 12 個月內）
 
-### Step 5: Assemble the File
+### Step 5：組建檔案
 
-Construct the llms.txt following this template:
+依此範本建構 llms.txt：
 
 ```markdown
-# [Site Name]
+# [網站名稱]
 
-> [One clear sentence: what the business does, who it serves, and its primary value proposition. Under 200 characters.]
+> [清楚的單句：業務內容、服務對象及其核心價值主張。200 字元以內。]
 
-## Docs
+## 文件 (Docs)
 
-- [Most Important Page](https://example.com/page): Description covering the key content on this page.
-- [Second Page](https://example.com/page-2): Description of this page's content and value.
-- [Third Page](https://example.com/page-3): What users and AI systems will find here.
+- [最重要頁面](https://example.com/page): 涵蓋此頁面關鍵內容的描述。
+- [第二個頁面](https://example.com/page-2): 此頁面內容與價值的描述。
+- [第三個頁面](https://example.com/page-3): 使用者與 AI 系統可在此找到的資訊。
 
-## Products
+## 產品 (Products)
 
-- [Product A](https://example.com/product-a): Core features, target users, and pricing model for Product A.
-- [Product B](https://example.com/product-b): What Product B does and how it differs from Product A.
+- [產品 A](https://example.com/product-a): 產品 A 的核心功能、目標使用者與定價模式。
+- [產品 B](https://example.com/product-b): 產品 B 的功能及其與產品 A 的差異。
 
-## Resources
+## 資源 (Resources)
 
-- [Guide Title](https://example.com/guide): Comprehensive guide covering [topic] with [X] sections and practical examples.
-- [Blog Post](https://example.com/blog/post): Analysis of [topic] with original data from [source].
+- [指南標題](https://example.com/guide): 涵蓋 [主題] 的全面指南，包含 [X] 個章節與實務範例。
+- [部落格文章](https://example.com/blog/post): 針對 [主題] 的分析，包含來自 [來源] 的原始數據。
 
-## Key Facts
+## 重要事實
 
-- Founded in [year] by [name(s)]
-- Headquartered in [City, Country]
-- [Specific metric: e.g., "Serves 10,000+ businesses in 40 countries"]
-- [Key differentiator: e.g., "Only platform offering real-time X and Y integration"]
-- Industry: [Classification]
+- Founded in [年份] by [姓名]
+- Headquartered in [城市, 國家]
+- [特定指標：例如 "服務超過 40 個國家的 10,000+ 家企業"]
+- [核心差異優勢：例如 "唯一提供即時 X 與 Y 整合的平台"]
+- Industry: [分類]
 
-## Contact
+## 聯絡方式
 
-- Website: https://example.com
-- Email: [primary contact email]
-- Support: [support URL or email]
+- Website: [https://example.com](https://example.com)
+- Email: [主要聯絡信箱]
+- Support: [支援 URL 或信箱]
 ```
 
-### Step 6: Validate the Generated File
+### Step 6：驗證產生的檔案
 
-Before outputting:
-1. Verify all URLs are reachable (200 status).
-2. Confirm total entry count is between 10-30.
-3. Check that no description exceeds 50 words.
-4. Verify the overall file length is 50-150 lines.
-5. Ensure Markdown formatting is clean and consistent.
+輸出前：
+1. 驗證所有 URL 皆可存取（200 狀態）。
+2. 確認條目總數在 10-30 個之間。
+3. 檢查沒有描述超過 50 個字。
+4. 驗證檔案總長度為 50-150 行。
+5. 確保 Markdown 格式化乾淨且一致。
 
 ---
 
-## Output Format
+## 輸出格式
 
-### For Analysis Mode
+### 分析模式輸出
 
-Generate `GEO-LLMSTXT-ANALYSIS.md`:
+產生 `GEO-LLMSTXT-ANALYSIS.md`：
 
 ```markdown
-# llms.txt Analysis: [Domain]
+# llms.txt 分析報告：[網域 Domain]
 
-**Analysis Date:** [Date]
-**llms.txt Status:** [Found at URL / Not Found / Error]
-**llms-full.txt Status:** [Found / Not Found]
+**分析日期：** [Date]
+**llms.txt 狀態：** [於 URL 找到 / 未找到 / 錯誤]
+**llms-full.txt 狀態：** [找到 / 未找到]
 
 ---
 
-## Overall llms.txt Score: [X]/100
+## 整體 llms.txt 分數：[X]/100
 
-| Dimension | Score |
+| 維度 | 分數 |
 |---|---|
-| Completeness | [X]/100 |
-| Accuracy | [X]/100 |
-| Usefulness | [X]/100 |
+| 完整性 | [X]/100 |
+| 準確性 | [X]/100 |
+| 有用性 | [X]/100 |
 
 ---
 
-## Format Validation
+## 格式驗證
 
-| Element | Status | Notes |
+| 元素 | 狀態 | 備註 |
 |---|---|---|
-| H1 Title | [Pass/Fail] | [Notes] |
-| Description blockquote | [Pass/Fail] | [Notes] |
-| H2 Sections | [Pass/Fail] | [X sections found] |
-| Page entries | [Pass/Fail] | [X entries found] |
-| URL validity | [Pass/Fail] | [X broken URLs] |
-| Entry descriptions | [Pass/Fail] | [X missing descriptions] |
-| Key Facts | [Pass/Fail] | [Notes] |
-| Contact section | [Pass/Fail] | [Notes] |
+| H1 標題 | [通過/失敗] | [備註] |
+| 引用區塊描述 | [通過/失敗] | [備註] |
+| H2 區塊 | [通過/失敗] | [找到 X 個區塊] |
+| 頁面條目 | [通過/失敗] | [找到 X 個條目] |
+| URL 有效性 | [通過/失敗] | [X 個失效 URL] |
+| 條目描述 | [通過/失敗] | [X 個缺失描述] |
+| 重要事實 | [通過/失敗] | [備註] |
+| 聯絡區塊 | [通過/失敗] | [備註] |
 
 ---
 
-## Missing Pages
+## 缺少的頁面
 
-These important pages were found on the site but not in llms.txt:
+網站上找到下列重要頁面，但它們未包含在 llms.txt 中：
 
-1. [Page Title](URL) -- [Why it should be included]
-2. [Page Title](URL) -- [Why it should be included]
+1. [頁面標題](URL) -- [應包含此頁面的原因]
+2. [頁面標題](URL) -- [應包含此頁面的原因]
 
-## Improvement Recommendations
+## 改善建議
 
-1. [Specific recommendation]
-2. [Specific recommendation]
-3. [Specific recommendation]
+1. [具體建議]
+2. [具體建議]
+3. [具體建議]
 
-## Suggested Updated llms.txt
+## 建議更新的 llms.txt
 
-[Complete rewritten llms.txt file if significant improvements are needed]
+[若需要大幅改進，請提供完整重寫的 llms.txt 檔案內容]
 ```
 
-### For Generation Mode
+### 產生模式輸出
 
-Output the complete `llms.txt` file content, ready to be saved to the site's root directory. Also output a brief `GEO-LLMSTXT-GENERATION.md` report explaining:
-- How many pages were discovered and how many were selected
-- The prioritization rationale
-- Any pages that were borderline (might add later)
-- Recommended update frequency (e.g., monthly for active blogs, quarterly for stable sites)
+輸出完整的 `llms.txt` 檔案內容，可直接儲存到網站根目錄。另輸出簡短的 `GEO-LLMSTXT-GENERATION.md` 報告，說明：
+- 發現多少頁面、選用了多少頁面
+- 優先級排序的理由
+- 邊緣頁面（未來可能加入的頁面）
+- 建議的更新頻率（例如：活躍的部落格每月更新、穩定的網站每季更新）
 
 ---
 
-## Best Practices Reference
+## 最佳實務參考
 
-1. **Update regularly.** If your site publishes weekly blog posts, update llms.txt monthly. If your product changes quarterly, update after each release.
-2. **Lead with your strongest content.** The first entries in each section should be your most authoritative, comprehensive pages.
-3. **Be specific in descriptions.** "Comprehensive 3,000-word guide to React Server Components with code examples" is far more useful than "React guide."
-4. **Include your differentiators.** If your site has unique data, original research, or exclusive features, highlight these in descriptions and Key Facts.
-5. **Keep it concise.** The llms.txt should be scannable in under 60 seconds. Save detail for llms-full.txt.
-6. **Use absolute URLs.** Always include the full `https://` URL, never relative paths.
-7. **Test after deployment.** After uploading, verify the file is accessible at `https://yourdomain.com/llms.txt` with no redirects.
-8. **Coordinate with robots.txt.** Ensure pages listed in llms.txt are not blocked in robots.txt for AI crawlers.
-9. **Mirror your site structure.** Section names in llms.txt should roughly correspond to your main navigation categories.
-10. **Avoid sensitive pages.** Do not include internal tools, admin panels, or pages with sensitive information.
+1. **定期更新。** 若網站每週發布部落格文章，請每月更新 llms.txt。若產品每季變動，請在每次發布後更新。
+2. **以最強內容開頭。** 每個區塊的前幾個條目應是最具權威性、最完整的頁面。
+3. **描述要具體。** 「關於 React Server Components 的全面 3,000 字指南，附有程式碼範例」遠比「React 指南」有用。
+4. **包含差異化優勢。** 若網站有獨特數據、原創研究或獨家功能，請在描述與「重要事實」中強調。
+5. **保持簡潔。** llms.txt 應可在 60 秒內掃讀完畢。細節留給 llms-full.txt。
+6. **使用絕對路徑 URL。** 永遠包含完整的 `https://` URL，不要使用相對路徑。
+7. **部署後測試。** 上傳後，確認 `https://yourdomain.com/llms.txt` 可存取且沒有重新導向。
+8. **與 robots.txt 協調。** 確保 llms.txt 中列出的頁面沒有在 robots.txt 中被 AI 爬蟲封鎖。
+9. **對應網站結構。** llms.txt 的區塊名稱應大致對應主導覽列的類別。
+10. **避免敏感頁面。** 不要包含內部工具、管理後台或含敏感資訊的頁面。

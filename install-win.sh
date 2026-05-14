@@ -2,36 +2,36 @@
 set -euo pipefail
 
 # ============================================================
-# GEO-SEO Claude Code Skill Installer — Windows (Git Bash)
-# Run this script from Git Bash, NOT PowerShell or CMD.
+# GEO-SEO Claude Code 技能安裝工具 — Windows (Git Bash)
+# 請從 Git Bash 執行此腳本，不要使用 PowerShell 或 CMD。
 # ============================================================
 
-REPO_URL="https://github.com/zubair-trabzada/geo-seo-claude.git"
+REPO_URL="https://github.com/gtut-nick/geo-seo-claude.git"
 CLAUDE_DIR="${HOME}/.claude"
 SKILLS_DIR="${CLAUDE_DIR}/skills"
 AGENTS_DIR="${CLAUDE_DIR}/agents"
 INSTALL_DIR="${SKILLS_DIR}/geo"
 TEMP_DIR=$(mktemp -d)
 
-# Detect if running via curl pipe (no interactive input available)
+# 偵測是否透過 curl pipe 執行 (無法使用互動式輸入)
 INTERACTIVE=true
 if [ ! -t 0 ]; then
     INTERACTIVE=false
 fi
 
-# Colors for output
+# 輸出顏色設定
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m' # 無顏色
 
 print_header() {
     echo ""
     echo -e "${BLUE}+------------------------------------------+${NC}"
-    echo -e "${BLUE}|   GEO-SEO Claude Code Skill Installer    |${NC}"
-    echo -e "${BLUE}|   GEO-First AI Search Optimization       |${NC}"
-    echo -e "${BLUE}|   Windows / Git Bash Edition             |${NC}"
+    echo -e "${BLUE}|   GEO-SEO Claude Code 技能安裝工具       |${NC}"
+    echo -e "${BLUE}|   以 GEO 為優先的 AI 搜尋優化            |${NC}"
+    echo -e "${BLUE}|   Windows / Git Bash 版本                |${NC}"
     echo -e "${BLUE}+------------------------------------------+${NC}"
     echo ""
 }
@@ -61,10 +61,10 @@ trap cleanup EXIT
 main() {
     print_header
 
-    # ---- Verify Git Bash environment ----
+    # ---- 驗證 Git Bash 環境 ----
     if [[ "${OSTYPE:-}" != "msys" && "${OSTYPE:-}" != "cygwin" && -z "${WINDIR:-}" ]]; then
-        print_warning "Could not confirm a Windows/Git Bash environment."
-        print_warning "If you are on Linux/macOS, use install.sh instead."
+        print_warning "無法確認是否為 Windows/Git Bash 環境。"
+        print_warning "如果您使用的是 Linux/macOS，請改用 install.sh。"
         echo ""
     fi
 
@@ -72,22 +72,22 @@ main() {
        [[ "$(uname -s 2>/dev/null)" != CYGWIN* ]] && \
        [[ "$(uname -s 2>/dev/null)" != MSYS* ]] && \
        [[ -z "${WINDIR:-}" ]]; then
-        print_info "Detected non-Windows environment — consider using install.sh"
+        print_info "偵測到非 Windows 環境 — 建議使用 install.sh"
     fi
 
-    # ---- Check Prerequisites ----
-    print_info "Checking prerequisites..."
+    # ---- 檢查必備條件 ----
+    print_info "正在檢查必備條件..."
 
-    # Check for Git
+    # 檢查 Git
     if ! command -v git &> /dev/null; then
-        print_error "Git is required but not installed."
-        echo "  Install Git for Windows: https://git-scm.com/downloads"
+        print_error "需要 Git 但尚未安裝。"
+        echo "  安裝 Git for Windows：https://git-scm.com/downloads"
         exit 1
     fi
-    print_success "Git found: $(git --version)"
+    print_success "找到 Git：$(git --version)"
 
-    # Check for Python 3
-    # On Windows, 'python' is typically Python 3; 'python3' may not exist.
+    # 檢查 Python 3
+    # 在 Windows 上，'python' 通常就是 Python 3；'python3' 可能不存在。
     PYTHON_CMD=""
     for cmd in python3 python py; do
         if command -v "$cmd" &> /dev/null; then
@@ -104,34 +104,34 @@ main() {
     done
 
     if [ -z "$PYTHON_CMD" ]; then
-        print_error "Python 3.8+ is required but not found."
-        echo "  Install: https://www.python.org/downloads/"
-        echo "  Make sure to check 'Add Python to PATH' during installation."
+        print_error "需要 Python 3.8+ 但尚未找到。"
+        echo "  安裝：https://www.python.org/downloads/"
+        echo "  安裝時請務必勾選 'Add Python to PATH' (將 Python 加入 PATH)。"
         exit 1
     fi
-    print_success "Python found: $($PYTHON_CMD --version)"
+    print_success "找到 Python：$($PYTHON_CMD --version)"
 
-    # Check for Claude Code
+    # 檢查 Claude Code
     if ! command -v claude &> /dev/null; then
-        print_warning "Claude Code CLI not found in PATH."
-        echo "  This tool requires Claude Code to function."
-        echo "  Install: npm install -g @anthropic-ai/claude-code"
+        print_warning "在 PATH 中找不到 Claude Code CLI。"
+        echo "  此工具需要 Claude Code 才能運作。"
+        echo "  安裝：npm install -g @anthropic-ai/claude-code"
         echo ""
         if [ "$INTERACTIVE" = true ]; then
-            read -r -p "Continue installation anyway? (y/n): " REPLY
+            read -r -p "是否仍要繼續安裝？(y/n)：" REPLY
             echo ""
             if [[ ! $REPLY =~ ^[Yy]$ ]]; then
                 exit 1
             fi
         else
-            print_info "Non-interactive mode — continuing anyway..."
+            print_info "非互動模式 — 繼續安裝..."
         fi
     else
-        print_success "Claude Code CLI found"
+        print_success "找到 Claude Code CLI"
     fi
 
-    # ---- Create Directories ----
-    print_info "Creating directories..."
+    # ---- 建立目錄 ----
+    print_info "正在建立目錄..."
 
     mkdir -p "$SKILLS_DIR"
     mkdir -p "$AGENTS_DIR"
@@ -140,10 +140,10 @@ main() {
     mkdir -p "$INSTALL_DIR/schema"
     mkdir -p "$INSTALL_DIR/hooks"
 
-    print_success "Directory structure created at: $CLAUDE_DIR"
+    print_success "目錄結構建立完成於：$CLAUDE_DIR"
 
-    # ---- Clone or Copy Repository ----
-    print_info "Fetching GEO-SEO skill files..."
+    # ---- 複製或拷貝儲存庫 ----
+    print_info "正在取得 GEO-SEO 技能檔案..."
 
     SCRIPT_DIR=""
     if [ -n "${BASH_SOURCE[0]:-}" ] && [ "${BASH_SOURCE[0]}" != "bash" ]; then
@@ -151,25 +151,25 @@ main() {
     fi
 
     if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/geo/SKILL.md" ]; then
-        print_info "Installing from local directory..."
+        print_info "從本機目錄安裝..."
         SOURCE_DIR="$SCRIPT_DIR"
     else
-        print_info "Cloning from repository..."
+        print_info "從儲存庫複製 (Clone)..."
         git clone --depth 1 "$REPO_URL" "$TEMP_DIR/repo" || {
-            print_error "Failed to clone repository. Check your internet connection."
+            print_error "複製儲存庫失敗。請檢查您的網路連線。"
             exit 1
         }
         SOURCE_DIR="${TEMP_DIR}/repo"
     fi
 
-    # ---- Install Main Skill ----
-    print_info "Installing main GEO skill..."
+    # ---- 安裝主要技能 ----
+    print_info "正在安裝主要 GEO 技能..."
 
     cp -r "$SOURCE_DIR/geo/"* "$INSTALL_DIR/"
-    print_success "Main skill installed -> ${INSTALL_DIR}/"
+    print_success "主要技能安裝完成 -> ${INSTALL_DIR}/"
 
-    # ---- Install Sub-Skills ----
-    print_info "Installing sub-skills..."
+    # ---- 安裝子技能 ----
+    print_info "正在安裝子技能..."
 
     SKILL_COUNT=0
     for skill_dir in "$SOURCE_DIR/skills"/*/; do
@@ -182,10 +182,10 @@ main() {
             print_success "  ${skill_name}"
         fi
     done
-    echo "  -> ${SKILL_COUNT} sub-skills installed"
+    echo "  -> 已安裝 ${SKILL_COUNT} 個子技能"
 
-    # ---- Install Agents ----
-    print_info "Installing subagents..."
+    # ---- 安裝代理 (Agents) ----
+    print_info "正在安裝子代理 (Subagents)..."
 
     AGENT_COUNT=0
     for agent_file in "$SOURCE_DIR/agents/"*.md; do
@@ -195,97 +195,97 @@ main() {
             print_success "  $(basename "$agent_file")"
         fi
     done
-    echo "  -> ${AGENT_COUNT} subagents installed"
+    echo "  -> 已安裝 ${AGENT_COUNT} 個子代理"
 
-    # ---- Install Scripts ----
-    print_info "Installing utility scripts..."
+    # ---- 安裝腳本 ----
+    print_info "正在安裝公用程式指令碼..."
 
     if [ -d "$SOURCE_DIR/scripts" ]; then
         cp -r "$SOURCE_DIR/scripts/"* "$INSTALL_DIR/scripts/"
-        # chmod is a no-op on Windows but harmless
+        # chmod 在 Windows 上無作用但無害
         chmod +x "$INSTALL_DIR/scripts/"*.py 2>/dev/null || true
-        print_success "Scripts installed -> ${INSTALL_DIR}/scripts/"
+        print_success "指令碼安裝完成 -> ${INSTALL_DIR}/scripts/"
     fi
 
-    # ---- Install Schema Templates ----
-    print_info "Installing schema templates..."
+    # ---- 安裝 Schema 範本 ----
+    print_info "正在安裝結構描述 (Schema) 範本..."
 
     if [ -d "$SOURCE_DIR/schema" ]; then
         cp -r "$SOURCE_DIR/schema/"* "$INSTALL_DIR/schema/"
-        print_success "Schema templates installed -> ${INSTALL_DIR}/schema/"
+        print_success "結構描述範本安裝完成 -> ${INSTALL_DIR}/schema/"
     fi
 
-    # ---- Install Hooks ----
+    # ---- 安裝 Hooks ----
     if [ -d "$SOURCE_DIR/hooks" ] && [ "$(ls -A "$SOURCE_DIR/hooks" 2>/dev/null)" ]; then
-        print_info "Installing hooks..."
+        print_info "正在安裝掛鉤 (Hooks)..."
         cp -r "$SOURCE_DIR/hooks/"* "$INSTALL_DIR/hooks/"
         chmod +x "$INSTALL_DIR/hooks/"* 2>/dev/null || true
-        print_success "Hooks installed -> ${INSTALL_DIR}/hooks/"
+        print_success "掛鉤安裝完成 -> ${INSTALL_DIR}/hooks/"
     fi
 
-    # ---- Install Python Dependencies ----
-    print_info "Installing Python dependencies..."
+    # ---- 安裝 Python 相依套件 ----
+    print_info "正在安裝 Python 相依套件..."
 
     if [ -f "$SOURCE_DIR/requirements.txt" ]; then
-        # Use --user to avoid needing admin rights; suppress noise with -q
+        # 使用 --user 以避免需要管理員權限；使用 -q 抑制不必要的輸出
         $PYTHON_CMD -m pip install --user -r "$SOURCE_DIR/requirements.txt" -q 2>/dev/null && {
-            print_success "Python dependencies installed"
+            print_success "Python 相依套件安裝完成"
         } || {
-            print_warning "Some Python dependencies failed to install."
-            echo "  Run manually: $PYTHON_CMD -m pip install --user -r requirements.txt"
+            print_warning "部分 Python 相依套件安裝失敗。"
+            echo "  請手動執行：$PYTHON_CMD -m pip install --user -r requirements.txt"
             cp "$SOURCE_DIR/requirements.txt" "$INSTALL_DIR/"
         }
     fi
 
-    # ---- Optional: Install Playwright ----
+    # ---- 選用：安裝 Playwright ----
     if [ "$INTERACTIVE" = true ]; then
         echo ""
-        read -r -p "Install Playwright for screenshots? (y/n): " REPLY
+        read -r -p "是否安裝 Playwright 瀏覽器以支援網頁截圖？(y/n)：" REPLY
         echo ""
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            print_info "Installing Playwright browsers..."
+            print_info "正在安裝 Playwright 瀏覽器..."
             $PYTHON_CMD -m playwright install chromium 2>/dev/null && {
-                print_success "Playwright Chromium installed"
+                print_success "Playwright Chromium 安裝完成"
             } || {
-                print_warning "Playwright installation failed. Screenshots won't be available."
-                echo "  Retry manually: $PYTHON_CMD -m playwright install chromium"
+                print_warning "Playwright 安裝失敗。無法使用網頁截圖功能。"
+                echo "  手動重試：$PYTHON_CMD -m playwright install chromium"
             }
         fi
     else
-        print_info "Skipping Playwright (non-interactive mode)."
-        echo "  Install later: $PYTHON_CMD -m playwright install chromium"
+        print_info "略過 Playwright (非互動模式)。"
+        echo "  稍後安裝：$PYTHON_CMD -m playwright install chromium"
     fi
 
-    # ---- Verify Installation ----
+    # ---- 驗證安裝 ----
     echo ""
-    print_info "Verifying installation..."
+    print_info "正在驗證安裝..."
 
     VERIFY_OK=true
 
-    [ -f "$INSTALL_DIR/SKILL.md" ]       && print_success "Main skill file"      || { print_error "Main skill file missing";   VERIFY_OK=false; }
-    [ -d "$SKILLS_DIR/geo-audit" ]        && print_success "Sub-skills directory" || { print_error "Sub-skills missing";        VERIFY_OK=false; }
+    [ -f "$INSTALL_DIR/SKILL.md" ]       && print_success "主要技能檔案"         || { print_error "主要技能檔案遺失";   VERIFY_OK=false; }
+    [ -d "$SKILLS_DIR/geo-audit" ]       && print_success "子技能目錄"           || { print_error "子技能目錄遺失";        VERIFY_OK=false; }
     [ "$(ls "$AGENTS_DIR"/geo-*.md 2>/dev/null | wc -l)" -gt 0 ] \
-                                          && print_success "Agent files"          || { print_error "Agent files missing";       VERIFY_OK=false; }
-    [ -d "$INSTALL_DIR/scripts" ]         && print_success "Utility scripts"      || { print_error "Scripts missing";           VERIFY_OK=false; }
-    [ -d "$INSTALL_DIR/schema" ]          && print_success "Schema templates"     || { print_error "Schema templates missing";  VERIFY_OK=false; }
+                                         && print_success "代理檔案"             || { print_error "代理檔案遺失";       VERIFY_OK=false; }
+    [ -d "$INSTALL_DIR/scripts" ]        && print_success "公用程式指令碼"       || { print_error "指令碼遺失";           VERIFY_OK=false; }
+    [ -d "$INSTALL_DIR/schema" ]         && print_success "結構描述範本"         || { print_error "結構描述範本遺失";  VERIFY_OK=false; }
 
     if [ "$VERIFY_OK" = false ]; then
         echo ""
-        print_warning "One or more files are missing. The install may be incomplete."
+        print_warning "遺失一個或多個檔案。安裝可能不完整。"
     fi
 
-    # ---- Print Summary ----
+    # ---- 列印摘要 ----
     echo ""
     echo -e "${GREEN}+------------------------------------------+${NC}"
-    echo -e "${GREEN}|        Installation Complete!            |${NC}"
+    echo -e "${GREEN}|               安裝完成！                 |${NC}"
     echo -e "${GREEN}+------------------------------------------+${NC}"
     echo ""
-    echo "  Installed to: ${INSTALL_DIR}"
-    echo "  Skills:       ${SKILL_COUNT} sub-skills"
-    echo "  Agents:       ${AGENT_COUNT} subagents"
+    echo "  安裝至：${INSTALL_DIR}"
+    echo "  技能：${SKILL_COUNT} 個子技能"
+    echo "  代理：${AGENT_COUNT} 個子代理"
     echo ""
-    echo -e "${BLUE}Quick Start:${NC}"
-    echo "  Open Claude Code and try:"
+    echo -e "${BLUE}快速開始：${NC}"
+    echo "  打開 Claude Code 並嘗試："
     echo ""
     echo "    /geo audit https://example.com"
     echo "    /geo quick https://example.com"
@@ -293,21 +293,21 @@ main() {
     echo "    /geo crawlers https://example.com"
     echo "    /geo report https://example.com"
     echo ""
-    echo -e "${BLUE}Available Commands:${NC}"
-    echo "    /geo audit <url>      Full GEO + SEO audit"
-    echo "    /geo quick <url>      60-second visibility snapshot"
-    echo "    /geo citability <url> AI citation readiness score"
-    echo "    /geo crawlers <url>   AI crawler access check"
-    echo "    /geo llmstxt <url>    Analyze/generate llms.txt"
-    echo "    /geo brands <url>     Brand mention scan"
-    echo "    /geo platforms <url>  Platform-specific optimization"
-    echo "    /geo schema <url>     Structured data analysis"
-    echo "    /geo technical <url>  Technical SEO audit"
-    echo "    /geo content <url>    Content quality & E-E-A-T"
-    echo "    /geo report <url>     Client-ready GEO report"
-    echo "    /geo report-pdf       Generate PDF report from audit data"
+    echo -e "${BLUE}可用指令：${NC}"
+    echo "    /geo audit <url>      完整的 GEO + SEO 稽核"
+    echo "    /geo quick <url>      60 秒可見度快照"
+    echo "    /geo citability <url> AI 引用準備度分數"
+    echo "    /geo crawlers <url>   AI 爬蟲存取檢查"
+    echo "    /geo llmstxt <url>    分析/產生 llms.txt"
+    echo "    /geo brands <url>     品牌提及掃描"
+    echo "    /geo platforms <url>  特定平台優化"
+    echo "    /geo schema <url>     結構化資料分析"
+    echo "    /geo technical <url>  技術 SEO 稽核"
+    echo "    /geo content <url>    內容品質與 E-E-A-T"
+    echo "    /geo report <url>     可交付客戶的 GEO 報告"
+    echo "    /geo report-pdf       從稽核資料產生 PDF 報告"
     echo ""
-    echo "  Documentation: https://github.com/zubair-trabzada/geo-seo-claude"
+    echo "  文件：https://github.com/gtut-nick/geo-seo-claude"
     echo ""
 }
 

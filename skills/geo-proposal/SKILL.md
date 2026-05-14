@@ -1,36 +1,36 @@
 ---
 name: geo-proposal
 description: >
-  Auto-generate a professional, client-ready GEO service proposal from audit data.
-  Creates a full proposal in markdown and PDF including executive summary, findings,
-  recommended service packages (Basic/Standard/Premium), pricing, timeline, and terms.
-  Use when user says "proposal", "proposta", "offerta", "preventivo", "generate proposal",
-  or after completing a GEO audit for a prospect.
+  從稽核資料自動產生專業、可直接交付客戶的 GEO 服務提案。
+  建立完整的 Markdown 與 PDF 提案，包含執行摘要、發現事項、
+  建議服務套裝（Basic/Standard/Premium）、定價、時程與條款。
+  當使用者提到 "proposal"、"proposta"、"offerta"、"preventivo"、"generate proposal"，
+  或完成潛在客戶的 GEO 稽核後使用。
 version: 1.0.0
 tags: [geo, business, proposal, sales, pricing, client]
-allowed-tools: Read, Write, Bash, Glob, WebFetch
+allowed-tools: [Read, Write, Bash, Glob, WebFetch]
 ---
 
-# GEO Proposal Generator
+# GEO 提案產生器
 
-## Purpose
+## 目的
 
-Generate a fully customized, client-ready GEO service proposal that:
-1. Pulls findings directly from the prospect's GEO audit
-2. Translates technical gaps into business pain points
-3. Presents 3 service tiers with clear pricing
-4. Includes a realistic ROI projection
-5. Outputs a professional markdown document ready to send
+產生完全客製化、可直接交付客戶的 GEO 服務提案，能夠：
+1. 直接從潛在客戶的 GEO 稽核 (Audit) 擷取發現事項。
+2. 將技術缺口轉譯為商業痛點。
+3. 呈現 3 個清楚定價的服務層級。
+4. 包含合理的投資報酬率 (ROI) 預測。
+5. 輸出可直接寄送的專業 Markdown 文件。
 
 ---
 
-## Command
+## 指令
 
 ```
 /geo proposal <domain-or-audit-file> [--tier basic|standard|premium] [--client-name "Name"] [--monthly EUR]
 ```
 
-**Examples:**
+**範例：**
 ```
 /geo proposal electron-srl.com
 /geo proposal electron-srl.com --tier standard --client-name "Electron Srl"
@@ -39,307 +39,306 @@ Generate a fully customized, client-ready GEO service proposal that:
 
 ---
 
-## Workflow
+## 工作流程
 
-### Step 1: Load Audit Data
+### Step 1: 載入稽核資料
 
-1. Check if `~/.geo-prospects/audits/<domain>*.md` exists
-2. If not, suggest running `/geo quick <domain>` first
-3. Extract from audit:
-   - GEO Score (overall and per-category)
-   - Top 3 critical findings
-   - Quick wins list
-   - Business type
-   - Estimated organic traffic impact
+1. 檢查 `~/.geo-prospects/audits/<domain>*.md` 是否存在。
+2. 若不存在，建議先執行 `/geo quick <domain>`。
+3. 從稽核資料擷取：
+   - GEO 分數（整體與各分類）。
+   - 前 3 個關鍵發現事項。
+   - 快速獲勝 (Quick wins) 清單。
+   - 業務類型。
+   - 預估自然流量影響。
 
-### Step 2: Customize the Proposal
+### Step 2: 客製化提案
 
-Auto-fill proposal template with:
-- Company name (from domain or prospect record)
-- GEO score and tier label
-- 3 most critical pain points (translated to business language)
-- Estimated revenue at risk from AI search shift
-- Recommended service tier based on score:
-  - Score 0-40 → Recommend Premium (critical issues need full attention)
-  - Score 41-60 → Recommend Standard (significant gaps, needs monthly work)
-  - Score 61-75 → Recommend Basic (solid base, needs monitoring)
+用以下內容自動填入提案範本：
+- 公司名稱（從網域或潛在客戶記錄取得）。
+- GEO 分數與層級標籤 (Tier label)。
+- 3 個最關鍵痛點（轉譯為商業語言）。
+- AI 搜尋轉變下的預估營收風險。
+- 根據分數建議服務層級：
+  - 分數 0-40 -> 建議 Premium（關鍵問題需要全面處理）。
+  - 分數 41-60 -> 建議 Standard（顯著缺口，需要每月處理）。
+  - 分數 61-75 -> 建議 Basic（基礎穩固，需要監控）。
 
-### Step 3: Generate Proposal File
+### Step 3: 產生提案檔案
 
-Output to `~/.geo-prospects/proposals/<domain>-proposal-<date>.md`
-Also update prospect record if it exists in `~/.geo-prospects/prospects.json`
+輸出到 `~/.geo-prospects/proposals/<domain>-proposal-<date>.md`。
+若 `~/.geo-prospects/prospects.json` 中已有潛在客戶記錄，也一併更新。
 
 ---
 
-## Proposal Template
+## 提案範本
 
-Generate the following document, filling all `[PLACEHOLDERS]` with real audit data:
+產生以下文件，將所有 `[占位符]` 填入真實稽核資料：
 
 ---
 
 ```markdown
-# GEO Optimization Proposal
-## [COMPANY NAME] — AI Search Visibility
+# GEO 最佳化提案
+## [公司名稱] — AI 搜尋能見度
 
-**Prepared by:** [YOUR AGENCY NAME]
-**Prepared for:** [CONTACT NAME], [COMPANY NAME]
-**Date:** [DATE]
-**Valid until:** [DATE + 30 DAYS]
-**Reference:** GEO-PROP-[YYMMDD]-[DOMAIN]
-
----
-
-## Executive Summary
-
-[COMPANY NAME] operates in [INDUSTRY] and serves customers across [GEOGRAPHY].
-Our GEO audit of [DOMAIN], conducted on [DATE], reveals a GEO Readiness Score
-of **[SCORE]/100 ([TIER LABEL])**.
-
-This means your website currently has [TIER DESCRIPTION — use score interpretation table].
-As AI-powered search (ChatGPT, Google AI Overviews, Perplexity) now influences
-**[X]% of online discovery** and is growing at 527% year-over-year, this gap
-represents a measurable risk to your pipeline.
-
-The three most urgent issues are:
-1. **[CRITICAL FINDING 1]** — [Business impact in one sentence]
-2. **[CRITICAL FINDING 2]** — [Business impact in one sentence]
-3. **[CRITICAL FINDING 3]** — [Business impact in one sentence]
-
-We recommend the **[TIER NAME] package** at **€[PRICE]/month**, which addresses
-all critical issues within 90 days and positions [COMPANY] as an AI-visible
-authority in [INDUSTRY].
+**提案方：**[您的代理商名稱]
+**提案對象：**[聯絡人姓名], [公司名稱]
+**日期：**[日期]
+**有效期限：**[日期 + 30 天]
+**參考編號：**GEO-PROP-[YYMMDD]-[DOMAIN]
 
 ---
 
-## The Opportunity: Why GEO Matters for [COMPANY NAME]
+## 執行摘要
 
-### The AI Search Shift Is Already Happening
+[公司名稱] 經營於 [產業]，服務 [地理區域] 的客戶。
+我們於 [日期] 對 [DOMAIN] 進行的 GEO 稽核顯示，GEO 準備度分數 (GEO Readiness Score)
+為 **[分數]/100 ([層級標籤])**。
 
-| Metric | Value |
+這代表您的網站目前 [層級描述 — 使用分數解釋表]。
+隨著 AI 驅動搜尋 (AI-powered search)（如 ChatGPT、Google AI Overviews、Perplexity）現在已影響
+**[X]% 的線上探索**，且年增率達 527%，這個缺口會對您的銷售管道造成可衡量的風險。
+
+三個最急迫的問題是：
+1. **[關鍵發現 1]** — [單句描述商業影響]
+2. **[關鍵發現 2]** — [單句描述商業影響]
+3. **[關鍵發現 3]** — [單句描述商業影響]
+
+我們建議採用 **[方案名稱] 套裝**，費用為 **每月 €[價格]**。
+此方案會在 90 天內處理所有關鍵問題，並讓 [公司名稱] 在 [產業] 中成為
+AI 可見的權威品牌。
+
+---
+
+## 機會：為什麼 GEO 對 [公司名稱] 至關重要
+
+### AI 搜尋的轉變已經發生
+
+| 指標 | 數值 |
 |--------|-------|
-| AI-referred traffic growth (2025) | +527% YoY |
-| AI traffic conversion vs. organic | 4.4x higher |
-| ChatGPT weekly active users | 900M+ |
-| Google AI Overviews monthly reach | 1.5B users, 200+ countries |
-| Gartner: traditional search traffic drop by 2028 | -50% |
-| Marketers investing in GEO today | Only 23% |
+| AI 轉單流量成長 (2025) | 年增率 +527% |
+| AI 流量轉換率 vs. 一般自然流量 | 高出 4.4 倍 |
+| ChatGPT 每週活躍使用者 | 9 億以上 |
+| Google AI Overviews 每月觸及 | 200 多國，15 億使用者 |
+| Gartner 預測：2028 年傳統搜尋流量降幅 | -50% |
+| 目前已投入 GEO 的行銷人員 | 僅佔 23% |
 
-**First-mover advantage is real.** Companies that invest in GEO now will
-capture the AI search channel before competitors do.
+**先行者優勢是真實存在的。** 現在投資 GEO 的公司，會在競爭對手之前
+優先掌握 AI 搜尋頻道。
 
-### Your Current Position
+### 您目前的位置
 
-| Metric | [COMPANY] | Industry Average | Top Performers |
+| 指標 | [公司名稱] | 產業平均 | 頂尖表現者 |
 |--------|-----------|------------------|----------------|
-| GEO Score | [SCORE]/100 | 45/100 | 75+/100 |
-| AI Crawlers Allowed | [X]/14 | 8/14 | 14/14 |
-| Brand Mentions (AI platforms) | [STATUS] | Moderate | High |
-| Schema Coverage | [STATUS] | Partial | Complete |
-| llms.txt | [Yes/No] | 12% have it | 78% have it |
+| GEO 分數 | [分數]/100 | 45/100 | 75+/100 |
+| 允許的 AI 爬蟲數 | [X]/14 | 8/14 | 14/14 |
+| 品牌提及 (AI 平台) | [狀態] | 中等 | 高 |
+| 結構化資料覆蓋率 | [狀態] | 部分 | 完整 |
+| llms.txt | [是/否] | 12% 網站具備 | 78% 網站具備 |
 
 ---
 
-## Audit Findings Summary
+## 稽核發現摘要
 
-### GEO Score Breakdown
+### GEO 分數細項
 
-| Category | Your Score | Weight | Weighted | Priority |
+| 分類 | 您的分數 | 權重 | 加權分數 | 優先順序 |
 |----------|-----------|--------|---------|----------|
-| AI Citability & Visibility | [SCORE]/100 | 25% | [WEIGHTED] | [HIGH/MED/LOW] |
-| Brand Authority Signals | [SCORE]/100 | 20% | [WEIGHTED] | [HIGH/MED/LOW] |
-| Content Quality & E-E-A-T | [SCORE]/100 | 20% | [WEIGHTED] | [HIGH/MED/LOW] |
-| Technical Foundations | [SCORE]/100 | 15% | [WEIGHTED] | [HIGH/MED/LOW] |
-| Structured Data | [SCORE]/100 | 10% | [WEIGHTED] | [HIGH/MED/LOW] |
-| Platform Optimization | [SCORE]/100 | 10% | [WEIGHTED] | [HIGH/MED/LOW] |
-| **TOTAL GEO SCORE** | | | **[SCORE]/100** | **[TIER]** |
+| AI 引用性與能見度 | [分數]/100 | 25% | [加權分] | [高/中/低] |
+| 品牌權威訊號 | [分數]/100 | 20% | [加權分] | [高/中/低] |
+| 內容品質與 E-E-A-T | [分數]/100 | 20% | [加權分] | [高/中/低] |
+| 技術基礎設施 | [分數]/100 | 15% | [加權分] | [高/中/低] |
+| 結構化資料 (Schema) | [分數]/100 | 10% | [加權分] | [高/中/低] |
+| 平台最佳化 | [分數]/100 | 10% | [加權分] | [高/中/低] |
+| **總體 GEO 分數** | | | **[分數]/100** | **[層級]** |
 
-### Critical Issues Found
+### 發現的關鍵問題
 
-[For each critical issue from audit:]
+[針對稽核中的每個關鍵問題：]
 
-#### 🔴 [ISSUE TITLE]
-**What we found:** [Technical finding in plain language]
-**Business impact:** [What this means for their revenue/visibility]
-**Our fix:** [What we will do to resolve it]
-**Timeline:** [When they will see improvement]
-
----
-
-## Our Solution: Service Packages
-
-We offer three engagement models based on the scope of optimization needed.
+#### 🔴 [問題標題]
+**我們發現：**[使用白話文描述技術發現]
+**商業影響：**[這對其營收/能見度代表什麼意義]
+**我們的修正方式：**[我們將如何解決此問題]
+**預期時程：**[何時能看到改善]
 
 ---
 
-### BASIC — €2,500/month
-*Best for: Sites with score 61-75 needing targeted improvements*
+## 我們的解決方案：服務套裝
 
-**What's included:**
-- Quarterly full GEO audit (4x/year)
-- Quarterly client report with score tracking
-- Schema.org implementation (Organization + key page schemas)
-- AI crawler access optimization (robots.txt)
-- llms.txt creation and maintenance
-- Email support (48-hour response)
-
-**Estimated GEO score improvement:** +10-20 points in 6 months
-**Contract:** Minimum 6 months
+我們會根據所需最佳化範圍，提供三種合作模式。
 
 ---
 
-### STANDARD — €5,000/month ⭐ Recommended for [COMPANY]
-*Best for: Sites with score 40-60 needing structured monthly work*
+### 基礎方案 (BASIC) — 每月 €2,500
+*適合：分數 61-75、需要針對性改善的網站*
 
-**Everything in Basic, plus:**
-- Monthly full GEO audit + delta report
-- Monthly strategy call (60 minutes)
-- Content citability optimization (up to 10 pages/month)
-- Brand authority building (Wikipedia, Wikidata, LinkedIn optimization)
-- Platform-specific optimization (Google AIO, ChatGPT, Perplexity)
-- E-E-A-T improvements (author pages, credentials, freshness signals)
-- Slack channel for fast communication (24-hour response)
+**服務內容：**
+- 每季完整 GEO 稽核（每年 4 次）
+- 每季客戶報告與分數追蹤
+- Schema.org 實作（Organization + 重要頁面標記）
+- AI 爬蟲存取最佳化（robots.txt）
+- llms.txt 建立與維護
+- 電子郵件支援（48 小時內回覆）
 
-**Estimated GEO score improvement:** +25-40 points in 6 months
-**Contract:** Minimum 6 months
-
----
-
-### PREMIUM — €9,500/month
-*Best for: Sites with score 0-40 with critical issues, or competitive industries*
-
-**Everything in Standard, plus:**
-- Bi-weekly strategy calls
-- Technical SEO implementation support (Core Web Vitals, SSR, speed)
-- Full content strategy + production (4 optimized articles/month)
-- Active brand building (Reddit, YouTube, industry citations)
-- Competitor monitoring and response
-- Dedicated account manager
-- Priority support (4-hour response)
-
-**Estimated GEO score improvement:** +40-60 points in 6 months
-**Contract:** Minimum 12 months
+**預估 GEO 分數改善：** 6 個月內提升 10-20 分
+**合約期：** 至少 6 個月
 
 ---
 
-## ROI Projection for [COMPANY NAME]
+### 標準方案 (STANDARD) — 每月 €5,000 ⭐ 建議 [公司名稱] 採用
+*適合：分數 40-60、需要結構化月度工作的網站*
 
-Based on your current GEO score of [SCORE]/100 and industry benchmarks:
+**包含基礎方案全部內容，外加：**
+- 每月完整 GEO 稽核 + 差異報告 (Delta report)
+- 每月策略會議（60 分鐘）
+- 內容引用性最佳化 (Content citability)（每月最多 10 頁）
+- 品牌權威建立（維基百科、Wikidata、LinkedIn 最佳化）
+- 平台專屬最佳化（Google AIO、ChatGPT、Perplexity）
+- E-E-A-T 改善（作者頁、證照/資歷、新鮮度訊號）
+- Slack 頻道快速溝通（24 小時內回覆）
 
-| Scenario | 6-Month Score | AI Traffic Increase | Est. Additional Value/Month |
+**預估 GEO 分數改善：** 6 個月內提升 25-40 分
+**合約期：** 至少 6 個月
+
+---
+
+### 進階方案 (PREMIUM) — 每月 €9,500
+*適合：分數 0-40 且有關鍵問題，或競爭激烈產業的網站*
+
+**包含標準方案全部內容，外加：**
+- 雙週策略會議
+- 技術 SEO 實作支援（Core Web Vitals、SSR、網頁速度）
+- 完整內容策略 + 內容產製（每月 4 篇最佳化文章）
+- 主動品牌建設（Reddit、YouTube、產業引用）
+- 競爭對手監控與回應
+- 專屬客戶經理 (Account Manager)
+- 優先支援服務（4 小時內回覆）
+
+**預估 GEO 分數改善：** 6 個月內提升 40-60 分
+**合約期：** 至少 12 個月
+
+---
+
+## [公司名稱] 的投資報酬率 (ROI) 預測
+
+根據您目前的 GEO 分數 [分數]/100 與產業基準：
+
+| 情境 | 6 個月後分數 | AI 流量增加 | 預估每月額外價值 |
 |----------|--------------|--------------------|-----------------------------|
-| No action | [SCORE + 2]/100 | +5% (organic growth) | €[LOW] |
-| Basic package | [SCORE + 15]/100 | +30-40% | €[MED] |
-| Standard package | [SCORE + 32]/100 | +60-90% | €[HIGH] |
-| Premium package | [SCORE + 50]/100 | +100-150% | €[VERY HIGH] |
+| 不採取行動 | [分數 + 2]/100 | +5%（自然成長） | €[低] |
+| 基礎方案 | [分數 + 15]/100 | +30-40% | €[中] |
+| 標準方案 | [分數 + 32]/100 | +60-90% | €[高] |
+| 進階方案 | [分數 + 50]/100 | +100-150% | €[極高] |
 
-**Assumptions:**
-- Based on estimated [X] monthly organic visitors to [DOMAIN]
-- AI search is projected to drive 25-40% of organic discovery by end of 2026
-- AI-referred traffic converts at 4.4x the rate of regular organic traffic
-- Calculations use conservative estimates — actual results may vary
+**評估假設：**
+- 根據 [DOMAIN] 預估每月有 [X] 位自然訪客。
+- 預計到 2026 年底，AI 搜尋將驅動 25-40% 的自然探索量。
+- AI 轉單流量的轉換率是一般自然流量的 4.4 倍。
+- 計算採用保守估計 — 實際結果可能有所不同。
 
-**Payback period (Standard package):** [X] months based on current traffic
-
----
-
-## Engagement Timeline
-
-### Month 1 — Foundation
-- Kick-off call and onboarding (Week 1)
-- Full technical audit + baseline metrics capture
-- Quick wins implementation: robots.txt, schema, llms.txt, meta descriptions
-- Expected score improvement: +5-10 points
-
-### Month 2-3 — Optimization
-- Content citability rewrites (top 10 pages)
-- E-E-A-T improvements: author pages, credentials, dates
-- Platform-specific optimization (Google AIO, ChatGPT, Perplexity)
-- Brand presence: LinkedIn, Wikipedia/Wikidata groundwork
-- Expected score improvement: +15-25 points cumulative
-
-### Month 4-6 — Authority Building
-- Brand mention campaigns (Reddit, industry sites, YouTube)
-- Topical authority content strategy
-- Monthly reports showing score improvements
-- Expected score improvement: +30-45 points cumulative
-
-### Month 6 — Review
-- Full re-audit with before/after comparison
-- ROI report
-- Renewal discussion
+**回本期（標準方案）：** 依目前流量估算為 [X] 個月。
 
 ---
 
-## Why Us
+## 合作時程
 
-- **GEO specialists**: We focus exclusively on AI search optimization, not traditional SEO agencies adapting to GEO
-- **Transparent reporting**: Monthly reports show exactly what changed and why
-- **No lock-in beyond minimum**: Month-to-month after initial commitment
-- **Proven methodology**: 11-dimension GEO audit covering all major AI platforms
-- **Fast results**: Quick wins visible within 30 days
+### 第一個月 — 基礎建設
+- 啟動會議 (Kick-off call) 與上線準備（第 1 週）。
+- 完整技術稽核 + 擷取基準指標 (Baseline metrics)。
+- 快速獲勝 (Quick wins) 實作：robots.txt、schema、llms.txt、元描述 (Meta descriptions)。
+- 預期分數改善：+5-10 分。
+
+### 第二至三個月 — 最佳化
+- 內容引用性重寫 (Content citability)（前 10 頁）。
+- E-E-A-T 改善：作者頁、證照/資歷、日期。
+- 平台專屬最佳化（Google AIO、ChatGPT、Perplexity）。
+- 品牌存在感：LinkedIn、維基百科/Wikidata 基礎建設。
+- 預期累積分數改善：+15-25 分。
+
+### 第四至六個月 — 權威建設
+- 品牌提及活動 (Brand mention campaigns)（Reddit、產業網站、YouTube）。
+- 主題權威內容策略。
+- 每月報告呈現分數改善。
+- 預期累積分數改善：+30-45 分。
+
+### 第六個月 — 檢討
+- 完整重新稽核與前後比較。
+- 投資報酬率 (ROI) 報告。
+- 續約討論。
 
 ---
 
-## Investment Summary
+## 為什麼選擇我們
 
-| Package | Monthly | 6-Month | 12-Month |
+- **GEO 專家**：我們專注於 AI 搜尋最佳化，而非從傳統 SEO 改造過來的代理商。
+- **透明的報告**：每月報告清楚呈現修改內容及其背後原因。
+- **彈性合作**：過初始承諾期後，可按月靈活合作。
+- **實證方法論**：11 維度 GEO 稽核，涵蓋所有主要 AI 平台。
+- **快速見效**：30 天內即可看到快速獲勝 (Quick wins) 的成效。
+
+---
+
+## 投資摘要
+
+| 套裝方案 | 每月費用 | 6 個月總計 | 12 個月總計 |
 |---------|---------|---------|----------|
-| Basic | €2,500 | €15,000 | €30,000 |
-| Standard | €5,000 | €30,000 | €60,000 |
-| Premium | €9,500 | €57,000 | €114,000 |
+| 基礎方案 | €2,500 | €15,000 | €30,000 |
+| 標準方案 | €5,000 | €30,000 | €60,000 |
+| 進階方案 | €9,500 | €57,000 | €114,000 |
 
-*All prices exclude VAT. Payment terms: monthly, due within 15 days of invoice.*
-
----
-
-## Next Steps
-
-To move forward:
-
-1. **Review this proposal** and share any questions
-2. **Schedule a 30-minute call** to walk through findings together: [CALENDAR LINK]
-3. **Sign the service agreement** (sent separately upon acceptance)
-4. **Kick-off call** scheduled for your chosen start date
-
-This proposal is valid for **30 days** from the date above.
+*所有價格均為未稅。付款條件：按月付款，發票開立後 15 天內到期。*
 
 ---
 
-## Terms & Conditions
+## 下一步
 
-- **Minimum commitment:** As stated per package above
-- **Cancellation:** 30-day written notice after minimum term
-- **Confidentiality:** All audit findings and client data are strictly confidential
-- **Results:** We guarantee effort and methodology, not specific ranking outcomes
-- **Reporting:** Monthly reports delivered by the 5th of each month
-- **Access needed:** Read access to Google Analytics / Search Console (if available)
+若要推進合作：
+
+1. **檢閱此提案** 並提出任何問題。
+2. **安排 30 分鐘通話**，一起逐項說明發現事項：[行事曆連結]
+3. **簽署服務合約**（接受提案後另行寄送）。
+4. **啟動會議** 依您選定的開始日期安排。
+
+此提案自上述日期起 **30 天** 內有效。
 
 ---
 
-*This proposal was prepared using GEO-SEO analysis tools and reflects findings
-from the audit of [DOMAIN] conducted on [DATE]. All scores and recommendations
-are based on current industry best practices for Generative Engine Optimization.*
+## 條款與條件
+
+- **最低承諾期：** 依上方各方案所述。
+- **取消：** 最低承諾期結束後，需提前 30 天書面通知。
+- **保密：** 所有稽核發現與客戶資料皆嚴格保密。
+- **成果：** 我們保證專業投入與方法論，不保證特定的排名結果。
+- **報告：** 每月 5 日前交付月報。
+- **所需權限：** Google Analytics / Search Console 的讀取權限（若可提供）。
+
+---
+
+*此提案使用 GEO-SEO 分析工具製作，並反映於 [日期] 對 [DOMAIN] 進行稽核後的發現。
+所有分數與建議均基於目前生成式引擎最佳化 (GEO) 的產業最佳實務。*
 ```
 
 ---
 
-## Output
+## 輸出
 
-1. Save proposal to `~/.geo-prospects/proposals/<domain>-proposal-<date>.md`
-2. Update prospect record: set `status` to `proposal`, save `proposal_file` path
-3. Print confirmation:
+1. 將提案儲存到 `~/.geo-prospects/proposals/<domain>-proposal-<date>.md`。
+2. 更新潛在客戶記錄：將 `status` 設為 `proposal`，並儲存 `proposal_file` 路徑。
+3. 印出確認訊息：
    ```
-   ✓ Proposal generated: ~/.geo-prospects/proposals/electron-srl.com-proposal-2026-03-12.md
-   ✓ Prospect status updated: Qualified → Proposal
-   ✓ Recommended package: STANDARD (€5,000/month) — Score 32/100
+   ✓ 提案已產生：~/.geo-prospects/proposals/electron-srl.com-proposal-2026-03-12.md
+   ✓ 潛在客戶狀態已更新：Qualified → Proposal
+   ✓ 建議套裝方案：標準方案 (STANDARD) (€5,000/月) — 目前分數 32/100
 
-   Next: Share the proposal file or run `/geo report-pdf` for a visual version.
-   ```
+   下一步：分享提案檔案或執行 `/geo report-pdf` 以取得視覺化版本。
 
-## Pricing Recommendation Logic
+```
 
-Base recommendation on GEO score:
-- Score 0-40 → Recommend **Premium** (critical issues require intensive work)
-- Score 41-60 → Recommend **Standard** (structured monthly optimization)
-- Score 61-75 → Recommend **Basic** (maintenance + targeted improvements)
-- Score 76+ → Offer **Basic** or quarterly retainer check-in
+## 定價建議邏輯
+
+根據 GEO 分數做基礎建議：
+- 分數 0-40 -> 建議 **Premium**（關鍵問題需要密集處理）。
+- 分數 41-60 -> 建議 **Standard**（結構化月度最佳化）。
+- 分數 61-75 -> 建議 **Basic**（維護 + 針對性改善）。
+- 分數 76+ -> 提供 **Basic** 或季度固定保留金 (Retainer) 的檢查核對。

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-llms.txt Generator — Creates and validates llms.txt files for AI crawler guidance.
+llms.txt 產生器 — 建立並驗證用於指引 AI 爬蟲的 llms.txt 檔案。
 
-The llms.txt standard is an emerging specification that helps AI crawlers
-understand your site structure and find your most important content.
+llms.txt 標準是一項新興規範，可協助 AI 爬蟲
+了解您的網站架構並找出最重要的內容。
 
-Location: /llms.txt (root of domain)
-Extended: /llms-full.txt (detailed version)
+位置：/llms.txt (網域根目錄)
+擴展版本：/llms-full.txt (詳細版本)
 """
 
 import sys
@@ -18,7 +18,7 @@ try:
     import requests
     from bs4 import BeautifulSoup
 except ImportError:
-    print("ERROR: Required packages not installed. Run: pip install -r requirements.txt")
+    print("錯誤：未安裝必要的套件。請執行：pip install -r requirements.txt")
     sys.exit(1)
 
 DEFAULT_HEADERS = {
@@ -28,7 +28,7 @@ DEFAULT_HEADERS = {
 
 
 def validate_llmstxt(url: str) -> dict:
-    """Check if llms.txt exists and validate its format."""
+    """檢查 llms.txt 是否存在並驗證其格式。"""
     parsed = urlparse(url)
     base_url = f"{parsed.scheme}://{parsed.netloc}"
     llms_url = f"{base_url}/llms.txt"
@@ -53,7 +53,7 @@ def validate_llmstxt(url: str) -> dict:
         },
     }
 
-    # Check llms.txt
+    # 檢查 llms.txt
     try:
         response = requests.get(llms_url, headers=DEFAULT_HEADERS, timeout=15)
         if response.status_code == 200:
@@ -61,39 +61,39 @@ def validate_llmstxt(url: str) -> dict:
             result["content"] = response.text
             content = response.text
 
-            # Validate format
+            # 驗證格式
             lines = content.strip().split("\n")
 
-            # Check for title (# at start)
+            # 檢查標題（以 # 開頭）
             if lines and lines[0].startswith("# "):
                 result["has_title"] = True
             else:
-                result["issues"].append("Missing title (should start with '# Site Name')")
+                result["issues"].append("缺少標題（應該以 '# 網站名稱' 開頭）")
 
-            # Check for description (> blockquote)
+            # 檢查描述（> 區塊引言）
             for line in lines:
                 if line.startswith("> "):
                     result["has_description"] = True
                     break
             if not result["has_description"]:
-                result["issues"].append("Missing description (use '> Brief description')")
+                result["issues"].append("缺少描述（請使用 '> 簡短描述'）")
 
-            # Check for sections (## headings)
+            # 檢查區塊（## 標題）
             sections = [l for l in lines if l.startswith("## ")]
             result["section_count"] = len(sections)
             result["has_sections"] = len(sections) > 0
             if not result["has_sections"]:
-                result["issues"].append("No sections found (use '## Section Name')")
+                result["issues"].append("未找到任何區塊（請使用 '## 區塊名稱'）")
 
-            # Check for links
+            # 檢查連結
             link_pattern = r"- \[.+\]\(.+\)"
             links = re.findall(link_pattern, content)
             result["link_count"] = len(links)
             result["has_links"] = len(links) > 0
             if not result["has_links"]:
-                result["issues"].append("No page links found (use '- [Page Title](url): Description')")
+                result["issues"].append("未找到頁面連結（請使用 '- [頁面標題](url): 描述'）")
 
-            # Overall format validity
+            # 整體格式有效性
             result["format_valid"] = (
                 result["has_title"]
                 and result["has_description"]
@@ -101,22 +101,22 @@ def validate_llmstxt(url: str) -> dict:
                 and result["has_links"]
             )
 
-            # Suggestions
+            # 建議
             if result["link_count"] < 5:
-                result["suggestions"].append("Consider adding more key pages (aim for 10-20)")
+                result["suggestions"].append("考慮新增更多關鍵頁面（目標為 10-20 個）")
             if result["section_count"] < 2:
-                result["suggestions"].append("Add more sections to organize content types")
+                result["suggestions"].append("新增更多區塊以組織內容類型")
             if "contact" not in content.lower():
-                result["suggestions"].append("Add a Contact section with email and location")
+                result["suggestions"].append("新增「聯絡方式」(Contact) 區塊，包含電子郵件和位置資訊")
             if "key fact" not in content.lower() and "about" not in content.lower():
-                result["suggestions"].append("Add key facts about your business/service")
+                result["suggestions"].append("新增關於您的業務/服務的關鍵事實")
 
         else:
-            result["issues"].append(f"llms.txt returned status {response.status_code}")
+            result["issues"].append(f"llms.txt 回傳狀態碼 {response.status_code}")
     except Exception as e:
-        result["issues"].append(f"Error fetching llms.txt: {str(e)}")
+        result["issues"].append(f"取得 llms.txt 時發生錯誤：{str(e)}")
 
-    # Check llms-full.txt
+    # 檢查 llms-full.txt
     try:
         response = requests.get(llms_full_url, headers=DEFAULT_HEADERS, timeout=15)
         if response.status_code == 200:
@@ -128,7 +128,7 @@ def validate_llmstxt(url: str) -> dict:
 
 
 def generate_llmstxt(url: str, max_pages: int = 30) -> dict:
-    """Generate an llms.txt file by crawling the site."""
+    """透過爬取網站來產生 llms.txt 檔案。"""
     parsed = urlparse(url)
     base_url = f"{parsed.scheme}://{parsed.netloc}"
 
@@ -139,30 +139,30 @@ def generate_llmstxt(url: str, max_pages: int = 30) -> dict:
         "sections": {},
     }
 
-    # Fetch homepage
+    # 抓取首頁
     try:
         response = requests.get(url, headers=DEFAULT_HEADERS, timeout=30)
         soup = BeautifulSoup(response.text, "lxml")
     except Exception as e:
-        result["error"] = f"Failed to fetch homepage: {str(e)}"
+        result["error"] = f"抓取首頁失敗：{str(e)}"
         return result
 
-    # Extract site name and description
+    # 擷取網站名稱與描述
     title = soup.find("title")
     site_name = title.get_text(strip=True).split("|")[0].split("-")[0].strip() if title else parsed.netloc
     meta_desc = soup.find("meta", attrs={"name": "description"})
-    site_description = meta_desc.get("content", "") if meta_desc else f"Official website of {site_name}"
+    site_description = meta_desc.get("content", "") if meta_desc else f"{site_name} 的官方網站"
 
-    # Discover and categorize pages
+    # 發現並分類頁面
     pages = {
-        "Main Pages": [],
-        "Products & Services": [],
-        "Resources & Blog": [],
-        "Company": [],
-        "Support": [],
+        "主要頁面": [],
+        "產品與服務": [],
+        "資源與部落格": [],
+        "公司資訊": [],
+        "支援與幫助": [],
     }
 
-    # Crawl internal links
+    # 爬取內部連結
     seen_urls = set()
     for link in soup.find_all("a", href=True):
         href = urljoin(base_url, link["href"])
@@ -184,29 +184,29 @@ def generate_llmstxt(url: str, max_pages: int = 30) -> dict:
         seen_urls.add(href)
         path = parsed_href.path.lower()
 
-        # Categorize
+        # 分類
         page_entry = {"url": href, "title": link_text}
 
         if any(kw in path for kw in ["/pricing", "/feature", "/product", "/solution", "/demo"]):
-            pages["Products & Services"].append(page_entry)
+            pages["產品與服務"].append(page_entry)
         elif any(kw in path for kw in ["/blog", "/article", "/resource", "/guide", "/learn", "/docs", "/documentation"]):
-            pages["Resources & Blog"].append(page_entry)
+            pages["資源與部落格"].append(page_entry)
         elif any(kw in path for kw in ["/about", "/team", "/career", "/contact", "/press", "/partner"]):
-            pages["Company"].append(page_entry)
+            pages["公司資訊"].append(page_entry)
         elif any(kw in path for kw in ["/help", "/support", "/faq", "/status"]):
-            pages["Support"].append(page_entry)
+            pages["支援與幫助"].append(page_entry)
         elif path in ["/", ""] or any(kw in path for kw in ["/home", "/index"]):
             if href != base_url and href != base_url + "/":
-                pages["Main Pages"].append(page_entry)
+                pages["主要頁面"].append(page_entry)
         else:
-            pages["Main Pages"].append(page_entry)
+            pages["主要頁面"].append(page_entry)
 
         if len(seen_urls) >= max_pages:
             break
 
     result["pages_analyzed"] = len(seen_urls)
 
-    # Generate llms.txt (concise version)
+    # 產生 llms.txt（簡潔版）
     llms_lines = [
         f"# {site_name}",
         f"> {site_description}",
@@ -216,22 +216,22 @@ def generate_llmstxt(url: str, max_pages: int = 30) -> dict:
     for section, section_pages in pages.items():
         if section_pages:
             llms_lines.append(f"## {section}")
-            # Limit to top 10 per section for concise version
+            # 簡潔版每個區塊限制最多前 10 個
             for page in section_pages[:10]:
                 llms_lines.append(f"- [{page['title']}]({page['url']})")
             llms_lines.append("")
 
-    # Add contact section placeholder
+    # 新增聯絡方式區塊佔位符
     llms_lines.extend([
-        "## Contact",
-        f"- Website: {base_url}",
-        f"- Email: contact@{parsed.netloc}",
+        "## 聯絡方式",
+        f"- 網站：{base_url}",
+        f"- 電子郵件：contact@{parsed.netloc}",
         "",
     ])
 
     result["generated_llmstxt"] = "\n".join(llms_lines)
 
-    # Generate llms-full.txt (detailed version with descriptions)
+    # 產生 llms-full.txt（包含描述的詳細版）
     full_lines = [
         f"# {site_name}",
         f"> {site_description}",
@@ -242,12 +242,12 @@ def generate_llmstxt(url: str, max_pages: int = 30) -> dict:
         if section_pages:
             full_lines.append(f"## {section}")
             for page in section_pages:
-                # Skip cross-origin URLs to prevent SSRF via redirect chains
+                # 略過跨來源 URL 以防止透過重新導向鏈發生 SSRF
                 if urlparse(page["url"]).netloc != parsed.netloc:
                     full_lines.append(f"- [{page['title']}]({page['url']})")
                     continue
 
-                # Try to fetch page description
+                # 嘗試抓取頁面描述
                 try:
                     page_resp = requests.get(page["url"], headers=DEFAULT_HEADERS, timeout=10)
                     page_soup = BeautifulSoup(page_resp.text, "lxml")
@@ -262,9 +262,9 @@ def generate_llmstxt(url: str, max_pages: int = 30) -> dict:
             full_lines.append("")
 
     full_lines.extend([
-        "## Contact",
-        f"- Website: {base_url}",
-        f"- Email: contact@{parsed.netloc}",
+        "## 聯絡方式",
+        f"- 網站：{base_url}",
+        f"- 電子郵件：contact@{parsed.netloc}",
         "",
     ])
 
@@ -276,8 +276,8 @@ def generate_llmstxt(url: str, max_pages: int = 30) -> dict:
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python llmstxt_generator.py <url> [mode]")
-        print("Modes: validate (default), generate")
+        print("用法：python llmstxt_generator.py <url> [模式]")
+        print("模式：validate (預設), generate")
         sys.exit(1)
 
     target_url = sys.argv[1]
@@ -288,7 +288,7 @@ if __name__ == "__main__":
     elif mode == "generate":
         data = generate_llmstxt(target_url)
     else:
-        print(f"Unknown mode: {mode}. Use 'validate' or 'generate'.")
+        print(f"未知的模式：{mode}。請使用 'validate' 或 'generate'。")
         sys.exit(1)
 
-    print(json.dumps(data, indent=2, default=str))
+    print(json.dumps(data, indent=2, default=str, ensure_ascii=False))

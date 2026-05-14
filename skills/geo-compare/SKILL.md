@@ -1,27 +1,25 @@
 ---
 name: geo-compare
 description: >
-  Monthly delta tracking and progress reporting for GEO clients. Compares two
-  GEO audits (baseline vs. current), calculates score improvements across all
-  categories, tracks action item completion, and generates a "here's your progress"
-  client report. Use when user says "compare", "delta", "monthly report", "progress",
-  "confronta", "progressi", "report mensile", or when running a monthly client check-in.
+  針對 GEO 客戶的每月差異追蹤與進度報告。比較兩次
+  GEO 稽核（基準線 vs. 目前），計算所有類別的分數提升，
+  追蹤行動項目完成情況，並產生「這是您的進展」客戶報告。
+  當使用者提到 "compare"、"delta"、"monthly report"、"progress"、
+  "confronta"、"progressi"、"report mensile"，或執行每月客戶核對時使用。
 version: 1.0.0
 tags: [geo, business, delta, monthly, reporting, client, progress]
-allowed-tools: Read, Write, Bash, Glob
+allowed-tools: [Read, Write, Bash, Glob]
 ---
 
-# GEO Monthly Delta Report Generator
+# GEO 月度差異報告產生器
 
-## Purpose
+## 目的
 
-The single most powerful retention tool for a GEO agency: show clients **exactly**
-what improved since they started working with you. Every point gained on the GEO
-score is proof of value. This skill generates the "here's your progress" report.
+GEO 代理商最有力的留客工具：向客戶清楚展示開始合作後**到底改善了什麼**。GEO 分數每提升一分，都是價值的證明。此技能會產生「這是您的進展」報告。
 
 ---
 
-## Commands
+## 指令
 
 ```
 /geo compare <domain>
@@ -29,7 +27,7 @@ score is proof of value. This skill generates the "here's your progress" report.
 /geo compare electron-srl.com --month march-2026
 ```
 
-**Examples:**
+**範例：**
 ```
 /geo compare electron-srl.com
 /geo compare ~/.geo-prospects/audits/electron-srl.com-2026-01-15.md ~/.geo-prospects/audits/electron-srl.com-2026-03-12.md
@@ -37,97 +35,97 @@ score is proof of value. This skill generates the "here's your progress" report.
 
 ---
 
-## Workflow
+## 工作流程
 
-### Step 1: Find Audit Files
+### Step 1：尋找稽核檔案 (Audit Files)
 
-If only domain is provided:
-1. Look in `~/.geo-prospects/audits/` for files matching `<domain>-*.md`
-2. Sort by date
-3. Use oldest as baseline, newest as current
-4. If only one file exists: use it as baseline, run a fresh quick audit as current
-5. If no files exist: suggest running `/geo prospect audit <domain>` first
+若只提供網域 (Domain)：
+1. 在 `~/.geo-prospects/audits/` 中尋找符合 `<domain>-*.md` 的檔案。
+2. 依日期排序。
+3. 使用最舊檔作為基準線 (Baseline)，最新檔作為目前狀態 (Current)。
+4. 若只有一個檔案：將它作為基準線，並執行新的快速稽核 (Quick Audit) 作為目前狀態。
+5. 若沒有檔案：建議先執行 `/geo prospect audit <domain>`。
 
-### Step 2: Parse Both Audits
+### Step 2：解析兩份稽核資料
 
-Extract from each audit file:
-- Overall GEO Score
-- Per-category scores (6 categories)
-- Per-platform scores (5 platforms)
-- AI crawler status (14 crawlers)
-- Critical issues list
-- Action items list with status
+從每份稽核檔案中擷取：
+- 整體 GEO 分數 (Overall GEO Score)
+- 各類別分數（共 6 個類別）
+- 各平台分數（共 5 個平台）
+- AI 爬蟲狀態（共 14 個爬蟲）
+- 關鍵問題列表
+- 附帶狀態的行動項目列表
 
-### Step 3: Calculate Deltas
+### Step 3：計算差異 (Deltas)
 
-For each metric:
-- Delta = Current - Baseline
-- Trend = ▲ (improved), ▼ (declined), ── (unchanged)
-- Color coding in report: green (+), red (-), gray (=)
+針對每個指標：
+- 差異 (Delta) = 目前狀態 - 基準線
+- 趨勢 (Trend) = ▲（改善）、▼（退步）、──（無變動）
+- 報告中的顏色編碼：綠色（+）、紅色（-）、灰色（=）
 
-### Step 4: Generate Monthly Report
+### Step 4：產生月度報告
 
-Output to `~/.geo-prospects/reports/<domain>-monthly-<date>.md`
+輸出到 `~/.geo-prospects/reports/<domain>-monthly-<date>.md`
 
 ---
 
-## Report Template
+## 報告範本
 
-Generate the following document:
+產生下列文件：
 
 ```markdown
-# GEO Monthly Progress Report
-## [COMPANY NAME] — [MONTH YEAR]
+# GEO 月度進度報告
+## [公司名稱] — [月 年]
 
-**Reporting period:** [BASELINE DATE] → [CURRENT DATE]
-**Prepared by:** [AGENCY NAME]
-**Report reference:** GEO-MONTHLY-[DOMAIN]-[YYMMDD]
-
----
-
-## Executive Summary
-
-[2-3 sentences: What improved, what's the trend, what to focus on next month.]
-
-Example: "Electron Srl's GEO Score improved from 32 to 44 this month (+12 points),
-placing the site firmly in the 'Below Average' tier and on track to reach 'Moderate'
-by May. The biggest wins were AI crawler access (+3 crawlers now allowed) and schema
-implementation (+Organization and LocalBusiness schemas live). Next month's focus is
-content citability — the highest-weighted remaining gap."
+**報告期間：**[基準線日期] → [目前日期]
+**提案方：**[代理商名稱]
+**報告參考編號：**GEO-MONTHLY-[DOMAIN]-[YYMMDD]
 
 ---
 
-## GEO Score Progress
+## 執行摘要
+
+[2-3 句：改善了什麼、趨勢如何、下個月要聚焦什麼。]
+
+範例："Electron Srl 的 GEO 分數本月從 32 提升到 44（+12 分），
+讓網站穩定進入 '低於平均 (Below Average)' 層級，並有望在 5 月達到 '中等 (Moderate)'。
+最大的進展是 AI 爬蟲存取權限（新增 3 個爬蟲允許存取）與結構化資料
+實作（Organization 與 LocalBusiness 結構化資料已上線）。下個月重點是
+內容引用性 (Content Citability) — 目前權重最高的剩餘缺口。"
+
+---
+
+## GEO 分數進度
 
 ```
-OVERALL GEO SCORE
+整體 GEO 分數 (Overall GEO SCORE)
 
-  Baseline   [▓▓▓▓░░░░░░░░░░░░░░░░]  32/100  (Critical)
-  Current    [▓▓▓▓▓▓▓▓░░░░░░░░░░░░]  44/100  (Below Average)
-  Change     ▲ +12 points (+37.5%)
+  基準線 (Baseline)   [▓▓▓▓░░░░░░░░░░░░░░░░]  32/100  (關鍵改善期 Critical)
+  目前 (Current)      [▓▓▓▓▓▓▓▓░░░░░░░░░░░░]  44/100  (低於平均 Below Average)
+  變動 (Change)       ▲ +12 分 (+37.5%)
 
-  Target:    65/100 by Month 6 (on track ✓)
+  目標：第 6 個月達到 65/100（符合進度 ✓）
 ```
 
 ---
 
-## Score Breakdown: Before vs. After
+## 分數細項：前後比較
 
-| Category | Baseline | Current | Change | Trend |
+| 類別 (Category) | 基準線 | 目前 | 變動 | 趨勢 |
 |----------|---------|---------|--------|-------|
-| AI Citability & Visibility | [X]/100 | [X]/100 | [+/-X] | [▲/▼/──] |
-| Brand Authority Signals | [X]/100 | [X]/100 | [+/-X] | [▲/▼/──] |
-| Content Quality & E-E-A-T | [X]/100 | [X]/100 | [+/-X] | [▲/▼/──] |
-| Technical Foundations | [X]/100 | [X]/100 | [+/-X] | [▲/▼/──] |
-| Structured Data | [X]/100 | [X]/100 | [+/-X] | [▲/▼/──] |
-| Platform Optimization | [X]/100 | [X]/100 | [+/-X] | [▲/▼/──] |
-| **TOTAL** | **[X]/100** | **[X]/100** | **[+/-X]** | **[▲/▼]** |
+| AI 引用性與能見度 | [X]/100 | [X]/100 | [+/-X] | [▲/▼/──] |
+| 品牌權威訊號 | [X]/100 | [X]/100 | [+/-X] | [▲/▼/──] |
+| 內容品質與 E-E-A-T | [X]/100 | [X]/100 | [+/-X] | [▲/▼/──] |
+| 技術基礎 | [X]/100 | [X]/100 | [+/-X] | [▲/▼/──] |
+| 結構化資料 | [X]/100 | [X]/100 | [+/-X] | [▲/▼/──] |
+| 平台最佳化 | [X]/100 | [X]/100 | [+/-X] | [▲/▼/──] |
+| **總計** | **[X]/100** | **[X]/100** | **[+/-X]** | **[▲/▼]** |
 
 ---
 
-## Platform Readiness: Before vs. After
+## 平台準備度：前後比較
 
-| AI Platform | Baseline | Current | Change |
+| AI 平台 | 基準線 | 目前 | 變動 |
 |-------------|---------|---------|--------|
 | Google AI Overviews | [X]/100 | [X]/100 | [+/-X] |
 | ChatGPT Web Search | [X]/100 | [X]/100 | [+/-X] |
@@ -137,128 +135,127 @@ OVERALL GEO SCORE
 
 ---
 
-## AI Crawler Access Changes
+## AI 爬蟲存取變更
 
-| Crawler | Baseline | Current | Change |
+| 爬蟲 (Crawler) | 基準線 | 目前 | 變動 |
 |---------|---------|---------|--------|
-| GPTBot (ChatGPT) | Blocked/Allowed | Blocked/Allowed | ✓ Fixed / No change |
-| ClaudeBot (Anthropic) | Blocked/Allowed | Blocked/Allowed | ✓ Fixed / No change |
-| PerplexityBot | Blocked/Allowed | Blocked/Allowed | ✓ Fixed / No change |
-| Google-Extended (Gemini) | Blocked/Allowed | Blocked/Allowed | ✓ Fixed / No change |
-| Bingbot | Blocked/Allowed | Blocked/Allowed | ✓ Fixed / No change |
+| GPTBot (ChatGPT) | 已封鎖/允許 | 已封鎖/允許 | ✓ 已修復 / 無變動 |
+| ClaudeBot (Anthropic) | 已封鎖/允許 | 已封鎖/允許 | ✓ 已修復 / 無變動 |
+| PerplexityBot | 已封鎖/允許 | 已封鎖/允許 | ✓ 已修復 / 無變動 |
+| Google-Extended (Gemini) | 已封鎖/允許 | 已封鎖/允許 | ✓ 已修復 / 無變動 |
+| Bingbot | 已封鎖/允許 | 已封鎖/允許 | ✓ 已修復 / 無變動 |
 
-[Show only crawlers that changed, or all if few crawlers.]
+[只顯示有變更的爬蟲；若數量很少則全列。]
 
 ---
 
-## Action Plan Progress
+## 行動計畫進度
 
-### Quick Wins — Status Update
+### 快速改善 — 狀態更新
 
-| # | Action | Assigned | Status | Impact |
+| # | 行動項目 (Action) | 負責人 | 狀態 | 影響 |
 |---|--------|---------|--------|--------|
-| 1 | Allow all AI crawlers in robots.txt | Client dev | ✅ Done | +3 crawlers |
-| 2 | Add Organization schema to homepage | Client dev | ✅ Done | Schema score +15 |
-| 3 | Create llms.txt | Agency | ✅ Done | AI visibility +8 |
-| 4 | Add author bylines to all articles | Client content | 🔄 In Progress | — |
-| 5 | Fix meta descriptions (47 pages missing) | Client dev | ❌ Not started | — |
+| 1 | 在 robots.txt 中允許所有 AI 爬蟲 | 客戶端開發 | ✅ 已完成 | +3 個爬蟲 |
+| 2 | 在首頁加入 Organization 結構化資料 | 客戶端開發 | ✅ 已完成 | 結構化資料分數 +15 |
+| 3 | 建立 llms.txt | 代理商 | ✅ 已完成 | AI 能見度 +8 |
+| 4 | 為所有文章加入作者署名 | 客戶端內容 | 🔄 進行中 | — |
+| 5 | 修復元描述 (Meta Descriptions) (缺 47 頁) | 客戶端開發 | ❌ 未開始 | — |
 
-**Quick wins completed: [X]/[Y] ([%])**
+**快速改善完成度：[X]/[Y] ([%])**
 
-### Medium-Term — Status Update
+### 中期計畫 — 狀態更新
 
-| # | Action | Target Month | Status |
+| # | 行動項目 (Action) | 目標月份 | 狀態 |
 |---|--------|-------------|--------|
-| 1 | Rewrite top 10 pages with Q&A structure | Month 2 | 🔄 3/10 done |
-| 2 | E-E-A-T: Create author pages | Month 2 | ❌ Not started |
-| 3 | Register Bing Webmaster Tools | Month 1 | ✅ Done |
-| 4 | Implement IndexNow | Month 2 | 🔄 In Progress |
+| 1 | 以問答 (Q&A) 結構重寫前 10 名頁面 | 第 2 個月 | 🔄 3/10 已完成 |
+| 2 | E-E-A-T：建立作者頁面 | 第 2 個月 | ❌ 未開始 |
+| 3 | 註冊 Bing 網站管理員工具 | 第 1 個月 | ✅ 已完成 |
+| 4 | 實作 IndexNow | 第 2 個月 | 🔄 進行中 |
 
-### Strategic — Status Update
+### 策略性行動 — 狀態更新
 
-| # | Action | Target | Status |
+| # | 行動項目 (Action) | 目標 | 狀態 |
 |---|--------|--------|--------|
-| 1 | Wikipedia entity creation | Month 4 | 📋 Planned |
-| 2 | YouTube channel launch | Month 3 | 📋 Planned |
-| 3 | Reddit presence (industry subs) | Month 3 | 📋 Planned |
+| 1 | 維基百科實體 (Entity) 建立 | 第 4 個月 | 📋 已計畫 |
+| 2 | YouTube 頻道啟動 | 第 3 個月 | 📋 已計畫 |
+| 3 | Reddit 經營 (產業子版) | 第 3 個月 | 📋 已計畫 |
 
 ---
 
-## This Month's Wins
+## 本月成果 (This Month's Wins)
 
-> Use this section to celebrate — clients need to see the value clearly.
+> 此區段用來清楚展示價值，讓客戶看見成果。
 
-✅ **[WIN 1]:** [Specific, tangible result — e.g., "GPTBot and ClaudeBot are now allowed. ChatGPT can now crawl and cite your content."]
-✅ **[WIN 2]:** [e.g., "Organization schema implemented on homepage. Your brand entity is now machine-readable."]
-✅ **[WIN 3]:** [e.g., "llms.txt created and deployed at electron-srl.com/llms.txt — one of only ~12% of sites in your industry to have this."]
-
----
-
-## New Issues Discovered
-
-> Issues found in current audit that weren't in baseline.
-
-⚠️ **[ISSUE 1]:** [What it is, what it means, how we'll fix it]
-⚠️ **[ISSUE 2]:** [What it is, what it means, how we'll fix it]
+✅ **[成果 1]：** [具體、有形的結果 — 例如："現在已允許 GPTBot 與 ClaudeBot。ChatGPT 現在可以抓取並引用您的內容。"]
+✅ **[成果 2]：** [例如："首頁已實作 Organization 結構化資料。您的品牌實體現已具備機器可讀性。"]
+✅ **[成果 3]：** [例如："已建立 llms.txt 並部署於 [electron-srl.com/llms.txt](https://electron-srl.com/llms.txt) — 您的產業中只有約 12% 的網站具備此檔案。"]
 
 ---
 
-## Next Month Focus
+## 新發現的問題
 
-### Priority Actions for [NEXT MONTH]:
+> 目前稽核中發現、但基準線中沒有的問題。
 
-| Priority | Action | Owner | Expected Impact |
+⚠️ **[問題 1]：** [內容是什麼、代表什麼意義、我們將如何修復]
+⚠️ **[問題 2]：** [內容是什麼、代表什麼意義、我們將如何修復]
+
+---
+
+## 下個月重點
+
+### [下個月] 的優先行動項目：
+
+| 優先級 | 行動項目 | 負責人 | 預期影響 |
 |----------|--------|-------|----------------|
-| 1 | [Highest ROI action] | [Agency/Client] | +[X] GEO points |
-| 2 | [Second priority] | [Agency/Client] | +[X] GEO points |
-| 3 | [Third priority] | [Agency/Client] | +[X] GEO points |
+| 1 | [投資報酬率最高的行動] | [代理商/客戶] | +[X] GEO 分數 |
+| 2 | [次要優先項目] | [代理商/客戶] | +[X] GEO 分數 |
+| 3 | [第三優先項目] | [代理商/客戶] | +[X] GEO 分數 |
 
-**Target GEO Score next month:** [CURRENT + estimated gain]/100
+**下個月目標 GEO 分數：[目前分數 + 預估增幅]/100**
 
 ---
 
-## 6-Month Trajectory
+## 6 個月發展軌跡 (6-Month Trajectory)
 
-| Month | Date | Score | Delta | Key Achievement |
+| 月份 | 日期 | 分數 | 變動 (Delta) | 關鍵成就 |
 |-------|------|-------|-------|----------------|
-| Baseline | [Date] | [Score] | — | Initial audit |
-| Month 1 | [Date] | [Score] | [+X] | Quick wins implemented |
-| Month 2 | [Date] | [Score] | [+X] | *Current month* |
-| Month 3 | [Date] | — | — | Content citability |
-| Month 4 | — | — | — | Brand authority |
-| Month 5 | — | — | — | Strategic initiatives |
-| Month 6 | — | **Target: [X]** | — | Full review |
+| 基準線 | [日期] | [分數] | — | 初次稽核 |
+| 第 1 個月 | [日期] | [分數] | [+X] | 實作快速改善項目 |
+| 第 2 個月 | [日期] | [分數] | [+X] | *本月* |
+| 第 3 個月 | [日期] | — | — | 內容引用性提升 |
+| 第 4 個月 | — | — | — | 品牌權威建立 |
+| 第 5 個月 | — | — | — | 策略性倡議 |
+| 第 6 個月 | — | **目標：[X]** | — | 全面檢視 |
 
-[Only fill rows that have happened. Show projected rows as "—"]
-
----
-
-## Estimated Business Impact
-
-Based on the [X]-point improvement this month:
-
-- **AI citation likelihood:** Increased by approximately [X]%
-- **Crawlers with access:** [X]/14 → [Y]/14 (better coverage on [platforms])
-- **Estimated monthly AI-referred traffic improvement:** +[X]% (conservative)
-- **Traffic value at current conversion rates:** +€[X]/month in organic value
-
-*Note: Full traffic impact from GEO changes typically takes 4-8 weeks to materialize
-as AI platforms re-index and update their knowledge bases.*
+[只填入已發生的列。預測列顯示為 "—"]
 
 ---
 
-*GEO Monthly Report — [COMPANY NAME] — [DATE]*
-*Questions or comments? [CONTACT EMAIL]*
+## 預估商業影響
+
+根據本月提升的 [X] 分：
+
+- **AI 引用可能性：** 約增加 [X]%
+- **可存取的爬蟲數：** [X]/14 → [Y]/14（[平台名稱] 覆蓋率更好）
+- **預估每月 AI 轉單流量提升：** +[X]%（保守估計）
+- **依目前轉換率計算的流量價值：** 每月增加 +€[X] 的自然搜尋價值
+
+*註：GEO 變動對流量的完整影響通常需要 4-8 週才會顯現，因為 AI 平台需要重新索引並更新知識庫。*
+
+---
+
+*GEO 每月報告 — [公司名稱] — [日期]*
+*有任何問題或建議？請聯絡 [聯絡電子郵件]*
 ```
 
 ---
 
-## Delta Calculation Logic
+## 差異計算邏輯
 
-When parsing two audit files, look for these patterns:
+解析兩個稽核檔案時，尋找下列模式：
 
 ```
-Score markers to extract:
+要擷取的分數標記：
 - "GEO Score: XX/100"
 - "Overall Score: XX"
 - "AI Citability: XX/100"
@@ -271,37 +268,36 @@ Score markers to extract:
 - "ClaudeBot: Allowed/Blocked"
 ```
 
-If exact scores are not found in audit files, use contextual analysis of the
-written findings to estimate approximate scores based on issues described.
+若稽核檔案中找不到精確分數，請依書面調查結果的情境分析，根據描述的問題估算大約分數。
 
 ---
 
-## Trend Interpretation
+## 趨勢解讀
 
-| Delta | Trend Symbol | Meaning |
+| 差異 (Delta) | 趨勢符號 | 意義 |
 |-------|-------------|---------|
-| +5 or more | ▲▲ | Strong improvement |
-| +1 to +4 | ▲ | Improvement |
-| 0 | ── | No change |
-| -1 to -4 | ▼ | Slight decline |
-| -5 or more | ▼▼ | Significant decline — needs discussion |
+| +5 或更多 | ▲▲ | 強勁改善 |
+| +1 到 +4 | ▲ | 有所改善 |
+| 0 | ── | 無變動 |
+| -1 到 -4 | ▼ | 輕微退步 |
+| -5 或更多 | ▼▼ | 顯著退步 — 需要進行討論 |
 
-A decline is not necessarily bad — it can mean new issues were discovered in the
-fresh audit that weren't visible before. Frame declines as "newly discovered opportunities."
+退步不一定是壞事，可能代表新的稽核發現了以前未察覺的新問題。請將退步定位為「新發現的機會 (newly discovered opportunities)」。
 
 ---
 
-## Output
+## 輸出
 
-1. Save report to `~/.geo-prospects/reports/<domain>-monthly-<YYYY-MM>.md`
-2. Print confirmation with key stats:
+1. 將報告存到 `~/.geo-prospects/reports/<domain>-monthly-<YYYY-MM>.md`。
+2. 印出包含關鍵數據的確認訊息：
    ```
-   ✓ Monthly report generated: ~/.geo-prospects/reports/electron-srl.com-monthly-2026-03.md
+   ✓ 已產生月度報告：~/.geo-prospects/reports/electron-srl.com-monthly-2026-03.md
 
-   SUMMARY:
-   GEO Score: 32 → 44 (+12 points) ▲
-   Quick wins completed: 3/5 (60%)
-   New issues found: 2 (minor)
-   On track for Month 6 target: YES (65/100)
-   ```
-3. Suggest next action: "Share with client or run `/geo report-pdf` for a visual version"
+   摘要 (SUMMARY)：
+   GEO 分數：32 → 44 (+12 分) ▲
+   快速改善完成度：3/5 (60%)
+   發現新問題：2 (輕微)
+   第 6 個月目標進度：正常 YES (65/100)
+
+```
+3. 建議下一步："與客戶分享或執行 `/geo report-pdf` 以取得視覺化版本"

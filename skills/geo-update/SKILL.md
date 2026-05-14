@@ -1,92 +1,92 @@
 ---
 name: geo-update
-description: Pull the latest GEO-SEO skill updates from the upstream repository. Compares installed files against the latest release, shows what changed, and updates all skills, agents, scripts, and schema templates in place.
+description: 從 upstream repository 拉取最新 GEO-SEO 技能更新。比較已安裝檔案與最新版本，顯示變更內容，並就地更新所有技能、代理程式 (agents)、指令碼與 schema 範本。
 allowed-tools:
   - Bash
   - Read
   - Write
 ---
 
-# GEO-SEO Update Skill
+# GEO-SEO 更新技能 (Update Skill)
 
-## Purpose
+## 目的
 
-Updates the locally installed GEO-SEO skills, agents, scripts, and schema templates to the latest version from the upstream repository. Shows a summary of what changed before and after the update.
+將本機已安裝的 GEO-SEO 技能、代理程式、指令碼與 schema 範本更新到上游儲存庫 (upstream repository) 的最新版本。更新前後都會顯示變更摘要。
 
 ---
 
-## Update Workflow
+## 更新工作流程
 
-### Step 1: Determine Installed Location
+### Step 1：判斷已安裝位置
 
-The GEO-SEO toolkit installs to these locations under `~/.claude/`:
+GEO-SEO 工具箱會安裝到 `~/.claude/` 底下的這些位置：
 
-| Component | Install Path |
+| 元件 (Component) | 安裝路徑 |
 |-----------|-------------|
-| Main skill | `~/.claude/skills/geo/` |
-| Sub-skills | `~/.claude/skills/geo-*/` |
-| Agents | `~/.claude/agents/geo-*.md` |
-| Scripts | `~/.claude/skills/geo/scripts/` |
-| Schema templates | `~/.claude/skills/geo/schema/` |
-| Hooks | `~/.claude/skills/geo/hooks/` |
+| 主技能 (Main skill) | `~/.claude/skills/geo/` |
+| 子技能 (Sub-skills) | `~/.claude/skills/geo-*/` |
+| 代理程式 (Agents) | `~/.claude/agents/geo-*.md` |
+| 指令碼 (Scripts) | `~/.claude/skills/geo/scripts/` |
+| Schema 範本 | `~/.claude/skills/geo/schema/` |
+| 鉤子 (Hooks) | `~/.claude/skills/geo/hooks/` |
 
-Verify the installation exists by checking for `~/.claude/skills/geo/SKILL.md`. If it does not exist, inform the user that GEO-SEO is not installed and suggest running the installer instead.
+透過檢查 `~/.claude/skills/geo/SKILL.md` 確認安裝存在。若不存在，告知使用者 GEO-SEO 尚未安裝，並建議改執行安裝程式 (installer)。
 
-### Step 2: Clone Latest from Upstream
+### Step 2：複製 (Clone) 最新上游版本
 
 ```bash
 TEMP_DIR=$(mktemp -d)
 git clone --depth 1 https://github.com/zubair-trabzada/geo-seo-claude.git "$TEMP_DIR/repo"
 ```
 
-If the clone fails, report the error and stop. Do not modify any installed files.
+若 clone 失敗，回報錯誤並停止作業。不要修改任何已安裝檔案。
 
-### Step 3: Compare Installed vs Latest
+### Step 3：比較已安裝 vs 最新版本
 
-Before copying files, generate a diff summary so the user knows what will change:
+複製檔案前，先產生差異摘要 (diff summary)，讓使用者知道將變更什麼內容：
 
-1. For each component directory, compare the installed files against the cloned files using `diff --recursive --brief`.
-2. Categorise changes as:
-   - **New files** — exist in upstream but not locally
-   - **Modified files** — exist in both but differ
-   - **Removed files** — exist locally but not in upstream (these are NOT deleted automatically)
-3. Present the summary to the user.
+1. 對每個元件目錄，使用 `diff --recursive --brief` 比較已安裝檔案與複製的檔案。
+2. 將變更分類為：
+   - **新檔案 (New files)** — 上游有、本機沒有
+   - **已修改檔案 (Modified files)** — 兩邊都有但內容不同
+   - **已移除檔案 (Removed files)** — 本機有、上游沒有（這些**不會**自動刪除）
+3. 將摘要呈現給使用者。
 
-### Step 4: Apply Updates
+### Step 4：套用更新
 
-Copy files from the cloned repo over the installed locations:
+將檔案從複製的儲存庫複製到安裝位置：
 
 ```bash
 CLAUDE_DIR="${HOME}/.claude"
 SOURCE_DIR="$TEMP_DIR/repo"
 
-# Main skill
+# 主技能
 cp -r "$SOURCE_DIR/geo/"* "$CLAUDE_DIR/skills/geo/"
 
-# Sub-skills
+# 子技能 (Sub-skills)
 for skill_dir in "$SOURCE_DIR/skills"/*/; do
     skill_name=$(basename "$skill_dir")
     mkdir -p "$CLAUDE_DIR/skills/${skill_name}"
     cp -r "$skill_dir"* "$CLAUDE_DIR/skills/${skill_name}/"
 done
 
-# Agents
+# 代理程式 (Agents)
 for agent_file in "$SOURCE_DIR/agents/"*.md; do
     cp "$agent_file" "$CLAUDE_DIR/agents/"
 done
 
-# Scripts
+# 指令碼 (Scripts)
 if [ -d "$SOURCE_DIR/scripts" ]; then
     cp -r "$SOURCE_DIR/scripts/"* "$CLAUDE_DIR/skills/geo/scripts/"
     chmod +x "$CLAUDE_DIR/skills/geo/scripts/"*.py 2>/dev/null || true
 fi
 
-# Schema templates
+# Schema 範本
 if [ -d "$SOURCE_DIR/schema" ]; then
     cp -r "$SOURCE_DIR/schema/"* "$CLAUDE_DIR/skills/geo/schema/"
 fi
 
-# Hooks
+# 鉤子 (Hooks)
 if [ -d "$SOURCE_DIR/hooks" ] && [ "$(ls -A "$SOURCE_DIR/hooks" 2>/dev/null)" ]; then
     mkdir -p "$CLAUDE_DIR/skills/geo/hooks"
     cp -r "$SOURCE_DIR/hooks/"* "$CLAUDE_DIR/skills/geo/hooks/"
@@ -94,44 +94,44 @@ if [ -d "$SOURCE_DIR/hooks" ] && [ "$(ls -A "$SOURCE_DIR/hooks" 2>/dev/null)" ];
 fi
 ```
 
-### Step 5: Update Python Dependencies
+### Step 5：更新 Python 相依套件
 
-If `requirements.txt` exists in the upstream repo and differs from the installed version:
+若上游儲存庫中存在 `requirements.txt` 且與已安裝版本不同：
 
 ```bash
 python3 -m pip install -r "$SOURCE_DIR/requirements.txt" --quiet
 ```
 
-Report any failures but do not treat them as fatal.
+回報任何失敗項目，但不要視為致命錯誤。
 
-### Step 6: Clean Up
+### Step 6：清理
 
 ```bash
 rm -rf "$TEMP_DIR"
 ```
 
-### Step 7: Report Results
+### Step 7：回報結果
 
-Present a summary:
+呈現摘要：
 
 ```
-GEO-SEO Update Complete
+GEO-SEO 更新完成
 =======================
-New files:      [count]
-Modified files: [count]
-Unchanged:      [count]
-Removed upstream (kept locally): [count]
+新增檔案：      [數量]
+已修改檔案：    [數量]
+未變更：        [數量]
+上游已移除（本機保留）：[數量]
 
-Dependencies: [updated / unchanged / failed]
+相依套件：[已更新 / 未變更 / 失敗]
 ```
 
-If there were removed files upstream, list them and suggest the user review whether to delete them manually.
+若上游有已移除檔案，列出它們並建議使用者檢視是否要手動刪除。
 
 ---
 
-## Important Notes
+## 重要備註
 
-- **Never delete locally installed files** that no longer exist upstream. The user may have customised them. List them and let the user decide.
-- **Never modify `~/.claude/settings.json` or `~/.claude/settings.local.json`** — these are user configuration files, not part of the GEO-SEO toolkit.
-- **If already up to date** (no diff), report that and skip the copy step.
-- **Restart notice:** Remind the user that skill changes take effect in new Claude Code sessions. They should restart their session to use the updated skills.
+- **永遠不要刪除**已安裝但上游不再存在的本機檔案。使用者可能已進行客製化。列出這些檔案，讓使用者自行決定。
+- **永遠不要修改 `~/.claude/settings.json` 或 `~/.claude/settings.local.json`** — 這些是使用者設定檔，不屬於 GEO-SEO 工具箱。
+- **若已是最新狀態**（沒有差異），回報該結果並略過複製步驟。
+- **重啟提醒：** 提醒使用者技能變更會在新的 Claude Code 工作階段生效。要使用更新後的技能，應重新啟動工作階段。

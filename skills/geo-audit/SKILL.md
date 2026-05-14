@@ -1,6 +1,6 @@
 ---
 name: geo-audit
-description: Full website GEO+SEO audit with parallel subagent delegation. Orchestrates a comprehensive Generative Engine Optimization audit across AI citability, platform analysis, technical infrastructure, content quality, and schema markup. Produces a composite GEO Score (0-100) with prioritized action plan.
+description: 使用平行子代理委派（parallel subagent delegation）執行完整的網站 GEO+SEO 稽核。協調涵蓋 AI 可引用度（AI citability）、平台分析（platform analysis）、技術基礎設施（technical infrastructure）、內容品質（content quality）與結構化標記（schema markup）的完整生成式引擎最佳化（Generative Engine Optimization）稽核。產生綜合 GEO 分數（0-100）與優先行動計畫。
 allowed-tools:
   - Read
   - Grep
@@ -10,328 +10,328 @@ allowed-tools:
   - Write
 ---
 
-# GEO Audit Orchestration Skill
+# GEO 稽核協調技能
 
-## Purpose
+## 目的
 
-This skill performs a comprehensive Generative Engine Optimization (GEO) audit of any website. GEO is the practice of optimizing web content so that AI systems (ChatGPT, Claude, Perplexity, Gemini, etc.) can discover, understand, cite, and recommend it. This audit measures how well a site performs across all GEO dimensions and produces an actionable improvement plan.
+此技能會對任意網站執行完整的生成式引擎最佳化（Generative Engine Optimization, GEO）稽核。GEO 是最佳化網站內容，使 AI 系統（ChatGPT、Claude、Perplexity、Gemini 等）能發現、理解、引用並推薦它。本稽核會衡量網站在所有 GEO 面向的表現，並產生可執行的改善計畫。
 
-## Key Insight
+## 核心洞察
 
-Traditional SEO optimizes for search engine rankings. GEO optimizes for AI citation and recommendation. Sites that score high on GEO metrics see 30-115% more visibility in AI-generated responses (Georgia Tech / Princeton / IIT Delhi 2024 study). The two disciplines overlap but have distinct requirements.
+傳統 SEO 最佳化的是搜尋引擎排名（search engine rankings）。GEO 最佳化的是 AI 引用與推薦。GEO 指標高分的網站，在 AI 產生的回應中會增加 30-115% 的曝光度（Georgia Tech / Princeton / IIT Delhi 2024 研究）。兩者有重疊，但要求不同。
 
 ---
 
-## Audit Workflow
+## 稽核工作流程
 
-### Phase 1: Discovery and Reconnaissance
+### 第一階段：發現與偵察
 
-**Step 1: Fetch Homepage and Detect Business Type**
+**步驟 1：抓取首頁並偵測業務類型**
 
-1. Use WebFetch to retrieve the homepage at the provided URL.
-2. Extract the following signals:
-   - Page title, meta description, H1 heading
-   - Navigation menu items (reveals site structure)
-   - Footer content (reveals business info, location, legal pages)
-   - Schema.org markup on homepage (Organization, LocalBusiness, etc.)
-   - Pricing page link (SaaS indicator)
-   - Product listing patterns (E-commerce indicator)
-   - Blog/resource section (Publisher indicator)
-   - Service pages (Agency indicator)
-   - Address/phone/Google Maps embed (Local business indicator)
+1. 使用 WebFetch 取得所提供 URL 的首頁。
+2. 擷取下列訊號：
+   - 頁面標題（Page title）、中繼描述（meta description）、H1 標題
+   - 導覽列選單項目（揭示網站架構）
+   - 頁尾內容（揭示業務資訊、地點、法律聲明頁面）
+   - 首頁上的 Schema.org 標記（如 Organization、LocalBusiness 等）
+   - 定價頁面連結（SaaS 指標）
+   - 產品列表模式（電子商務指標）
+   - 部落格/資源區塊（發布者指標）
+   - 服務頁面（代理商指標）
+   - 地址/電話/Google 地圖嵌入（在地商家指標）
 
-3. Classify the business type using these patterns:
+3. 使用下列模式分類業務類型：
 
-| Business Type | Detection Signals |
+| 業務類型 | 偵測訊號 |
 |---|---|
-| **SaaS** | Pricing page, "Sign up" / "Free trial" CTAs, app.domain.com subdomain, feature comparison tables, integration pages |
-| **Local Business** | Physical address on homepage, Google Maps embed, "Near me" content, LocalBusiness schema, service area pages |
-| **E-commerce** | Product listings, shopping cart, product schema, category pages, price displays, "Add to cart" buttons |
-| **Publisher** | Blog-heavy navigation, article schema, author pages, date-based archives, RSS feeds, high content volume |
-| **Agency/Services** | Case studies, portfolio, "Our Work" section, team page, client logos, service descriptions |
-| **Hybrid** | Combination of above signals -- classify by dominant pattern |
+| **SaaS（軟體即服務）** | 定價頁面、「註冊」/「免費試用」行動呼籲（CTA）、app.domain.com 子網域、功能比較表、整合頁面 |
+| **在地商家** | 首頁上的實體地址、Google 地圖嵌入、「附近」內容、LocalBusiness schema、服務區域頁面 |
+| **電子商務** | 產品列表、購物車、Product schema、分類頁面、價格顯示、「加入購物車」按鈕 |
+| **發布者** | 導覽列以部落格為主、Article schema、作者頁面、以日期為基礎的彙整、RSS 摘要、高內容發布量 |
+| **代理商/服務** | 案例研究、作品集、「我們的作品」區塊、團隊頁面、客戶商標、服務描述 |
+| **混合型** | 上述訊號的組合，依主要模式進行分類 |
 
-**Step 2: Crawl Sitemap and Internal Links**
+**步驟 2：爬取網站地圖與內部連結**
 
-1. Attempt to fetch `/sitemap.xml` and `/sitemap_index.xml`.
-2. If sitemap exists, extract up to 50 unique page URLs prioritized by:
-   - Homepage (always include)
-   - Top-level navigation pages
-   - High-value pages (pricing, about, contact, key service/product pages)
-   - Blog posts (sample 5-10 most recent)
-   - Category/landing pages
-3. If no sitemap exists, crawl internal links from the homepage:
-   - Extract all `<a href>` links pointing to the same domain
-   - Follow up to 2 levels deep
-   - Prioritize pages linked from main navigation
-4. Respect `robots.txt` directives -- do not fetch disallowed paths.
-5. Enforce a maximum of 50 pages and a 30-second timeout per fetch.
+1. 嘗試抓取 `/sitemap.xml` 與 `/sitemap_index.xml`。
+2. 若網站地圖（sitemap）存在，依下列優先順序擷取最多 50 個不重複的頁面 URL：
+   - 首頁（永遠包含）
+   - 頂層導覽頁面
+   - 高價值頁面（定價、關於我們、聯絡資訊、關鍵服務/產品頁面）
+   - 部落格文章（抽樣 5-10 篇最近文章）
+   - 分類/到達頁面（landing pages）
+3. 若沒有網站地圖，從首頁爬取內部連結：
+   - 擷取所有指向同一個網域的 `<a href>` 連結
+   - 最多追蹤 2 層深度
+   - 優先處理主要導覽列連出的頁面
+4. 尊重 `robots.txt` 指令，不抓取被禁止（disallowed）的路徑。
+5. 強制上限為 50 個頁面，每次擷取逾時限制為 30 秒。
 
-**Step 3: Collect Page-Level Data**
+**步驟 3：收集頁面層級數據**
 
-For each page in the crawl set, record:
-- URL, title, meta description, canonical URL
-- H1-H6 heading structure
-- Word count of main content
-- Schema.org types present
-- Internal/external link counts
-- Images with/without alt text
-- Open Graph and Twitter Card meta tags
-- Response status code
-- Whether the page has structured data
-
----
-
-### Phase 2: Parallel Subagent Delegation
-
-Delegate analysis to 5 specialized subagents. Each subagent operates on the collected page data and produces a category score (0-100) plus findings.
-
-**Subagent 1: AI Visibility Analysis (geo-ai-visibility)**
-- Analyze content blocks for quotability by AI systems (citability scoring)
-- Check AI crawler access via robots.txt and llms.txt presence
-- Scan brand presence across YouTube, Reddit, Wikipedia, LinkedIn
-- Score brand authority signals that AI models use for entity recognition
-
-**Subagent 2: Platform Optimization (geo-platform-analysis)**
-- Assess readiness for Google AI Overviews, ChatGPT, Perplexity, Gemini, Bing Copilot
-- Check platform-specific ranking factors and optimization opportunities
-
-**Subagent 3: Technical GEO Infrastructure (geo-technical)**
-- Analyze robots.txt for AI crawler access
-- Verify meta tags, headers, and technical accessibility for AI systems
-- Check page speed, server-side rendering, and Core Web Vitals
-- Assess security headers and mobile optimization
-
-**Subagent 4: Content E-E-A-T Quality (geo-content)**
-- Evaluate Experience, Expertise, Authoritativeness, Trustworthiness signals
-- Check author bios, credentials, source citations
-- Assess content freshness, depth, and originality
-- Verify "About" page quality and team credentials
-
-**Subagent 5: Schema & Structured Data (geo-schema)**
-- Validate all schema.org markup
-- Check for GEO-critical schema types (FAQ, HowTo, Organization, Product, Article)
-- Assess schema completeness and accuracy
-- Identify missing schema opportunities
+對爬取集合中的每個頁面記錄：
+- URL、標題、中繼描述、標準網址（canonical URL）
+- H1-H6 標題架構
+- 主要內容字數
+- 存在的 Schema.org 類型
+- 內部/外部連結數量
+- 有/無 alt 替代文字的圖片
+- Open Graph 與 Twitter Card 中繼標籤（meta tags）
+- 回應狀態碼（Response status code）
+- 頁面是否有結構化資料（structured data）
 
 ---
 
-### Phase 3: Score Aggregation and Report Generation
+### 第二階段：平行子代理委派
 
-#### Composite GEO Score Calculation
+將分析委派給 5 個專門的子代理（subagents）。每個子代理都會使用收集到的頁面數據，並產生類別分數（0-100）與發現結果。
 
-The overall GEO Score (0-100) is a weighted average of six category scores:
+**子代理 1：AI 曝光度分析（geo-ai-visibility）**
+- 分析內容區塊是否適合被 AI 系統引用（可引用度評分）
+- 透過 `robots.txt` 與 `llms.txt` 的存在與否檢查 AI 爬蟲的存取權限
+- 掃描 YouTube、Reddit、Wikipedia、LinkedIn 上的品牌能見度
+- 評估 AI 模型用於實體識別（entity recognition）的品牌權威訊號
 
-| Category | Weight | What It Measures |
+**子代理 2：平台最佳化（geo-platform-analysis）**
+- 評估 Google AI Overviews、ChatGPT、Perplexity、Gemini、Bing Copilot 的準備度
+- 檢查特定平台的排名因素與最佳化機會
+
+**子代理 3：技術 GEO 基礎設施（geo-technical）**
+- 分析 `robots.txt` 中的 AI 爬蟲存取權限
+- 驗證中繼標籤、標頭（headers）與 AI 系統的技術可存取性
+- 檢查頁面載入速度、伺服器端渲染（SSR）與網站核心指標（Core Web Vitals）
+- 評估安全標頭與行動裝置最佳化
+
+**子代理 4：內容 E-E-A-T 品質（geo-content）**
+- 評估經驗（Experience）、專業度（Expertise）、權威性（Authoritativeness）、可信度（Trustworthiness）訊號
+- 檢查作者簡介、資歷證明、來源引用
+- 評估內容的新鮮度、深度與原創性
+- 驗證「關於我們」頁面品質與團隊資歷
+
+**子代理 5：Schema 與結構化資料（geo-schema）**
+- 驗證所有 schema.org 標記
+- 檢查對 GEO 至關重要的 schema 類型（FAQ、HowTo、Organization、Product、Article）
+- 評估 schema 的完整性與準確性
+- 找出缺失的 schema 機會
+
+---
+
+### 第三階段：分數彙總與報告產生
+
+#### 綜合 GEO 分數計算
+
+整體 GEO 分數（0-100）是六個類別分數的加權平均：
+
+| 類別 | 權重 | 衡量內容 |
 |---|---|---|
-| **AI Citability** | 25% | How quotable/extractable content is for AI systems |
-| **Brand Authority** | 20% | Third-party mentions, entity recognition signals |
-| **Content E-E-A-T** | 20% | Experience, Expertise, Authoritativeness, Trustworthiness |
-| **Technical GEO** | 15% | AI crawler access, llms.txt, rendering, speed |
-| **Schema & Structured Data** | 10% | Schema.org markup quality and completeness |
-| **Platform Optimization** | 10% | Presence on platforms AI models train on and cite |
+| **AI 可引用度 (AI Citability)** | 25% | 內容對 AI 系統的可引用/可擷取程度 |
+| **品牌權威 (Brand Authority)** | 20% | 第三方提及、實體識別訊號 |
+| **內容 E-E-A-T (Content E-E-A-T)** | 20% | 經驗、專業度、權威性、可信度 |
+| **技術 GEO (Technical GEO)** | 15% | AI 爬蟲存取權限、llms.txt、渲染、速度 |
+| **Schema 與結構化資料** | 10% | Schema.org 標記品質與完整性 |
+| **平台最佳化 (Platform Optimization)** | 10% | 在 AI 模型訓練與引用平台上的能見度 |
 
-**Formula:**
+**公式:**
 ```
-GEO_Score = (Citability * 0.25) + (Brand * 0.20) + (EEAT * 0.20) + (Technical * 0.15) + (Schema * 0.10) + (Platform * 0.10)
+GEO分數 = (可引用度 * 0.25) + (品牌 * 0.20) + (EEAT * 0.20) + (技術 * 0.15) + (Schema * 0.10) + (平台 * 0.10)
 ```
 
-#### Score Interpretation
+#### 分數解讀
 
-| Score Range | Rating | Interpretation |
+| 分數範圍 | 評等 | 解讀 |
 |---|---|---|
-| 90-100 | Excellent | Top-tier GEO optimization; site is highly likely to be cited by AI |
-| 75-89 | Good | Strong GEO foundation with room for improvement |
-| 60-74 | Fair | Moderate GEO presence; significant optimization opportunities exist |
-| 40-59 | Poor | Weak GEO signals; AI systems may struggle to cite or recommend |
-| 0-39 | Critical | Minimal GEO optimization; site is largely invisible to AI systems |
+| 90-100 | 極佳 (Excellent) | 頂級 GEO 最佳化；網站極度可能被 AI 引用 |
+| 75-89 | 良好 (Good) | GEO 基礎穩固，但仍有改善空間 |
+| 60-74 | 尚可 (Fair) | 中等 GEO 能見度；有顯著的最佳化機會 |
+| 40-59 | 差劣 (Poor) | GEO 訊號弱；AI 系統可能難以引用或推薦 |
+| 0-39 | 危急 (Critical) | GEO 最佳化極少；網站大多對 AI 系統不可見 |
 
 ---
 
-## Issue Severity Classification
+## 問題嚴重度分類
 
-Every issue found during the audit is classified by severity:
+稽核期間找到的每個問題都依嚴重度分類：
 
-### Critical (Fix Immediately)
-- All AI crawlers blocked in robots.txt
-- No indexable content (JavaScript-rendered only with no SSR)
-- Domain-level noindex directive
-- Site returns 5xx errors on key pages
-- Complete absence of any structured data
-- Brand not recognized as an entity by any AI system
+### 嚴重 (Critical)（立即修復）
+- `robots.txt` 封鎖所有 AI 爬蟲
+- 沒有可索引的內容（僅依賴 JavaScript 渲染且無伺服器端渲染 SSR）
+- 網域層級的 noindex 指令
+- 關鍵頁面回傳 5xx 錯誤
+- 完全沒有任何結構化資料
+- 品牌未被任何 AI 系統視為實體（entity）
 
-### High (Fix Within 1 Week)
-- Key AI crawlers (GPTBot, ClaudeBot, PerplexityBot) blocked
-- No llms.txt file present
-- Zero question-answering content blocks on key pages
-- Missing Organization or LocalBusiness schema
-- No author attribution on content pages
-- All content behind login/paywall with no preview
+### 高 (High)（1 週內修復）
+- 關鍵 AI 爬蟲（GPTBot、ClaudeBot、PerplexityBot）被封鎖
+- 沒有 `llms.txt` 檔案
+- 關鍵頁面上沒有問答（question-answering）內容區塊
+- 缺少 Organization 或 LocalBusiness schema
+- 內容頁面沒有作者署名
+- 所有內容都在登入/付費牆後，且無預覽內容
 
-### Medium (Fix Within 1 Month)
-- Partial AI crawler blocking (some allowed, some blocked)
-- llms.txt exists but is incomplete or malformed
-- Content blocks average under 50 citability score
-- Missing FAQ schema on pages with FAQ content
-- Thin author bios without credentials
-- No Wikipedia or Reddit brand presence
+### 中 (Medium)（1 個月內修復）
+- 部分 AI 爬蟲封鎖（部分允許、部分封鎖）
+- `llms.txt` 存在但不完整或格式錯誤
+- 內容區塊平均低於 50 分的可引用度分數
+- 有 FAQ 內容的頁面缺少 FAQ schema
+- 作者簡介很單薄且無資歷證明
+- 沒有 Wikipedia 或 Reddit 品牌能見度
 
-### Low (Optimize When Possible)
-- Minor schema validation errors
-- Some images missing alt text
-- Content freshness issues on non-critical pages
-- Missing Open Graph tags
-- Suboptimal heading hierarchy on some pages
-- LinkedIn company page exists but is incomplete
+### 低 (Low)（可行時最佳化）
+- 輕微的 schema 驗證錯誤
+- 部分圖片缺少 alt 替代文字
+- 非關鍵頁面有內容新鮮度問題
+- 缺少 Open Graph 標籤
+- 部分頁面的標題層級（heading hierarchy）不理想
+- LinkedIn 公司頁面存在但不完整
 
 ---
 
-## Output Format
+## 輸出格式
 
-Generate a file called `GEO-AUDIT-REPORT.md` with the following structure:
+產生名為 `GEO-AUDIT-REPORT.md` 的檔案，結構如下：
 
 ```markdown
-# GEO Audit Report: [Site Name]
+# GEO 稽核報告：[網站名稱]
 
-**Audit Date:** [Date]
-**URL:** [URL]
-**Business Type:** [Detected Type]
-**Pages Analyzed:** [Count]
+**稽核日期:** [日期]
+**網址 (URL):** [網址]
+**業務類型:** [偵測到的類型]
+**已分析頁面數:** [數量]
 
 ---
 
-## Executive Summary
+## 執行摘要
 
-**Overall GEO Score: [X]/100 ([Rating])**
+**整體 GEO 分數: [X]/100 ([評等])**
 
-[2-3 sentence summary of the site's GEO health, biggest strengths, and most critical gaps.]
+[用 2-3 句話總結網站的 GEO 健康狀況、最大優勢以及最關鍵的缺口。]
 
-### Score Breakdown
+### 分數細項
 
-| Category | Score | Weight | Weighted Score |
+| 類別 | 分數 | 權重 | 加權分數 |
 |---|---|---|---|
-| AI Citability | [X]/100 | 25% | [X] |
-| Brand Authority | [X]/100 | 20% | [X] |
-| Content E-E-A-T | [X]/100 | 20% | [X] |
-| Technical GEO | [X]/100 | 15% | [X] |
-| Schema & Structured Data | [X]/100 | 10% | [X] |
-| Platform Optimization | [X]/100 | 10% | [X] |
-| **Overall GEO Score** | | | **[X]/100** |
+| AI 可引用度 | [X]/100 | 25% | [X] |
+| 品牌權威 | [X]/100 | 20% | [X] |
+| 內容 E-E-A-T | [X]/100 | 20% | [X] |
+| 技術 GEO | [X]/100 | 15% | [X] |
+| Schema 與結構化資料 | [X]/100 | 10% | [X] |
+| 平台最佳化 | [X]/100 | 10% | [X] |
+| **整體 GEO 分數** | | | **[X]/100** |
 
 ---
 
-## Critical Issues (Fix Immediately)
+## 嚴重問題 (立即修復)
 
-[List each critical issue with specific page URLs and recommended fix]
+[列出每個嚴重問題，包含特定頁面 URL 與建議的修復方式]
 
-## High Priority Issues
+## 高優先級問題
 
-[List each high-priority issue with details]
+[列出每個高優先級問題的詳細資訊]
 
-## Medium Priority Issues
+## 中優先級問題
 
-[List each medium-priority issue]
+[列出每個中優先級問題]
 
-## Low Priority Issues
+## 低優先級問題
 
-[List each low-priority issue]
-
----
-
-## Category Deep Dives
-
-### AI Citability ([X]/100)
-[Detailed findings, examples of good/bad passages, rewrite suggestions]
-
-### Brand Authority ([X]/100)
-[Platform presence map, mention volume, sentiment]
-
-### Content E-E-A-T ([X]/100)
-[Author quality, source citations, freshness, depth]
-
-### Technical GEO ([X]/100)
-[Crawler access, llms.txt, rendering, headers]
-
-### Schema & Structured Data ([X]/100)
-[Schema types found, validation results, missing opportunities]
-
-### Platform Optimization ([X]/100)
-[Presence on YouTube, Reddit, Wikipedia, etc.]
+[列出每個低優先級問題]
 
 ---
 
-## Quick Wins (Implement This Week)
+## 分類深入分析
 
-1. [Specific, actionable quick win with expected impact]
-2. [Another quick win]
-3. [Another quick win]
-4. [Another quick win]
-5. [Another quick win]
+### AI 可引用度 ([X]/100)
+[詳細發現結果、優良/不良段落範例、改寫建議]
 
-## 30-Day Action Plan
+### 品牌權威 ([X]/100)
+[平台能見度地圖、提及量、情緒分析]
 
-### Week 1: [Theme]
-- [ ] Action item 1
-- [ ] Action item 2
+### 內容 E-E-A-T ([X]/100)
+[作者品質、來源引用、新鮮度、深度]
 
-### Week 2: [Theme]
-- [ ] Action item 1
-- [ ] Action item 2
+### 技術 GEO ([X]/100)
+[爬蟲存取權限、llms.txt、渲染、標頭]
 
-### Week 3: [Theme]
-- [ ] Action item 1
-- [ ] Action item 2
+### Schema 與結構化資料 ([X]/100)
+[找到的 Schema 類型、驗證結果、缺失的機會]
 
-### Week 4: [Theme]
-- [ ] Action item 1
-- [ ] Action item 2
+### 平台最佳化 ([X]/100)
+[在 YouTube、Reddit、Wikipedia 等平台的能見度]
 
 ---
 
-## Appendix: Pages Analyzed
+## 快速致勝 (Quick Wins - 本週實施)
 
-| URL | Title | GEO Issues |
+1. [具體、可執行的快速致勝方案與預期影響]
+2. [另一個快速致勝方案]
+3. [另一個快速致勝方案]
+4. [另一個快速致勝方案]
+5. [另一個快速致勝方案]
+
+## 30 天行動計畫
+
+### 第 1 週: [主題]
+- [ ] 行動項目 1
+- [ ] 行動項目 2
+
+### 第 2 週: [主題]
+- [ ] 行動項目 1
+- [ ] 行動項目 2
+
+### 第 3 週: [主題]
+- [ ] 行動項目 1
+- [ ] 行動項目 2
+
+### 第 4 週: [主題]
+- [ ] 行動項目 1
+- [ ] 行動項目 2
+
+---
+
+## 附錄：已分析頁面
+
+| URL | 標題 | GEO 問題數量 |
 |---|---|---|
 | [url] | [title] | [issue count] |
 ```
 
 ---
 
-## Quality Gates
+## 品質門檻
 
-- **Page Limit:** Never crawl more than 50 pages per audit. Prioritize high-value pages.
-- **Timeout:** 30-second maximum per page fetch. Skip pages that exceed this.
-- **Robots.txt:** Always check and respect robots.txt before crawling. Note any AI-specific directives.
-- **Rate Limiting:** Wait at least 1 second between page fetches to avoid overloading the server.
-- **Error Handling:** Log failed fetches but continue the audit. Report fetch failures in the appendix.
-- **Content Type:** Only analyze HTML pages. Skip PDFs, images, and other binary content.
-- **Deduplication:** Canonicalize URLs before crawling. Skip duplicate content (e.g., HTTP vs HTTPS, www vs non-www, trailing slashes).
+- **頁面限制 (Page Limit)：** 每次稽核（audit）不超過 50 個頁面。優先處理高價值頁面。
+- **逾時 (Timeout)：** 每次頁面擷取（fetch）最多 30 秒。超時頁面跳過。
+- **Robots.txt：** 爬取前永遠檢查並尊重 robots.txt。註明任何針對 AI 的特定指令（AI-specific directives）。
+- **速率限制 (Rate Limiting)：** 頁面擷取間至少等待 1 秒，避免讓伺服器（server）過載。
+- **錯誤處理 (Error Handling)：** 記錄失敗的擷取，但繼續執行稽核。在附錄（appendix）回報擷取失敗的項目。
+- **內容類型 (Content Type)：** 只分析 HTML 頁面。跳過 PDF、圖片（images）與其他二進位內容（binary content）。
+- **去重複化 (Deduplication)：** 爬取前將 URL 標準化（canonicalize）。跳過重複內容（例如 HTTP vs HTTPS、www vs non-www、結尾斜線等差異）。
 
 ---
 
-## Business-Type-Specific Audit Adjustments
+## 特定業務類型的稽核調整 (Business-Type-Specific Audit Adjustments)
 
-### SaaS Sites
-- Extra weight on: Feature comparison tables (high citability), integration pages, documentation quality
-- Check for: API documentation structure, changelog pages, knowledge base organization
-- Key schema: SoftwareApplication, FAQPage, HowTo
+### SaaS 網站
+- **額外加重權重於：** 功能比較表（高可引用度）、整合頁面、文件品質
+- **檢查重點：** API 文件架構、更新日誌（changelog）頁面、知識庫組織
+- **關鍵 Schema：** SoftwareApplication、FAQPage、HowTo
 
-### Local Businesses
-- Extra weight on: NAP consistency, Google Business Profile signals, local schema
-- Check for: Service area pages, location-specific content, review markup
-- Key schema: LocalBusiness, GeoCoordinates, OpeningHoursSpecification
+### 在地商家
+- **額外加重權重於：** NAP（名稱、地址、電話）一致性、Google 商家檔案（Google Business Profile）訊號、在地 Schema
+- **檢查重點：** 服務區域頁面、特定地點內容、評論標記
+- **關鍵 Schema：** LocalBusiness、GeoCoordinates、OpeningHoursSpecification
 
-### E-commerce Sites
-- Extra weight on: Product descriptions (citability), comparison content, buying guides
-- Check for: Product schema completeness, review aggregation, FAQ sections on product pages
-- Key schema: Product, AggregateRating, Offer, BreadcrumbList
+### 電子商務網站 (E-commerce Sites)
+- **額外加重權重於：** 產品描述（可引用度）、比較內容、購買指南
+- **檢查重點：** Product Schema 完整性、評論彙總、產品頁面上的 FAQ 區塊
+- **關鍵 Schema：** Product、AggregateRating、Offer、BreadcrumbList
 
-### Publishers
-- Extra weight on: Article quality, author credentials, source citation practices
-- Check for: Article schema, author pages, publication date freshness, original research
-- Key schema: Article, NewsArticle, Person (author), ClaimReview
+### 出版者
+- **額外加重權重於：** 文章品質、作者資歷證明、來源引用實務
+- **檢查重點：** Article Schema、作者頁面、發布日期新鮮度、原創研究
+- **關鍵 Schema：** Article、NewsArticle、Person（作者）、ClaimReview
 
-### Agency/Services
-- Extra weight on: Case studies (citability), expertise demonstration, thought leadership
-- Check for: Portfolio schema, team credentials, industry-specific expertise signals
-- Key schema: Organization, Service, Person (team), Review
+### 代理商/服務 (Agency/Services)
+- **額外加重權重於：** 案例研究（可引用度）、專業度展現、思想領導力（thought leadership）
+- **檢查重點：** 作品集（portfolio）Schema、團隊資歷證明、特定產業專業度訊號
+- **關鍵 Schema：** Organization、Service、Person（團隊）、Review

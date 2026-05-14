@@ -1,345 +1,345 @@
 ---
 name: geo-content
-description: Content quality and E-E-A-T assessment for AI citability — evaluate experience, expertise, authoritativeness, trustworthiness, and content structure
+description: 針對 AI 引用性進行內容品質與 E-E-A-T 評估，檢查經驗 (Experience)、專業性 (Expertise)、權威性 (Authoritativeness)、可信度 (Trustworthiness) 與內容結構
 version: 1.0.0
 author: geo-seo-claude
 tags: [geo, content-quality, eeat, citability, ai-content, topical-authority]
-allowed-tools: Read, Grep, Glob, Bash, WebFetch, Write
+allowed-tools: [Read, Grep, Glob, Bash, WebFetch, Write]
 ---
 
-# GEO Content Quality & E-E-A-T Assessment
+# GEO 內容品質與 E-E-A-T 評估
 
-## Purpose
+## 目的
 
-AI search platforms do not just find content — they evaluate whether content deserves to be cited. The primary framework for this evaluation is **E-E-A-T** (Experience, Expertise, Authoritativeness, Trustworthiness), which per Google's December 2025 Quality Rater Guidelines update now applies to **ALL competitive queries**, not just YMYL (Your Money Your Life) topics. Content that scores high on E-E-A-T is dramatically more likely to be cited by AI platforms.
+AI 搜尋平台不僅是在尋找內容，還會評估內容是否值得被引用。這項評估的主要框架是 **E-E-A-T**（經驗 Experience, 專業性 Expertise, 權威性 Authoritativeness, 可信度 Trustworthiness）。根據 Google 2025 年 12 月《品質評分者指南 (Quality Rater Guidelines)》的更新，E-E-A-T 現在適用於**所有競爭性查詢 (Queries)**，而不僅限於 YMYL（攸關金錢或生命 Your Money Your Life）主題。E-E-A-T 分數高的內容，被 AI 平台引用的機率會大幅提高。
 
-This skill evaluates content through two lenses:
-1. **E-E-A-T signals** — does the content demonstrate real expertise and trust?
-2. **AI citability** — is the content structured so AI platforms can extract and cite specific claims?
+此技能從兩個角度評估內容：
+1. **E-E-A-T 訊號** — 內容是否展現真實的專業性與信任？
+2. **AI 引用性 (Citability)** — 內容結構是否便於 AI 平台擷取並引用具體主張 (Claims)？
 
-## How to Use This Skill
+## 如何使用此技能
 
-1. Fetch the target page(s) — homepage, key blog posts, service/product pages
-2. Evaluate E-E-A-T across the 4 dimensions (25% each)
-3. Assess content quality metrics (structure, readability, depth)
-4. Check for AI content quality signals
-5. Evaluate topical authority across the site
-6. Score and generate GEO-CONTENT-ANALYSIS.md
-
----
-
-## E-E-A-T Framework (100 points total)
-
-### Experience — 25 points
-First-hand knowledge and direct involvement with the topic. AI platforms increasingly distinguish between content that reports on a topic and content from someone who has DONE it.
-
-**Signals to evaluate:**
-
-| Signal | Points | How to Score |
-|---|---|---|
-| First-person accounts ("I tested...", "We implemented...") | 5 | 5 if present and specific, 3 if generic, 0 if absent |
-| Original research or data not available elsewhere | 5 | 5 if original data, 3 if references original work, 0 if none |
-| Case studies with specific results | 4 | 4 if detailed with numbers, 2 if general, 0 if none |
-| Screenshots, photos, or evidence of direct use | 3 | 3 if authentic evidence, 1 if stock/generic, 0 if none |
-| Specific examples from personal experience | 4 | 4 if specific and unique, 2 if somewhat specific, 0 if generic |
-| Demonstrations of process (not just outcome) | 4 | 4 if step-by-step from experience, 2 if partial, 0 if none |
-
-**What to flag as weak Experience:**
-- Content that only summarizes what other sources say without adding new perspective
-- Generic advice that could apply to any situation ("It depends on your needs")
-- No mention of actual usage, testing, or direct involvement
-- Hedging language that suggests lack of direct knowledge ("reportedly", "supposedly", "some say")
-
-### Expertise — 25 points
-Demonstrated knowledge depth and professional competence in the subject matter.
-
-**Signals to evaluate:**
-
-| Signal | Points | How to Score |
-|---|---|---|
-| Author credentials visible (bio, degrees, certifications) | 5 | 5 if full credentials, 3 if basic bio, 0 if no author |
-| Technical depth appropriate to topic | 5 | 5 if thorough technical treatment, 3 if adequate, 0 if superficial |
-| Methodology explanation (how conclusions were reached) | 4 | 4 if clear methodology, 2 if some explanation, 0 if none |
-| Data-backed claims (statistics, research citations) | 4 | 4 if well-sourced, 2 if some data, 0 if unsupported claims |
-| Industry-specific terminology used correctly | 3 | 3 if accurate specialized language, 1 if basic, 0 if errors |
-| Author page with detailed professional background | 4 | 4 if dedicated author page, 2 if brief bio, 0 if none |
-
-**What to flag as weak Expertise:**
-- Claims without supporting evidence or sources
-- Surface-level coverage of complex topics
-- Misuse of technical terminology
-- No visible author or author without relevant credentials
-- Content that is broad and generic rather than deep and specific
-
-### Authoritativeness — 25 points
-Recognition by others as a credible source on the topic.
-
-**Signals to evaluate:**
-
-| Signal | Points | How to Score |
-|---|---|---|
-| Inbound citations from authoritative sources | 5 | 5 if cited by major sources, 3 if some citations, 0 if none |
-| Author quoted or cited in press/media | 4 | 4 if media mentions, 2 if industry mentions, 0 if none |
-| Industry awards or recognition mentioned | 3 | 3 if relevant awards, 1 if tangential, 0 if none |
-| Speaker credentials (conferences, events) | 3 | 3 if listed, 0 if none |
-| Published in peer-reviewed or respected outlets | 4 | 4 if tier-1 publications, 2 if industry outlets, 0 if none |
-| Comprehensive topic coverage (topical authority) | 3 | 3 if site covers topic thoroughly, 1 if some coverage, 0 if isolated |
-| Brand mentioned on Wikipedia or authoritative references | 3 | 3 if Wikipedia, 2 if other encyclopedic refs, 0 if none |
-
-**What to flag as weak Authoritativeness:**
-- Single-topic site with no depth of coverage
-- No external validation of expertise claims
-- No backlinks from authoritative sources
-- Claims of authority without evidence (self-proclaimed "expert")
-
-### Trustworthiness — 25 points
-Signals that the content and its publisher are reliable and transparent.
-
-**Signals to evaluate:**
-
-| Signal | Points | How to Score |
-|---|---|---|
-| Contact information visible (address, phone, email) | 4 | 4 if full contact info, 2 if email only, 0 if none |
-| Privacy policy present and linked | 2 | 2 if present, 0 if absent |
-| Terms of service present | 1 | 1 if present, 0 if absent |
-| HTTPS with valid certificate | 2 | 2 if valid HTTPS, 0 if not |
-| Editorial standards or corrections policy | 3 | 3 if documented, 1 if implicit, 0 if none |
-| Transparent about business model and conflicts | 3 | 3 if clear disclosures, 1 if some, 0 if none |
-| Reviews and testimonials from real customers | 3 | 3 if verified reviews, 1 if testimonials, 0 if none |
-| Accurate claims (no misinformation detected) | 4 | 4 if all claims accurate, 2 if mostly accurate, 0 if errors found |
-| Clear affiliate/sponsorship disclosures | 3 | 3 if properly disclosed, 0 if undisclosed or absent |
-
-**What to flag as weak Trustworthiness:**
-- No contact information or physical address
-- Missing privacy policy or terms
-- Undisclosed affiliate links or sponsored content
-- Claims that are verifiably false or misleading
-- No way to contact the publisher for corrections
+1. 抓取目標頁面：首頁、關鍵部落格文章、服務/產品頁面。
+2. 依 4 個維度評估 E-E-A-T（各佔 25%）。
+3. 評估內容品質指標（結構、可讀性、深度）。
+4. 檢查 AI 內容品質訊號。
+5. 評估全站主題權威 (Topical Authority)。
+6. 評分並產生 GEO-CONTENT-ANALYSIS.md。
 
 ---
 
-## Content Quality Metrics
+## E-E-A-T 框架（總分 100）
 
-### Word Count Benchmarks
-These are **floors, not targets**. More words does not mean better content. The benchmark is the minimum length to adequately cover a topic for AI citability.
+### 經驗 (Experience) — 25 分
+對主題的第一手知識與直接參與。AI 平台越來越能區分「報導某個主題的內容」與「由真正實踐過的人所產出的內容」。
 
-| Page Type | Minimum Words | Ideal Range | Notes |
+**評估訊號：**
+
+| 訊號 (Signal) | 分數 | 評分標準 |
+|---|---|---|
+| 第一人稱敘述（"我測試了..."、"我們實作了..."） | 5 | 具體存在得 5，泛泛存在得 3，沒有得 0 |
+| 其他地方沒有的原創研究或數據 (Original Data) | 5 | 有原創數據得 5，引用原創成果得 3，沒有得 0 |
+| 包含具體結果的案例研究 (Case Studies) | 4 | 數據詳細得 4，概略描述得 2，沒有得 0 |
+| 螢幕截圖、照片或直接使用證據 | 3 | 真實證據得 3，圖庫/通用圖片得 1，沒有得 0 |
+| 來自個人經驗的具體範例 | 4 | 具體且獨特得 4，稍具體得 2，通用得 0 |
+| 展示過程（不只是結果） | 4 | 來自經驗且逐步說明得 4，部分說明得 2，沒有得 0 |
+
+**弱經驗訊號的警訊：**
+- 內容僅摘要其他來源，未加入新觀點。
+- 可套用到任何情境的通用建議（例如 "視您的需求而定"）。
+- 未提及實際使用、測試或直接參與。
+- 使用暗示缺乏直接知識的避險語言（如 "據報導"、"據稱"、"有人說"）。
+
+### 專業性 (Expertise) — 25 分
+主題知識深度與專業能力的展現。
+
+**評估訊號：**
+
+| 訊號 (Signal) | 分數 | 評分標準 |
+|---|---|---|
+| 作者憑證可見（簡介、學位、證照） | 5 | 憑證完整得 5，基本簡介得 3，無作者得 0 |
+| 技術深度符合主題 | 5 | 深入處理得 5，足夠得 3，流於表面得 0 |
+| 方法論說明（如何得出結論） | 4 | 方法清楚得 4，部分說明得 2，沒有得 0 |
+| 有數據支持的主張（統計數據、研究引用） | 4 | 來源可靠得 4，部分數據得 2，主張無根據得 0 |
+| 正確使用產業專有名詞 (Terminology) | 3 | 專業用語準確得 3，基本用語得 1，有誤得 0 |
+| 包含詳細專業背景的作者頁面 | 4 | 有專屬頁面得 4，簡短介紹得 2，沒有得 0 |
+
+**弱專業性的警訊：**
+- 主張缺乏支持證據或來源。
+- 複雜主題僅有表面層級的涵蓋。
+- 誤用技術術語。
+- 無可見作者，或作者缺乏相關憑證。
+- 內容廣泛且通用，缺乏深度與具體性。
+
+### 權威性 (Authoritativeness) — 25 分
+是否被他人認定為該主題的可靠來源 (Credible Source)。
+
+**評估訊號：**
+
+| 訊號 (Signal) | 分數 | 評分標準 |
+|---|---|---|
+| 來自權威來源的入站引用 (Inbound Citations) | 5 | 被主要來源引用得 5，有些許引用得 3，沒有得 0 |
+| 作者被媒體/報章雜誌引用或採訪 | 4 | 有媒體提及得 4，有產業提及得 2，沒有得 0 |
+| 提及產業獎項或認可 | 3 | 相關獎項得 3，邊緣相關得 1，沒有得 0 |
+| 講者憑證（研討會、活動） | 3 | 有列出得 3，沒有得 0 |
+| 發表於同儕審查或受尊重的管道 | 4 | 第一梯隊刊物得 4，產業管道得 2，沒有得 0 |
+| 全面的主題涵蓋（主題權威） | 3 | 網站徹底涵蓋主題得 3，部分涵蓋得 1，孤立內容得 0 |
+| 品牌在維基百科或權威參考資料中被提及 | 3 | 維基百科得 3，其他百科參考得 2，沒有得 0 |
+
+**弱權威性的警訊：**
+- 單一主題網站，但涵蓋內容缺乏深度。
+- 專業主張缺乏外部驗證。
+- 缺乏來自權威來源的反向連結 (Backlinks)。
+- 缺乏證據的權威主張（自稱為 "專家"）。
+
+### 可信度 (Trustworthiness) — 25 分
+內容與發布者可靠且透明的訊號。
+
+**評估訊號：**
+
+| 訊號 (Signal) | 分數 | 評分標準 |
+|---|---|---|
+| 聯絡資訊可見（地址、電話、Email） | 4 | 資訊完整得 4，僅有 Email 得 2，沒有得 0 |
+| 具備隱私權政策連結 | 2 | 有得 2，沒有得 0 |
+| 具備服務條款 (TOS) | 1 | 有得 1，沒有得 0 |
+| 使用具備有效憑證的 HTTPS | 2 | 有效 HTTPS 得 2，否則為 0 |
+| 編輯標準或更正政策 | 3 | 有文件說明得 3，隱含說明得 1，沒有得 0 |
+| 商業模式與衝突透明化 | 3 | 揭露清楚得 3，部分揭露得 1，沒有得 0 |
+| 來自真實客戶的評價與證言 | 3 | 經驗證的評價得 3，一般證言得 1，沒有得 0 |
+| 主張準確（未偵測到錯誤資訊） | 4 | 全部準確得 4，大多準確得 2，有誤得 0 |
+| 清楚的聯盟行銷/贊助揭露 | 3 | 妥善揭露得 3，未揭露或沒有得 0 |
+
+**弱可信度的警訊：**
+- 無聯絡資訊或實體地址。
+- 缺少隱私權政策或條款。
+- 未揭露的聯盟行銷連結或贊助內容。
+- 可驗證為錯誤或誤導的主張。
+- 無法聯絡發布者要求更正。
+
+---
+
+## 內容品質指標
+
+### 字數基準
+這些是**下限，而非目標**。字數多不代表內容好。基準 (Benchmark) 是為了讓 AI 具備引用性而充分涵蓋主題所需的最低長度。
+
+| 頁面類型 | 最少字數 | 理想範圍 | 備註 |
 |---|---|---|---|
-| Homepage | 500 | 500-1,500 | Clear value proposition, not a wall of text |
-| Blog post | 1,500 | 1,500-3,000 | Thorough but focused |
-| Pillar content / Ultimate guide | 2,000 | 2,500-5,000 | Comprehensive topic coverage |
-| Product page | 300 | 500-1,500 | Descriptions, specs, use cases |
-| Service page | 500 | 800-2,000 | What, how, why, for whom |
-| About page | 300 | 500-1,000 | Company/person story and credentials |
-| FAQ page | 500 | 1,000-2,500 | Thorough answers, not one-liners |
+| 首頁 | 500 | 500-1,500 | 清楚的價值主張，避免成為文字牆 |
+| 部落格文章 | 1,500 | 1,500-3,000 | 徹底且聚焦 |
+| 支柱內容 / 終極指南 | 2,000 | 2,500-5,000 | 全面的主題涵蓋 |
+| 產品頁面 | 300 | 500-1,500 | 描述、規格、使用案例 |
+| 服務頁面 | 500 | 800-2,000 | 內容、方式、原因、對象 |
+| 關於頁面 | 300 | 500-1,000 | 公司/個人故事與憑證 |
+| FAQ 頁面 | 500 | 1,000-2,500 | 詳盡回答，非單句回答 |
 
-### Readability Assessment
-- **Target Flesch Reading Ease**: 60-70 (8th-9th grade level)
-- This is NOT a direct ranking factor but affects citability — AI platforms prefer content that is clear and unambiguous
-- Overly academic writing (score < 30) reduces citability for general queries
-- Overly simple writing (score > 80) may lack the depth needed for expertise signals
+### 可讀性評估
+- **目標 Flesch Reading Ease**：60-70（約國中程度）
+- 這雖非直接排名因素，但會影響引用性；AI 平台偏好清楚、無歧義的內容。
+- 過度學術化（分數 < 30）會降低一般查詢的引用性。
+- 過度簡單（分數 > 80）可能缺乏專業訊號所需的深度。
 
-**How to estimate without a tool:**
-- Average sentence length: 15-20 words is ideal
-- Average paragraph length: 2-4 sentences
-- Presence of jargon: should be defined when first used
-- Passive voice: < 15% of sentences
+**無工具時的估算方式：**
+- 平均句長：15-20 字最理想。
+- 平均段落長度：2-4 句。
+- 專有名詞：第一次使用時應予定義。
+- 被動語態：應少於 15% 的句子。
 
-### Paragraph Structure for AI Parsing
-AI platforms extract content at the paragraph level. Each paragraph should be a self-contained unit of meaning.
+### AI 解析用的段落結構
+AI 平台會在段落層級 (Paragraph Level) 擷取內容。每個段落都應是自成一體的意義單元。
 
-**Optimal paragraph structure:**
-- **2-4 sentences** per paragraph (1-sentence paragraphs are weak; 5+ sentences are hard to extract)
-- **One idea per paragraph** — do not mix topics within a paragraph
-- **Lead with the key claim** — first sentence should contain the main point
-- **Support with evidence** — remaining sentences provide data, examples, or context
-- **Quotable standalone** — each paragraph should make sense if extracted in isolation
+**最佳段落結構：**
+- 每段 **2-4 句**（單句段落過弱，5 句以上難以擷取）。
+- **一段一重點** — 不要在同一段混合多個主題。
+- **以核心主張開頭** — 第一句應包含重點。
+- **以證據支持** — 後續句子提供數據、範例或脈絡。
+- **可獨立引用** — 每段被單獨擷取時仍應語意完整。
 
-### Heading Structure
-- **One H1 per page** — the primary topic/title
-- **H2 for major sections** — should represent distinct subtopics
-- **H3 for subsections** — nested under relevant H2
-- **No skipped levels** — do not go from H1 to H3 without an H2
-- **Descriptive headings** — "How to Optimize for AI Search" not "Section 2"
-- **Question-based headings** where appropriate — these map directly to AI queries
+### 標題結構
+- **每頁一個 H1** — 主要主題/標題。
+- **H2 用於主要章節** — 應代表不同的次主題。
+- **H3 用於子章節** — 嵌套在相關的 H2 下。
+- **標題不跳層** — 不要從 H1 直接跳到 H3。
+- **具描述性的標題** — 使用「如何針對 AI 搜尋進行最佳化」，而非「第二節」。
+- 適當使用 **問題式標題** — 可直接對應 AI 查詢。
 
-### Internal Linking
-- Every content page should link to 3-5 related pages on the same site
-- Links should use descriptive anchor text (not "click here")
-- Create a topic cluster structure: pillar page linked to/from all related subtopic pages
-- Orphan pages (no internal links pointing to them) are rarely cited by AI
-
----
-
-## AI Content Assessment
-
-### AI-Generated Content Policy
-AI-generated content is **acceptable** per Google's guidance (March 2024 clarification) as long as it demonstrates genuine E-E-A-T signals and has human oversight. The concern is not HOW content is created but WHETHER it provides value.
-
-### Signs of Low-Quality AI Content (flag these)
-
-| Signal | Description |
-|---|---|
-| Generic phrasing | "In today's fast-paced world...", "It's important to note that...", "At the end of the day..." |
-| No original insight | Content that only rephrases widely available information |
-| Lack of first-hand experience | No personal anecdotes, case studies, or specific examples |
-| Perfect but empty structure | Well-formatted headings with shallow content beneath them |
-| No specific examples | Uses abstract explanations without concrete instances |
-| Repetitive conclusions | Each section ends with a variation of the same point |
-| Hedging overload | "Generally speaking", "In most cases", "It depends on various factors" without specifying which factors |
-| Missing human voice | No opinions, preferences, or professional judgment expressed |
-| Filler content | Paragraphs that could be deleted without losing information |
-| No data or sources | Claims presented as facts without attribution or evidence |
-
-### High-Quality Content Signals (regardless of production method)
-
-| Signal | Description |
-|---|---|
-| Original data | Surveys, experiments, benchmarks, proprietary analysis |
-| Specific examples | Named products, companies, dates, numbers |
-| Contrarian or nuanced views | Disagreement with conventional wisdom, backed by reasoning |
-| First-person experience | "When I tested this..." or "Our team found..." |
-| Updated information | References to recent events, current data |
-| Expert opinion | Clear professional judgment, not just facts |
-| Practical recommendations | Specific, actionable advice, not vague guidance |
-| Trade-offs acknowledged | "This approach works well for X but not for Y because..." |
+### 內部連結
+- 每個內容頁面應連結到站內 3-5 個相關頁面。
+- 連結應使用描述性錨點文字 (Anchor Text)，避免使用「點擊這裡」。
+- 建立主題集群 (Topic Cluster) 結構：支柱頁面 (Pillar Page) 與所有相關次主題頁面互連。
+- 孤兒頁面 (Orphan Pages，無內部連結指向者) 很少被 AI 引用。
 
 ---
 
-## Content Freshness Assessment
+## AI 內容評估
 
-### Publication Dates
-- Check for visible `datePublished` and `dateModified` in both the content and structured data
-- Content without dates is treated as less trustworthy by AI platforms
-- Dates should be specific (January 15, 2026) not vague ("recently")
+### AI 生成內容政策
+根據 Google 指南（2024 年 3 月澄清），AI 生成內容是**可接受的**，前提是它展現出真正的 E-E-A-T 訊號並有人類監督。問題不在內容如何產生，而在於它是否提供價值。
 
-### Freshness Scoring
+### 低品質 AI 內容訊號（標記這些項目）
 
-| Criterion | Score |
+| 訊號 (Signal) | 描述 |
 |---|---|
-| Updated within 3 months | Excellent — current and relevant |
-| Updated within 6 months | Good — still reasonably current |
-| Updated within 12 months | Acceptable — may need refresh |
-| Updated 12-24 months ago | Warning — review for accuracy |
-| No date or 24+ months old | Critical — AI platforms may deprioritize |
+| 通用詞彙 | "在當今節奏快速的世界..."、"值得注意的是..."、"歸根究底..." |
+| 缺乏原創見解 | 內容僅改寫廣泛可得的資訊 |
+| 缺乏第一手經驗 | 無個人軼事、案例研究或具體範例 |
+| 完美但空洞的結構 | 標題格式漂亮，但內容淺薄 |
+| 缺乏具體範例 | 使用抽象解釋，無具體實例 |
+| 重複性的結論 | 每個章節都用同一種結論變體收尾 |
+| 過度避險 (Hedging) | 使用 "一般而言"、"多數情況下"、"視因素而定"，卻未說明是哪些因素 |
+| 缺乏人類聲音 | 沒有觀點、偏好或專業判斷 |
+| 填充內容 | 刪除後也不會損失任何資訊的段落 |
+| 缺乏數據或來源 | 主張被當作事實呈現，卻無歸屬說明或證據 |
 
-### Evergreen Indicators
-Some content remains relevant regardless of age. Flag content as evergreen if:
-- It covers fundamental concepts that do not change (physics, basic math, legal definitions)
-- It is clearly labeled as a reference/guide for lasting concepts
-- It does not contain time-dependent claims ("the latest", "currently", "in 2024")
+### 高品質內容訊號（不論產製方式）
+
+| 訊號 (Signal) | 描述 |
+|---|---|
+| 原創數據 | 調查、實驗、基準測試、專有分析 |
+| 具體範例 | 具名的產品、公司、日期、數字 |
+| 非主流或細膩觀點 | 有理由支持的非傳統觀點或異見 |
+| 第一人稱經驗 | "當我測試這個時..." 或 "我們的團隊發現..." |
+| 更新後的資訊 | 參照近期事件或當前數據 |
+| 專家意見 | 清楚的專業判斷，而不僅是事實陳述 |
+| 具體建議 | 具體可執行的建議，而非模糊指導 |
+| 權衡評估 | "此方法適用於 X 但不適用於 Y，因為..." |
 
 ---
 
-## Topical Authority Assessment
+## 內容新鮮度評估
 
-### What It Is
-Topical authority measures whether a site comprehensively covers a topic rather than touching on it superficially. AI platforms prefer citing sites that are recognized authorities on their topics.
+### 發布日期
+- 檢查內容與結構化資料中是否有可見的 `datePublished` 與 `dateModified`。
+- 沒有日期的內容會被 AI 平台視為較不可信。
+- 日期應具體（2026 年 1 月 15 日），避免模糊（如 "最近"）。
 
-### How to Assess
-1. **Content breadth**: Does the site have multiple pages covering different aspects of its core topic?
-2. **Content depth**: Do individual pages go deep into subtopics?
-3. **Topic clustering**: Are pages organized into logical groups with internal linking?
-4. **Content gaps**: Are there obvious subtopics that the site should cover but does not?
-5. **Competitor comparison**: Do competitors cover subtopics that this site misses?
+### 新鮮度評分
 
-### Scoring
+| 準則 | 分數 |
+|---|---|
+| 3 個月內更新 | 極佳 — 即時且相關 |
+| 6 個月內更新 | 良好 — 仍具備合理的時效性 |
+| 12 個月內更新 | 可接受 — 可能需要更新 |
+| 12-24 個月前更新 | 警告 — 應檢視準確性 |
+| 無日期或 24 個月以上 | 關鍵問題 — AI 平台可能會降低其優先權 |
 
-| Level | Description | Score Impact |
+### 常青 (Evergreen) 指標
+某些內容不論年代都保持相關。若符合以下情況，標記為常青：
+- 涵蓋不會改變的基本概念（物理、基礎數學、法律定義）。
+- 清楚標記為持久概念的參考/指南。
+- 不含具時效性的主張（如 "最新"、"目前"、"在 2024 年"）。
+
+---
+
+## 主題權威評估
+
+### 定義
+主題權威 (Topical Authority) 衡量網站是否全面涵蓋某主題，而非僅表面提及。AI 平台偏好引用被視為該主題權威的網站。
+
+### 評估方式
+1. **內容廣度**：網站是否有多個頁面涵蓋核心主題的不同面向？
+2. **內容深度**：個別頁面是否深入探討次主題？
+3. **主題集群**：頁面是否以邏輯群組與內部連結組織？
+4. **內容缺口**：是否有明顯應涵蓋但未涵蓋的次主題？
+5. **競爭者比較**：競爭者是否涵蓋了此站缺少的次主題？
+
+### 評分
+
+| 層級 | 描述 | 分數影響 |
 |---|---|---|
-| Authority | 20+ pages covering topic comprehensively, strong clustering | +10 bonus |
-| Developing | 10-20 pages with some clustering | +5 bonus |
-| Emerging | 5-10 pages on topic, limited clustering | +0 |
-| Thin | < 5 pages, no clustering | -5 penalty |
+| 權威 (Authority) | 20 頁以上全面涵蓋主題，集群結構強 | +10 加分 |
+| 發展中 (Developing) | 10-20 頁且具備部分集群 | +5 加分 |
+| 新興 (Emerging) | 5-10 頁且集群有限 | +0 |
+| 薄弱 (Thin) | 少於 5 頁，無集群 | -5 扣分 |
 
 ---
 
-## Overall Scoring (0-100)
+## 整體評分（Overall Scoring，0-100）
 
-### Score Composition
-| Component | Weight | Max Points |
+### 分數組成
+| 組成部分 | 權重 | 最高分 |
 |---|---|---|
-| Experience | 25% | 25 |
-| Expertise | 25% | 25 |
-| Authoritativeness | 25% | 25 |
-| Trustworthiness | 25% | 25 |
-| **Subtotal** | | **100** |
-| Topical Authority Modifier | | +10 to -5 |
-| **Final Score** | | **Capped at 100** |
+| 經驗 (Experience) | 25% | 25 |
+| 專業性 (Expertise) | 25% | 25 |
+| 權威性 (Authoritativeness) | 25% | 25 |
+| 可信度 (Trustworthiness) | 25% | 25 |
+| **小計** | | **100** |
+| 主題權威調整值 | | +10 至 -5 |
+| **最終分數** | | **最高 100** |
 
-### Score Interpretation
-- **85-100**: Exceptional — strong AI citation candidate across platforms
-- **70-84**: Good — solid foundation, specific improvements will increase citability
-- **55-69**: Average — multiple E-E-A-T gaps reducing AI visibility
-- **40-54**: Below Average — significant content quality and trust issues
-- **0-39**: Poor — fundamental content strategy overhaul needed
+### 分數解讀
+- **85-100**：卓越 — 跨平台強大的 AI 引用候選者。
+- **70-84**：良好 — 基礎穩固，具體改進可提高引用性。
+- **55-69**：平均 — 多個 E-E-A-T 缺口降低了 AI 能見度。
+- **40-54**：低於平均 — 內容品質與信任度有重大問題。
+- **0-39**：不佳 — 需要根本性的內容策略重整。
 
 ---
 
-## Output Format
+## 輸出格式
 
-Generate **GEO-CONTENT-ANALYSIS.md** with:
+產生 **GEO-CONTENT-ANALYSIS.md**，格式如下：
 
 ```markdown
-# GEO Content Quality & E-E-A-T Analysis — [Domain]
-Date: [Date]
+# GEO 內容品質與 E-E-A-T 分析 — [網域 Domain]
+日期：[Date]
 
-## Content Score: XX/100
+## 內容分數：XX/100
 
-## E-E-A-T Breakdown
-| Dimension | Score | Key Finding |
+## E-E-A-T 分解
+| 維度 | 分數 | 關鍵發現 |
 |---|---|---|
-| Experience | XX/25 | [One-line summary] |
-| Expertise | XX/25 | [One-line summary] |
-| Authoritativeness | XX/25 | [One-line summary] |
-| Trustworthiness | XX/25 | [One-line summary] |
+| 經驗 | XX/25 | [單句總結] |
+| 專業性 | XX/25 | [單句總結] |
+| 權威性 | XX/25 | [單句總結] |
+| 可信度 | XX/25 | [單句總結] |
 
-## Topical Authority Modifier: [+10 to -5]
+## 主題權威調整值：[+10 至 -5]
 
-## Pages Analyzed
-| Page | Word Count | Readability | Heading Structure | Citability Rating |
+## 已分析頁面
+| 頁面 | 字數 | 可讀性 | 標題結構 | 引用性評級 |
 |---|---|---|---|---|
-| [URL] | [Count] | [Score] | [Pass/Warn/Fail] | [High/Medium/Low] |
+| [URL] | [Count] | [Score] | [通過/警告/失敗] | [高/中/低] |
 
-## E-E-A-T Detailed Findings
+## E-E-A-T 詳細發現
 
-### Experience
-[Specific passages and pages with strong/weak experience signals]
+### 經驗
+[具備強/弱經驗訊號的具體段落與頁面]
 
-### Expertise
-[Author credentials found, technical depth assessment, specific gaps]
+### 專業性
+[發現的作者憑證、技術深度評估、具體缺口]
 
-### Authoritativeness
-[External validation found, topical authority assessment, gaps]
+### 權威性
+[發現的外部驗證、主題權威評估、缺口]
 
-### Trustworthiness
-[Trust signals present/missing, accuracy concerns if any]
+### 可信度
+[存在/缺失的信任訊號、準確性疑慮（如有）]
 
-## Content Quality Issues
-[Specific passages flagged with reasons and rewrite suggestions]
+## 內容品質問題
+[標記具體段落並說明原因與重寫建議]
 
-## AI Content Concerns
-[Any low-quality AI content patterns detected, with specific examples]
+## AI 內容疑慮
+[偵測到的任何低品質 AI 內容模式，並附上具體範例]
 
-## Freshness Assessment
-| Page | Published | Last Updated | Status |
+## 新鮮度評估
+| 頁面 | 發布日期 | 最後更新 | 狀態 |
 |---|---|---|---|
-| [URL] | [Date] | [Date] | [Current/Stale/No Date] |
+| [URL] | [Date] | [Date] | [即時/陳舊/無日期] |
 
-## Citability Assessment
-### Most Citable Passages
-[Top 5 passages that AI platforms are most likely to cite, with reasons]
+## 引用性評估
+### 最容易被引用的段落
+[AI 平台最可能引用的前 5 個段落及其原因]
 
-### Least Citable Pages
-[Pages with lowest citability, with specific improvement recommendations]
+### 最不容易被引用的頁面
+[引用性最低的頁面及其具體改善建議]
 
-## Improvement Recommendations
-### Quick Wins
-[Specific content changes that can be made immediately]
+## 改善建議
+### 快速改善
+[可立即執行的具體內容變更]
 
-### Content Gaps
-[Topics the site should cover to strengthen topical authority]
+### 內容缺口
+[網站應涵蓋的主題，以強化主題權威]
 
-### Author/E-E-A-T Improvements
-[Specific steps to strengthen E-E-A-T signals]
+### 作者/E-E-A-T 改善
+[強化 E-E-A-T 訊號的具體步驟]
 ```

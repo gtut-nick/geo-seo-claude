@@ -1,41 +1,41 @@
-# Contributing to GEO-SEO Claude
+# 為 GEO-SEO Claude 做貢獻
 
-First off, thank you for considering contributing to `geo-seo-claude`! It's people like you that make it such a great tool.
+首先，感謝你考慮為 `geo-seo-claude` 做出貢獻！正是因為有像你這樣的人，這個工具才能變得這麼實用。
 
-Below you'll find guidelines that help explain how to contribute to the project.
+以下是說明如何為本專案做出貢獻的指南。
 
-## How Can I Contribute?
+## 我可以如何貢獻？
 
-### Reporting Bugs
-If you find a bug:
-- Ensure the bug was not already reported by searching on GitHub under Issues.
-- If you're unable to find an open issue addressing the problem, open a new one. Be sure to include a title and clear description, as much relevant information as possible, and a code sample or an executable test case demonstrating the expected behavior that is not occurring.
+### 回報 Bug
+如果你發現 bug：
+- 請先在 GitHub 的 Issues 中搜尋，確認該 bug 尚未被回報。
+- 如果找不到正在處理該問題的開放 issue，請建立新的 issue。請務必包含標題、清楚描述、盡可能多的相關資訊，以及能展示預期行為未發生的程式碼範例或可執行測試案例。
 
-### Suggesting Enhancements
-If you have an idea for a feature or you think of something the tool is lacking:
-- Open a feature request under Issues.
-- Provide a clear and detailed explanation of the feature you want and why it's important.
+### 建議功能改善
+如果你有功能想法，或覺得工具缺少某些能力：
+- 請在 Issues 中開啟功能請求。
+- 清楚且詳細地說明你想要的功能，以及它為什麼重要。
 
-### Pull Requests
-The process described here has several goals:
+### Pull Request
+這裡描述的流程有幾個目標：
 
-1. Maintain the quality of the tool.
-2. Fix problems that are important to users.
-3. Engage the community in working toward the best possible product.
+1. 維持工具品質。
+2. 修復對使用者重要的問題。
+3. 讓社群一起打造盡可能好的產品。
 
-Please follow these steps to have your contribution considered by the maintainers:
+請依照以下步驟，讓維護者能評估你的貢獻：
 
-1. Follow all instructions in the template.
-2. Follow the styleguides provided below.
-3. After you submit your pull request, verify that all status checks are passing.
+1. 遵循範本中的所有指示。
+2. 遵循下方提供的風格指南。
+3. 提交 pull request 後，確認所有狀態檢查都已通過。
 
-## Styleguides
+## 風格指南
 
-### Git Commit Messages
-- Use the present tense ("Add feature" not "Added feature")
-- Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
-- Limit the first line to 72 characters or less
-- Reference issues and pull requests liberally after the first line
+### Git Commit 訊息
+- 使用現在式（例如 "Add feature"，不要用 "Added feature"）
+- 使用祈使語氣（例如 "Move cursor to..."，不要用 "Moves cursor to..."）
+- 第一行限制在 72 個字元以內
+- 在第一行之後盡量引用相關 issue 和 pull request
 
-### Documentation
-When modifying code or behavior, ensure that corresponding updates have been made to the documentation in the `/docs` directory. Read the existing docs beforehand to maintain structural and tonal consistency.
+### 文件
+修改程式碼或行為時，請確認 `/docs` 目錄中的對應文件也已更新。事前先閱讀既有文件，以維持結構與語氣一致。

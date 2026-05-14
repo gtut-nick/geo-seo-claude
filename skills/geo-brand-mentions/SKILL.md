@@ -1,6 +1,6 @@
 ---
 name: geo-brand-mentions
-description: Brand mention and authority scanner for AI visibility. Analyzes brand presence across platforms that AI models rely on for entity recognition and citation decisions. Produces a Brand Authority Score (0-100) with platform-specific recommendations.
+description: 用於 AI 能見度的品牌提及與權威掃描器。分析品牌在 AI 模型用於實體識別與引用判斷的平台上的存在感。產出品牌權威分數 Brand Authority Score（0-100），並提供各平台專屬建議。
 allowed-tools:
   - Read
   - Grep
@@ -10,254 +10,254 @@ allowed-tools:
   - Write
 ---
 
-# Brand Mention Scanner Skill
+# 品牌提及掃描技能
 
-## Core Insight
+## 核心洞察
 
-Brand mentions correlate approximately 3x more strongly with AI visibility than traditional backlinks. An Ahrefs study published in December 2025, analyzing 75,000 brands across AI search platforms, found that **unlinked brand mentions** -- references to a brand name without a hyperlink -- are a stronger predictor of whether AI systems cite and recommend a brand than Domain Rating or backlink count.
+品牌提及與 AI 能見度的相關性，大約比傳統反向連結（Backlinks）高出 3 倍。Ahrefs 於 2025 年 12 月發布的一項研究分析了 75,000 個品牌在 AI 搜尋平台上的表現，發現 **未連結的品牌提及（Unlinked Brand Mentions）** —— 也就是沒有超連結的品牌名稱引用 —— 比網域評級（Domain Rating, DR）或反向連結數量更能預測 AI 系統是否會引用並推薦某個品牌。
 
-The critical finding: **the platform where the mention appears matters enormously.** Not all mentions are equal. A mention on YouTube or Reddit carries far more weight for AI citation than a mention on a low-authority blog, because AI training data and retrieval systems disproportionately index high-engagement platforms.
+關鍵發現是：**提及出現在哪個平台至關重要。** 並非所有提及的價值都相等。YouTube 或 Reddit 上的一次提及，對 AI 引用的權重可能遠高於低權威部落格上的提及，因為 AI 訓練資料與檢索系統會不成比例地索引高互動平台。
 
-This inverts a core assumption of traditional SEO. In traditional SEO, a backlink from a high-DR site is the gold standard. In GEO, an unlinked mention on Reddit or a YouTube video description may be more valuable than a dofollow backlink from a DR 70 blog.
+這顛覆了傳統 SEO 的核心假設。在傳統 SEO 中，來自高 DR 網站的反向連結是黃金標準。在 GEO（生成式引擎最佳化）中，Reddit 上未連結的一次提及，或 YouTube 影片描述中的一次提及，可能比 DR 70 部落格的 dofollow 反向連結更有價值。
 
 ---
 
-## Platform Importance Ranking for AI Citations
+## AI 引用的平台重要性排名
 
-Based on the Ahrefs December 2025 study and corroborating research from Profound (2025) and Terakeet (2025):
+根據 Ahrefs 2025 年 12 月的研究，以及 Profound (2025) 與 Terakeet (2025) 的佐證研究：
 
-### 1. YouTube Mentions -- Correlation ~0.737 (STRONGEST)
+### 1. YouTube 提及 —— 相關性約 0.737（最強）
 
-**Why YouTube matters most:**
-- YouTube is the second-largest search engine and the largest video platform globally (2.5B+ monthly users).
-- AI training datasets heavily incorporate YouTube transcripts, descriptions, and metadata.
-- Google's Gemini and AI Overviews directly reference YouTube content.
-- Perplexity and ChatGPT both index and cite YouTube video content.
-- YouTube transcripts are particularly valuable because they contain natural language mentions in conversational context, which aligns with how AI models process and generate text.
+**YouTube 為何最重要：**
+- YouTube 是全球第二大搜尋引擎，也是最大的影片平台（每月使用者超過 25 億）。
+- AI 訓練資料集大量納入 YouTube 逐字稿、描述與中繼資料。
+- Google 的 Gemini 與 AI Overviews 會直接參考 YouTube 內容。
+- Perplexity 與 ChatGPT 都會索引並引用 YouTube 影片內容。
+- YouTube 逐字稿特別有價值，因為它們包含自然語言對話脈絡中的提及，這與 AI 模型處理與生成文字的方式一致。
 
-**What to check:**
-- **Brand YouTube channel:** Does the brand have an active YouTube channel? How many subscribers? Video count? Upload frequency?
-- **Third-party video mentions:** Are other YouTubers or channels mentioning the brand? In what context (reviews, tutorials, comparisons)?
-- **Video descriptions:** Does the brand name appear in video descriptions of industry-relevant content?
-- **Video transcripts:** Is the brand mentioned in spoken content of relevant videos? (AI models index transcripts)
-- **YouTube search presence:** When searching "[brand name]" on YouTube, do results appear? Are they positive?
-- **Comment mentions:** Is the brand mentioned in comments on relevant industry videos?
+**要檢查什麼：**
+- **品牌 YouTube 頻道：** 品牌是否有活躍的 YouTube 頻道？訂閱者多少？影片數量？上傳頻率？
+- **第三方影片提及：** 其他 YouTuber 或頻道是否提及該品牌？脈絡是什麼（評論、教學、比較）？
+- **影片描述：** 品牌名稱是否出現在產業相關內容的影片描述中？
+- **影片逐字稿：** 品牌是否在相關影片的口述內容中被提及？（AI 模型會索引逐字稿）
+- **YouTube 搜尋存在感：** 在 YouTube 搜尋「[品牌名稱]」時是否出現結果？結果是否正面？
+- **留言提及：** 品牌是否在相關產業影片的留言中被提及？
 
-**Scoring for YouTube (0-100):**
+**YouTube 評分（0-100）：**
 
-| Score | Criteria |
+| 分數 | 標準 |
 |---|---|
-| 90-100 | Active channel with 10K+ subscribers, regular uploads, brand mentioned in 20+ third-party videos, appears in YouTube search results for industry terms |
-| 70-89 | Active channel with 1K+ subscribers, brand mentioned in 10-19 third-party videos, some YouTube search presence |
-| 50-69 | Channel exists with some content, brand mentioned in 5-9 third-party videos, limited YouTube search presence |
-| 30-49 | Channel exists but inactive, brand mentioned in 1-4 third-party videos |
-| 10-29 | No channel or empty channel, brand mentioned in 1-2 videos only |
-| 0-9 | No YouTube presence whatsoever |
+| 90-100 | 活躍頻道且有 10K+ 訂閱者、定期上傳、品牌在 20+ 支第三方影片被提及、會出現在產業詞的 YouTube 搜尋結果中 |
+| 70-89 | 活躍頻道且有 1K+ 訂閱者、品牌在 10-19 支第三方影片被提及、有部分 YouTube 搜尋存在感 |
+| 50-69 | 有頻道且有部分內容、品牌在 5-9 支第三方影片被提及、YouTube 搜尋存在感有限 |
+| 30-49 | 有頻道但不活躍、品牌在 1-4 支第三方影片被提及 |
+| 10-29 | 沒有頻道或空頻道，品牌僅在 1-2 支影片被提及 |
+| 0-9 | 完全沒有 YouTube 存在感 |
 
 ---
 
-### 2. Reddit Mentions -- High Correlation
+### 2. Reddit 提及 —— 高相關性
 
-**Why Reddit matters:**
-- Reddit is one of the most heavily indexed platforms in AI training data (confirmed in Google's $60M/year Reddit licensing deal, 2024).
-- AI systems heavily weight Reddit for product recommendations, comparisons, and user sentiment.
-- "Reddit" is now appended to an estimated 10-15% of Google searches by users seeking authentic opinions.
-- Perplexity frequently cites Reddit threads as sources.
-- ChatGPT and Claude both reference Reddit discussions when answering product/service questions.
+**Reddit 為何重要：**
+- Reddit 是 AI 訓練資料中最常被索引的平台之一（Google 於 2024 年每年 6,000 萬美元的 Reddit 授權協議已證實此點）。
+- AI 系統在產品推薦、比較與使用者情緒上高度重視 Reddit。
+- 估計有 10-15% 的 Google 搜尋會被使用者加上「Reddit」字眼，以尋找真實意見。
+- Perplexity 經常引用 Reddit 討論串作為來源。
+- ChatGPT 與 Claude 在回答產品/服務問題時都會參考 Reddit 討論。
 
-**What to check:**
-- **Subreddit presence:** Is the brand discussed in relevant subreddits? Which ones?
-- **Mention volume:** How many Reddit threads mention the brand? What is the trend (increasing/decreasing)?
-- **Sentiment:** Are mentions mostly positive, negative, or neutral? What are common praise points and complaints?
-- **Official presence:** Does the brand have an official Reddit account? Do they participate in discussions? Have they done AMAs?
-- **Recommendation threads:** Does the brand appear in "What do you recommend for X?" threads? Is it the top recommendation or an also-ran?
-- **Subreddit community:** Does the brand have its own subreddit? How active is it?
+**要檢查什麼：**
+- **Subreddit 存在感：** 品牌是否在相關 subreddit 中被討論？哪些 subreddit？
+- **提及量：** 有多少 Reddit 討論串提及該品牌？趨勢如何（增加/減少）？
+- **情緒：** 提及多為正面、負面或中立？常見讚賞點與抱怨是什麼？
+- **官方存在感：** 品牌是否有官方 Reddit 帳號？是否參與討論？是否辦過 AMA（問我任何事）？
+- **推薦討論串：** 品牌是否出現在「你會推薦什麼 X？」這類討論串中？它是首選推薦還是陪榜選項？
+- **Subreddit 社群：** 品牌是否有自己的 subreddit？活躍程度如何？
 
-**Scoring for Reddit (0-100):**
+**Reddit 評分（0-100）：**
 
-| Score | Criteria |
+| 分數 | 標準 |
 |---|---|
-| 90-100 | Frequently recommended in relevant subreddits, predominantly positive sentiment, active official presence, own subreddit with 5K+ members, appears in top recommendations for industry queries |
-| 70-89 | Regularly mentioned in relevant subreddits, mostly positive sentiment, some official presence, appears in multiple recommendation threads |
-| 50-69 | Mentioned in several relevant threads, mixed sentiment, brand name is recognized by community members |
-| 30-49 | Occasional mentions, limited to 1-2 subreddits, no official presence |
-| 10-29 | Rare mentions, brand largely unknown on Reddit |
-| 0-9 | No Reddit presence |
+| 90-100 | 在相關 subreddit 中經常被推薦、情緒以正面為主、有活躍官方存在感、自有 subreddit 且有 5K+ 成員、在產業查詢的主要推薦中出現 |
+| 70-89 | 在相關 subreddit 中定期被提及、情緒多為正面、有部分官方存在感、出現在多個推薦討論串 |
+| 50-69 | 在數個相關討論串中被提及、情緒混合、品牌名稱被社群成員辨識 |
+| 30-49 | 偶爾被提及、限於 1-2 個 subreddit、沒有官方存在感 |
+| 10-29 | 很少被提及，品牌在 Reddit 上大體上不具知名度 |
+| 0-9 | 沒有 Reddit 存在感 |
 
 ---
 
-### 3. Wikipedia Presence -- High Correlation
+### 3. Wikipedia 存在感 —— 高相關性
 
-**Why Wikipedia matters:**
-- Wikipedia is one of the highest-authority sources in AI training data. All major AI models have been trained on Wikipedia dumps.
-- AI systems use Wikipedia as a primary source for entity recognition -- determining whether a brand is a "real" entity worth knowing about.
-- Wikidata (Wikipedia's structured data sibling) provides machine-readable facts that AI models use for knowledge graph construction.
-- Having a Wikipedia page is a strong signal of notability, which correlates with AI systems treating the brand as an authoritative entity.
+**Wikipedia 為何重要：**
+- Wikipedia 是 AI 訓練資料中權威性最高的來源之一。所有主要 AI 模型都曾以 Wikipedia dump 進行訓練。
+- AI 系統將 Wikipedia 作為實體識別（Entity Recognition）的主要來源，用來判斷品牌是否是值得被記錄的「真實」實體。
+- Wikidata（Wikipedia 的結構化資料姊妹專案）提供機器可讀的事實，AI 模型會用於知識圖譜建構。
+- 擁有 Wikipedia 頁面是知名度的強訊號，這與 AI 系統是否將品牌視為權威實體直接相關。
 
-**What to check:**
-- **Wikipedia page:** Does the brand or company have its own Wikipedia article? Is it marked for deletion or quality issues?
-- **Founder page:** Does the founder/CEO have a Wikipedia page? (Strong authority signal)
-- **Wikipedia citations:** Is the brand's website cited as a reference in any Wikipedia articles?
-- **Wikidata entry:** Does the brand have a Wikidata item (Q-number)? How complete is it?
-- **Wikipedia mentions:** Is the brand mentioned in other Wikipedia articles (industry articles, competitor pages, category pages)?
-- **Article quality:** If a Wikipedia page exists, is it a stub, start-class, or higher quality?
+**要檢查什麼：**
+- **Wikipedia 頁面：** 品牌或公司是否有自己的 Wikipedia 條目？是否被標記為刪除或品質問題？
+- **創辦人頁面：** 創辦人/CEO 是否有 Wikipedia 頁面？（強權威訊號）
+- **Wikipedia 引用：** 品牌網站是否在任何 Wikipedia 條目中被列為參考資料？
+- **Wikidata 項目：** 品牌是否有 Wikidata 項目（Q-number）？完整度如何？
+- **Wikipedia 提及：** 品牌是否在其他 Wikipedia 條目中被提及（產業條目、競品頁、分類頁）？
+- **條目品質：** 如果存在 Wikipedia 頁面，它是小作品（stub）、初級（start-class），還是更高品質？
 
-**Scoring for Wikipedia (0-100):**
+**Wikipedia 評分（0-100）：**
 
-| Score | Criteria |
+| 分數 | 標準 |
 |---|---|
-| 90-100 | Detailed Wikipedia article (B-class or higher), Wikidata entry with complete properties, brand cited as reference in multiple articles, founder has Wikipedia page |
-| 70-89 | Wikipedia article exists (start-class or higher), Wikidata entry exists, brand mentioned in 2+ other Wikipedia articles |
-| 50-69 | Wikipedia article exists (stub or start), basic Wikidata entry, limited mentions in other articles |
-| 30-49 | No Wikipedia article but brand is mentioned in other articles or cited as reference; Wikidata entry may exist |
-| 10-29 | Brand mentioned in 1-2 Wikipedia articles as a passing reference only |
-| 0-9 | No Wikipedia or Wikidata presence of any kind |
+| 90-100 | 詳細 Wikipedia 條目（B-class 或更高）、Wikidata 項目屬性完整、品牌在多個條目中作為參考資料被引用、創辦人有 Wikipedia 頁面 |
+| 70-89 | 有 Wikipedia 條目（初級或更高）、有 Wikidata 項目、品牌在 2+ 個其他 Wikipedia 條目中被提及 |
+| 50-69 | 有 Wikipedia 條目（小作品或初級）、基本 Wikidata 項目、在其他條目中提及有限 |
+| 30-49 | 沒有 Wikipedia 條目，但品牌在其他條目中被提及或作為參考資料被引用；可能有 Wikidata 項目 |
+| 10-29 | 品牌僅在 1-2 個 Wikipedia 條目中被順帶提及 |
+| 0-9 | 沒有任何 Wikipedia 或 Wikidata 存在感 |
 
 ---
 
-### 4. LinkedIn Presence -- Moderate Correlation
+### 4. LinkedIn 存在感 —— 中度相關性
 
-**Why LinkedIn matters:**
-- LinkedIn content is increasingly indexed by AI systems for professional and B2B context.
-- Company LinkedIn pages and employee thought leadership posts build brand entity signals.
-- AI models reference LinkedIn for company information, team credentials, and professional authority.
-- LinkedIn articles and posts are indexed by search engines and AI crawlers.
+**LinkedIn 為何重要：**
+- LinkedIn 內容正越來越多地被 AI 系統索引用於專業與 B2B 脈絡。
+- 公司 LinkedIn 頁面與員工的思想領導（Thought Leadership）內容會建立品牌實體訊號。
+- AI 模型會參考 LinkedIn 取得公司資訊、團隊資歷與專業權威。
+- LinkedIn 文章與貼文會被搜尋引擎與 AI 爬蟲索引。
 
-**What to check:**
-- **Company page:** Does the brand have a LinkedIn company page? Follower count? Post frequency?
-- **Employee thought leadership:** Are employees (especially leadership) posting thought leadership content that mentions the brand?
-- **Company mentions:** Is the brand mentioned in LinkedIn posts by non-employees? Industry analysts? Customers?
-- **LinkedIn articles:** Are there long-form LinkedIn articles about or mentioning the brand?
-- **Employee profiles:** Do employees list the company with detailed descriptions? Do they have strong professional profiles?
-- **Engagement metrics:** What is the typical engagement (likes, comments, shares) on company posts?
+**要檢查什麼：**
+- **公司頁面：** 品牌是否有 LinkedIn 公司頁面？追蹤者數？發文頻率？
+- **員工思想領導：** 員工（尤其是領導層）是否發布提及品牌的思想領導內容？
+- **公司提及：** 品牌是否被非員工、產業分析師或客戶在 LinkedIn 貼文中提及？
+- **LinkedIn 文章：** 是否有關於或提及品牌的長篇 LinkedIn 文章？
+- **員工個人檔案：** 員工是否列出公司並提供詳細描述？是否具備強大的專業檔案？
+- **互動指標：** 公司貼文的一般互動（按讚、留言、分享）狀況如何？
 
-**Scoring for LinkedIn (0-100):**
+**LinkedIn 評分（0-100）：**
 
-| Score | Criteria |
+| 分數 | 標準 |
 |---|---|
-| 90-100 | Active company page with 10K+ followers, leadership regularly posts thought leadership, brand frequently mentioned by industry professionals, strong employee profiles |
-| 70-89 | Active company page with 5K+ followers, some employee thought leadership, occasional third-party mentions |
-| 50-69 | Company page exists with 1K+ followers, irregular posting, limited third-party mentions |
-| 30-49 | Company page exists but is sparse or inactive, few followers, no third-party mentions |
-| 10-29 | Basic company page with minimal information |
-| 0-9 | No LinkedIn company page |
+| 90-100 | 活躍公司頁面且有 10K+ 追蹤者、領導層定期發布思想領導內容、品牌經常被產業專業人士提及、員工檔案完整強健 |
+| 70-89 | 活躍公司頁面且有 5K+ 追蹤者、有部分員工思想領導內容、偶爾有第三方提及 |
+| 50-69 | 有公司頁面且有 1K+ 追蹤者、發文不規律、第三方提及有限 |
+| 30-49 | 有公司頁面但內容稀疏或不活躍、追蹤者少、沒有第三方提及 |
+| 10-29 | 基本公司頁面，資訊很少 |
+| 0-9 | 沒有 LinkedIn 公司頁面 |
 
 ---
 
-### 5. Other Platform Presence -- Supplementary
+### 5. 其他平台存在感 —— 補充訊號
 
-These platforms have lower but still meaningful correlation with AI visibility:
+這些平台與 AI 能見度的相關性較低，但仍具備意義：
 
 #### Quora
-- **Relevance:** Quora answers are frequently included in AI training data and cited by Perplexity.
-- **What to check:** Is the brand mentioned in Quora answers to industry-relevant questions? Does the brand have an official Quora presence?
-- **Signal strength:** Moderate for B2C, lower for B2B.
+- **相關性：** Quora 回答經常包含在 AI 訓練資料中，也會被 Perplexity 引用。
+- **要檢查什麼：** 品牌是否在產業相關問題的 Quora 回答中被提及？品牌是否有官方 Quora 存在感？
+- **訊號強度：** 對 B2C 為中等，對 B2B 較低。
 
 #### Stack Overflow / Stack Exchange
-- **Relevance:** Critical for developer-facing brands (SaaS, dev tools, APIs).
-- **What to check:** Is the brand's product discussed in Stack Overflow questions/answers? Does the brand have a tag? Do they have an official account answering questions?
-- **Signal strength:** High for technical products, irrelevant for most B2C.
+- **相關性：** 對面向開發者的品牌（SaaS、開發工具、API）至關重要。
+- **要檢查什麼：** 品牌產品是否在 Stack Overflow 問答中被討論？品牌是否有專屬標籤（Tag）？是否有官方帳號回答問題？
+- **訊號強度：** 對技術產品高，對多數 B2C 無關。
 
 #### GitHub
-- **Relevance:** Critical for open-source and developer-focused brands.
-- **What to check:** Does the brand have a GitHub organization? Stars on repositories? Mentions in other repos' documentation or discussions?
-- **Signal strength:** High for dev tools and open-source, low for non-technical brands.
+- **相關性：** 對開源與開發者導向品牌至關重要。
+- **要檢查什麼：** 品牌是否有 GitHub 組織（Organization）？存放庫（Repository）的星數（Stars）？是否在其他 Repo 的文件或討論中被提及？
+- **訊號強度：** 對開發工具與開源項目高，對非技術品牌低。
 
-#### Industry Forums and Communities
-- **Relevance:** Niche authority signals that AI models pick up from domain-specific training data.
-- **What to check:** Is the brand discussed in industry-specific forums (e.g., Hacker News for tech, ProductHunt for startups, industry-specific Slack communities)?
-- **Signal strength:** Moderate, but valuable for establishing niche authority.
+#### 產業論壇與社群
+- **相關性：** AI 模型會從特定領域訓練資料中捕捉到利基權威（Niche Authority）訊號。
+- **要檢查什麼：** 品牌是否在產業特定論壇被討論（例如科技領域的 Hacker News、新創領域的 ProductHunt、產業特定 Slack 社群）？
+- **訊號強度：** 中等，但有助於建立利基權威。
 
-#### News and Press
-- **Relevance:** News mentions build entity authority and recency signals.
-- **What to check:** Has the brand been covered by major news outlets or industry publications? How recently? What was the context?
-- **Signal strength:** Moderate. Recency matters -- a mention in the last 6 months is far more valuable than one from 3 years ago.
+#### 新聞與媒體
+- **相關性：** 新聞提及會建立實體權威與新近性（Recency）訊號。
+- **要檢查什麼：** 品牌是否被主流新聞媒體或產業出版物報導？多近期？脈絡是什麼？
+- **訊號強度：** 中等。新近性很重要 —— 過去 6 個月內的提及，遠比 3 年前的一次提及更有價值。
 
 #### Podcasts
-- **Relevance:** Growing AI training data source. Transcripts are increasingly indexed.
-- **What to check:** Has the brand or its leadership appeared on podcasts? Are podcast transcripts mentioning the brand indexed by search engines?
-- **Signal strength:** Moderate and growing.
+- **相關性：** 正在成長的 AI 訓練資料來源。逐字稿越來越常被索引。
+- **要檢查什麼：** 品牌或其領導層是否上過 Podcast？提及品牌的 Podcast 逐字稿是否被搜尋引擎索引？
+- **訊號強度：** 中等且持續成長。
 
 ---
 
-## Composite Brand Authority Score
+## 綜合品牌權威分數 (Brand Authority Score)
 
-### Scoring Formula
+### 評分公式
 
-| Platform | Weight | Rationale |
+| 平台 | 權重 | 理由 |
 |---|---|---|
-| YouTube Presence | 25% | Strongest correlation with AI citation (0.737) |
-| Reddit Presence | 25% | Second strongest correlation; critical for product recommendations |
-| Wikipedia / Wikidata | 20% | Entity recognition foundation; AI training data cornerstone |
-| LinkedIn Authority | 15% | Professional authority signals; B2B relevance |
-| Other Platforms | 15% | Supplementary signals from Quora, GitHub, news, forums, podcasts |
+| YouTube 存在感 | 25% | 與 AI 引用的相關性最強（0.737） |
+| Reddit 存在感 | 25% | 第二強相關性；對產品推薦至關重要 |
+| Wikipedia / Wikidata | 20% | 實體識別基礎；AI 訓練資料基石 |
+| LinkedIn 權威性 | 15% | 專業權威訊號；B2B 相關性 |
+| 其他平台 | 15% | 來自 Quora、GitHub、新聞、論壇、Podcast 的補充訊號 |
 
-**Formula:**
+**公式：**
 ```
 Brand_Authority_Score = (YouTube * 0.25) + (Reddit * 0.25) + (Wikipedia * 0.20) + (LinkedIn * 0.15) + (Other * 0.15)
 ```
 
-### Score Interpretation
+### 分數解讀
 
-| Score Range | Rating | Interpretation |
+| 分數範圍 | 評級 | 解讀 |
 |---|---|---|
-| 85-100 | Dominant | Brand is a well-recognized entity across AI platforms. Highly likely to be cited and recommended by AI systems. |
-| 70-84 | Strong | Brand has solid cross-platform presence. AI systems likely recognize and cite it for relevant queries. |
-| 50-69 | Moderate | Brand has presence on some platforms but gaps exist. AI citation is inconsistent. |
-| 30-49 | Weak | Brand has limited platform presence. AI systems may not recognize it as a distinct entity. |
-| 0-29 | Minimal | Brand has negligible platform presence. AI systems are unlikely to cite or recommend it. |
+| 85-100 | Dominant (主導) | 品牌在 AI 平台上是被充分識別的實體。極有可能被 AI 系統引用與推薦。 |
+| 70-84 | Strong (強勁) | 品牌具備穩固的跨平台存在感。AI 系統可能會針對相關查詢辨識並引用它。 |
+| 50-69 | Moderate (中等) | 品牌在部分平台有存在感，但仍有缺口。AI 引用不穩定。 |
+| 30-49 | Weak (微弱) | 品牌平台存在感有限。AI 系統可能不會將其辨識為獨立實體。 |
+| 0-29 | Minimal (極低) | 品牌平台存在感極低。AI 系統不太可能引用或推薦它。 |
 
 ---
 
-## Analysis Procedure
+## 分析流程
 
-### Step 1: Identify Brand Information
+### Step 1: 識別品牌資訊
 
-Gather the following from the user or from the website:
-- **Brand name** (exact spelling, including any official variants)
-- **Founder/CEO name(s)**
-- **Domain URL**
-- **Industry/category**
-- **Key products or services** (top 3)
-- **Key competitors** (for comparison context)
+從使用者或網站蒐集以下資訊：
+- **品牌名稱**（精確拼法，包含任何官方變體）
+- **創辦人/CEO 姓名**
+- **網域 URL**
+- **產業/類別**
+- **主要產品或服務**（前 3 項）
+- **主要競爭對手**（用於比較脈絡）
 
-### Step 2: Platform Scanning
+### Step 2: 平台掃描
 
-For each platform, use WebFetch to search and assess presence:
+對每個平台使用 WebFetch 搜尋並評估存在感：
 
-**YouTube Check:**
+**YouTube 檢查:**
 1. Search: `[brand name] site:youtube.com`
-2. Check: `youtube.com/@[brand-name]` or `youtube.com/c/[brand-name]` for official channel
-3. Search: `"[brand name]" site:youtube.com` (exact match for mentions in descriptions)
-4. Note: Channel subscriber count, video count, latest upload date, third-party mention count
+2. Check: `youtube.com/@[brand-name]` 或 `youtube.com/c/[brand-name]` 是否為官方頻道
+3. Search: `"[brand name]"` site:youtube.com（精確比對描述中的提及）
+4. 記錄：頻道訂閱數、影片數、最新上傳日期、第三方提及數量
 
-**Reddit Check:**
+**Reddit 檢查:**
 1. Search: `[brand name] site:reddit.com`
-2. Search: `"[brand name]" site:reddit.com` (exact match)
-3. Check: `reddit.com/r/[brand-name]` for official subreddit
-4. Check: `reddit.com/user/[brand-name]` for official account
-5. Note: Thread count, dominant subreddits, sentiment (positive/negative/neutral), recommendation frequency
+2. Search: `"[brand name]"` site:reddit.com（精確比對）
+3. Check: `reddit.com/r/[brand-name]` 是否為官方 subreddit
+4. Check: `reddit.com/user/[brand-name]` 是否為官方帳號
+5. 記錄：討論串數量、主要 subreddit、情緒（正面/負面/中立）、推薦頻率
 
-**Wikipedia Check (IMPORTANT — use BOTH methods to avoid false negatives):**
+**Wikipedia 檢查（重要 —— 使用兩種方法避免偽陰性）：**
 
-**Method 1 — Python API check (MOST RELIABLE, do this FIRST):**
+**Method 1 —— Python API check（最可靠，優先執行）：**
 ```bash
 python3 -c "
 import requests, json
 from urllib.parse import quote_plus
 brand = '[Brand_Name]'
-# Check Wikipedia API directly
-api_url = f'https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={quote_plus(brand)}&format=json'
+# 直接檢查 Wikipedia API
+api_url = f'[https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=](https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=){quote_plus(brand)}&format=json'
 r = requests.get(api_url, headers={'User-Agent': 'GEO-Audit/1.0'}, timeout=15)
 data = r.json()
 results = data.get('query', {}).get('search', [])
 if results and brand.lower() in results[0].get('title', '').lower():
     print(f'WIKIPEDIA PAGE EXISTS: {results[0][\"title\"]}')
-    print(f'URL: https://en.wikipedia.org/wiki/{results[0][\"title\"].replace(\" \", \"_\")}')
+    print(f'URL: [https://en.wikipedia.org/wiki/](https://en.wikipedia.org/wiki/){results[0][\"title\"].replace(\" \", \"_\")}')
 else:
     print('No direct Wikipedia page found')
-# Check Wikidata
-wd_url = f'https://www.wikidata.org/w/api.php?action=wbsearchentities&search={quote_plus(brand)}&language=en&format=json'
+# 檢查 Wikidata
+wd_url = f'[https://www.wikidata.org/w/api.php?action=wbsearchentities&search=](https://www.wikidata.org/w/api.php?action=wbsearchentities&search=){quote_plus(brand)}&language=en&format=json'
 r2 = requests.get(wd_url, headers={'User-Agent': 'GEO-Audit/1.0'}, timeout=15)
 wd = r2.json()
 entities = wd.get('search', [])
@@ -266,215 +266,215 @@ if entities:
 "
 ```
 
-**Method 2 — Direct URL check (backup verification):**
-1. WebFetch: `https://en.wikipedia.org/wiki/[Brand_Name]` — check if the page loads (not a redirect to search)
-2. WebFetch: `https://en.wikipedia.org/wiki/[Founder_Name]` for founder article
+**Method 2 —— 直接 URL 檢查（備援驗證）：**
+1. WebFetch: `https://en.wikipedia.org/wiki/[Brand_Name]` —— 檢查頁面是否載入（而不是重新導向到搜尋結果）
+2. WebFetch: `https://en.wikipedia.org/wiki/[Founder_Name]` 檢查創辦人條目
 
-**Method 3 — Search (least reliable, use only for supplemental info):**
+**Method 3 —— 搜尋（最不可靠，僅用於補充資訊）：**
 1. Search: `[brand name] site:wikipedia.org`
 2. Search: `[brand name] site:wikidata.org`
 
-**CRITICAL:** Web search alone is NOT reliable for determining Wikipedia presence. ALWAYS run the Python API check first. If the API says a page exists, it exists — do not override this with a search result that fails to find it.
+**關鍵提醒 (CRITICAL)：** 單靠網頁搜尋無法可靠判斷 Wikipedia 存在感。務必先執行 Python API 檢查。如果 API 顯示頁面存在，它就確實存在 —— 不要因為搜尋結果找不到而推翻此結論。
 
-5. Note: Article existence, quality, edit history, Wikidata completeness
+5. 記錄：條目是否存在、品質、編輯歷史、Wikidata 完整度
 
-**LinkedIn Check:**
+**LinkedIn 檢查:**
 1. Search: `[brand name] site:linkedin.com`
-2. Check: `linkedin.com/company/[brand-name]` for company page
-3. Note: Follower count, post frequency, employee count listed, engagement levels
+2. Check: `linkedin.com/company/[brand-name]` 是否為公司頁面
+3. 記錄：追蹤者數、發文頻率、列出的員工數、互動程度
 
-**Other Platforms:**
+**其他平台：**
 1. Search: `[brand name] site:quora.com`
-2. Search: `[brand name] site:stackoverflow.com` (if technical brand)
-3. Search: `[brand name] site:github.com` (if technical brand)
-4. Search: `[brand name] site:news.ycombinator.com` (Hacker News)
-5. Search: `"[brand name]"` broadly for news mentions (filter to last 6 months)
-6. Note: Presence/absence and quality of mentions on each platform
+2. Search: `[brand name] site:stackoverflow.com`（若為技術品牌）
+3. Search: `[brand name] site:github.com`（若為技術品牌）
+4. Search: `[brand name] site:news.ycombinator.com`（Hacker News）
+5. Search: `"[brand name]"` 廣泛搜尋新聞提及（篩選過去 6 個月）
+6. 記錄：各平台是否存在，以及提及品質
 
-### Step 3: Sentiment Assessment
+### Step 3: 情緒評估
 
-For Reddit and other discussion platforms, assess sentiment by analyzing the most recent and most prominent mentions:
+針對 Reddit 與其他討論平台，分析最新且最突出的提及來評估情緒：
 
-| Sentiment | Indicators |
+| 情緒 | 指標 |
 |---|---|
-| **Positive** | Recommendations ("I love [brand]," "We switched to [brand] and...", "Highly recommend"), upvoted mentions, positive comparison against competitors |
-| **Neutral** | Factual mentions ("We use [brand] for...", "[Brand] offers..."), questions about the brand, balanced comparisons |
-| **Negative** | Complaints ("Avoid [brand]", "[Brand] has terrible support"), downvoted recommendations, negative comparisons |
-| **Mixed** | Combination of positive and negative. Note the ratio and primary themes. |
+| **正面 (Positive)** | 推薦（"我愛 [品牌名]", "我們換成了 [品牌名] 然後...", "強力推薦"）、高票提及、相對於競品的正面比較 |
+| **中立 (Neutral)** | 事實性提及（"我們使用 [品牌名] 來做...", "[品牌名] 提供..."）、關於品牌的問題、平衡的比較 |
+| **負面 (Negative)** | 抱怨（"避開 [品牌名]", "[品牌名] 的支援很糟"）、被負評 (downvote) 的推薦、負面比較 |
+| **混合 (Mixed)** | 正面與負面混合。記錄比例與主要主題。 |
 
-### Step 4: Competitive Comparison (Optional)
+### Step 4: 競爭比較（選用）
 
-If competitors are identified, do a quick scan of their platform presence for context. This helps calibrate the score -- a brand with "moderate" Reddit presence in an industry where competitors have zero Reddit presence is relatively strong.
+如果已識別競爭對手，快速掃描他們的平台存在感作為脈絡。這有助於校正分數 —— 如果某品牌在 Reddit 的存在感屬「中等」，但同產業競品幾乎沒有 Reddit 存在感，則相對而言仍然很強。
 
-### Step 5: Score Calculation
+### Step 5: 分數計算
 
-1. Score each platform (0-100) using the rubrics above.
-2. Apply weights to calculate the composite Brand Authority Score.
-3. Identify the strongest and weakest platforms.
-4. Generate specific, actionable recommendations for the weakest platforms.
+1. 使用上方量表為每個平台評分（0-100）。
+2. 套用權重計算綜合品牌權威分數 (Brand Authority Score)。
+3. 識別最強與最弱的平台。
+4. 針對最弱的平台產生具體、可執行的建議。
 
 ---
 
-## Output Format
+## 輸出格式
 
-Generate a file called `GEO-BRAND-MENTIONS.md`:
+產生名為 `GEO-BRAND-MENTIONS.md` 的檔案：
 
 ```markdown
-# Brand Authority Report: [Brand Name]
+# 品牌權威報告：[Brand Name]
 
-**Analysis Date:** [Date]
-**Brand:** [Brand Name]
-**Domain:** [URL]
-**Industry:** [Industry]
+**分析日期 (Analysis Date):** [Date]
+**品牌 (Brand):** [Brand Name]
+**網域 (Domain):** [URL]
+**產業 (Industry):** [Industry]
 
 ---
 
-## Brand Authority Score: [X]/100 ([Rating])
+## 品牌權威分數：[X]/100（[Rating]）
 
-### Platform Breakdown
+### 平台細項
 
-| Platform | Score | Weight | Weighted | Status |
+| 平台 | 分數 | 權重 | 加權得分 | 狀態 |
 |---|---|---|---|---|
-| YouTube | [X]/100 | 25% | [X] | [Active Channel / Mentioned / Absent] |
-| Reddit | [X]/100 | 25% | [X] | [Active / Discussed / Absent] |
-| Wikipedia | [X]/100 | 20% | [X] | [Article / Mentioned / Absent] |
-| LinkedIn | [X]/100 | 15% | [X] | [Active / Basic / Absent] |
-| Other Platforms | [X]/100 | 15% | [X] | [Summary] |
-| **Total** | | | **[X]/100** | |
+| YouTube | [X]/100 | 25% | [X] | [活躍頻道 / 有提及 / 缺席] |
+| Reddit | [X]/100 | 25% | [X] | [活躍 / 有討論 / 缺席] |
+| Wikipedia | [X]/100 | 20% | [X] | [條目 / 有提及 / 缺席] |
+| LinkedIn | [X]/100 | 15% | [X] | [活躍 / 基本 / 缺席] |
+| 其他平台 | [X]/100 | 15% | [X] | [摘要] |
+| **總計** | | | **[X]/100** | |
 
 ---
 
-## Platform Detail
+## 平台詳細資料
 
 ### YouTube ([X]/100)
 
-**Official Channel:** [Yes/No] | [URL if exists]
-**Subscribers:** [Count or N/A]
-**Videos:** [Count or N/A]
-**Last Upload:** [Date or N/A]
-**Third-Party Mentions:** [Estimated count]
-**Key Findings:**
-- [Finding 1]
-- [Finding 2]
+**官方頻道:** [是/否] | [若存在則提供網址]
+**訂閱者:** [數量或不適用]
+**影片數:** [數量或不適用]
+**最後上傳:** [日期或不適用]
+**第三方提及:** [估計數量]
+**關鍵發現:**
+- [發現 1]
+- [發現 2]
 
 ### Reddit ([X]/100)
 
-**Official Account:** [Yes/No] | [URL if exists]
-**Own Subreddit:** [Yes/No] | [URL and member count if exists]
-**Mention Volume:** [Estimated thread count]
-**Primary Subreddits:** [List of subreddits where brand is discussed]
-**Sentiment:** [Positive/Negative/Neutral/Mixed]
-**Key Findings:**
-- [Finding 1]
-- [Finding 2]
+**官方帳號:** [是/否] | [若存在則提供網址]
+**自有 Subreddit:** [是/否] | [若存在則提供網址與成員數]
+**提及量:** [估計討論串數量]
+**主要 Subreddits:** [討論品牌的主要 subreddit 列表]
+**情緒:** [正面/負面/中立/混合]
+**關鍵發現:**
+- [發現 1]
+- [發現 2]
 
 ### Wikipedia ([X]/100)
 
-**Company Article:** [Yes/No] | [URL if exists]
-**Founder Article:** [Yes/No] | [URL if exists]
-**Wikidata Entry:** [Yes/No] | [Q-number if exists]
-**Cited in Other Articles:** [Yes/No] | [Which articles]
-**Key Findings:**
-- [Finding 1]
-- [Finding 2]
+**公司條目:** [是/否] | [若存在則提供網址]
+**創辦人條目:** [是/否] | [若存在則提供網址]
+**Wikidata 項目:** [是/否] | [若存在則提供 Q 編號]
+**在其他條目被引用:** [是/否] | [哪些條目]
+**關鍵發現:**
+- [發現 1]
+- [發現 2]
 
 ### LinkedIn ([X]/100)
 
-**Company Page:** [Yes/No] | [URL if exists]
-**Followers:** [Count or N/A]
-**Post Frequency:** [Weekly/Monthly/Rare/Never]
-**Key Findings:**
-- [Finding 1]
-- [Finding 2]
+**公司頁面:** [是/否] | [若存在則提供網址]
+**追蹤者:** [數量或不適用]
+**發文頻率:** [每週/每月/罕見/從不]
+**關鍵發現:**
+- [發現 1]
+- [發現 2]
 
-### Other Platforms ([X]/100)
+### 其他平台 ([X]/100)
 
-| Platform | Presence | Notes |
+| 平台 | 存在感 | 備註 |
 |---|---|---|
-| Quora | [Yes/No] | [Brief note] |
-| Stack Overflow | [Yes/No] | [Brief note] |
-| GitHub | [Yes/No] | [Brief note] |
-| Hacker News | [Yes/No] | [Brief note] |
-| News/Press | [Yes/No] | [Brief note] |
-| Podcasts | [Yes/No] | [Brief note] |
+| Quora | [是/否] | [簡短說明] |
+| Stack Overflow | [是/否] | [簡短說明] |
+| GitHub | [是/否] | [簡短說明] |
+| Hacker News | [是/否] | [簡短說明] |
+| 新聞/媒體 | [是/否] | [簡短說明] |
+| Podcasts | [是/否] | [簡短說明] |
 
 ---
 
-## Recommendations
+## 建議
 
-### Immediate Actions (Week 1-2)
+### 立即行動 (第 1-2 週)
 
-1. **[Platform]:** [Specific action to take with expected impact]
-2. **[Platform]:** [Specific action]
+1. **[平台]:** [具體行動與預期影響]
+2. **[平台]:** [具體行動]
 
-### Short-Term Strategy (Month 1-3)
+### 短期策略 (第 1-3 個月)
 
-1. **[Platform]:** [Strategy with tactics]
-2. **[Platform]:** [Strategy with tactics]
+1. **[平台]:** [策略與戰術]
+2. **[平台]:** [策略與戰術]
 
-### Long-Term Authority Building (Month 3-12)
+### 長期權威建立 (第 3-12 個月)
 
-1. **[Platform]:** [Long-term strategy]
-2. **[Platform]:** [Long-term strategy]
+1. **[平台]:** [長期策略]
+2. **[平台]:** [長期策略]
 
 ---
 
-## Competitive Context
+## 競爭脈絡
 
-[If competitors were analyzed, show a brief comparison table]
+[若有分析競爭對手，顯示簡要比較表]
 
-| Brand | YouTube | Reddit | Wikipedia | LinkedIn | Other | Total |
+| 品牌 | YouTube | Reddit | Wikipedia | LinkedIn | 其他 | 總分 |
 |---|---|---|---|---|---|---|
-| [Subject Brand] | [X] | [X] | [X] | [X] | [X] | **[X]** |
-| [Competitor 1] | [X] | [X] | [X] | [X] | [X] | **[X]** |
-| [Competitor 2] | [X] | [X] | [X] | [X] | [X] | **[X]** |
+| [受評品牌] | [X] | [X] | [X] | [X] | [X] | **[X]** |
+| [競爭對手 1] | [X] | [X] | [X] | [X] | [X] | **[X]** |
+| [競爭對手 2] | [X] | [X] | [X] | [X] | [X] | **[X]** |
 
-## Key Takeaway
+## 關鍵結論
 
-[1-2 sentence summary of the brand's AI visibility standing and the single most impactful action to take]
+[1-2 句話總結品牌的 AI 能見度現狀，以及單一最具影響力的行動建議]
 ```
 
 ---
 
-## Reference Data
+## 參考資料
 
-### Correlation Strengths (Ahrefs Dec 2025, 75K Brands)
+### 相關強度（Ahrefs 2025 年 12 月，針對 75K 個品牌）
 
-| Signal | Correlation with AI Citation | Traditional SEO Value |
+| 訊號 | 與 AI 引用的相關性 | 傳統 SEO 價值 |
 |---|---|---|
-| YouTube mentions | ~0.737 | Low (not a ranking factor) |
-| Reddit mentions | High (exact coefficient not published) | Low |
-| Wikipedia presence | High | Moderate (trust signal) |
-| LinkedIn presence | Moderate | Low |
-| Domain Rating | ~0.266 | Very High |
-| Backlink count | ~0.266 | Very High |
-| Organic traffic | Moderate | Very High |
+| YouTube 提及 | ~0.737 | 低（非排名因素） |
+| Reddit 提及 | 高（未公布精確係數） | 低 |
+| Wikipedia 存在感 | 高 | 中等（信任訊號） |
+| LinkedIn 存在感 | 中等 | 低 |
+| 網域評級 (DR) | ~0.266 | 極高 |
+| 反向連結數量 | ~0.266 | 極高 |
+| 自然流量 (Organic traffic) | 中等 | 極高 |
 
-**Key insight:** The signals that matter most for AI visibility (YouTube, Reddit) are almost irrelevant in traditional SEO, and the signals that matter most for traditional SEO (backlinks, DR) are weak predictors of AI visibility. This requires a fundamentally different optimization strategy.
+**關鍵洞察：** 對 AI 能見度最重要的訊號（YouTube、Reddit）在傳統 SEO 中幾乎無關，而傳統 SEO 最重要的訊號（反向連結、DR）對 AI 能見度的預測力較弱。這需要一套根本不同的最佳化策略。
 
-### Platform-Specific Tips for Building Presence
+### 建立平台存在感的平台專屬提示
 
-**YouTube Quick Wins:**
-- Create a channel and upload 3-5 explainer videos about your core topics.
-- Ensure your brand name appears in video titles, descriptions, and spoken content.
-- Pursue guest appearances on relevant industry YouTube channels.
-- Create comparison or "alternatives" videos (these get cited by AI for comparison queries).
+**YouTube 快速獲勝法 (Quick Wins):**
+- 建立頻道並上傳 3-5 支說明核心主題的解說影片。
+- 確保品牌名稱出現在影片標題、描述與口述內容中。
+- 爭取登上相關產業 YouTube 頻道擔任來賓。
+- 製作比較或「替代方案 (alternatives)」影片（這類影片常被 AI 用於比較查詢的引用）。
 
-**Reddit Quick Wins:**
-- Identify 3-5 subreddits where your target audience is active.
-- Participate authentically (do not shill -- Reddit communities detect and punish this).
-- Do an AMA if appropriate for your brand.
-- Monitor and respond to mentions of your brand.
-- Create genuinely helpful posts that naturally mention your brand's expertise.
+**Reddit 快速獲勝法:**
+- 找出 3-5 個目標受眾活躍的 subreddit。
+- 真誠參與（不要硬性推銷 —— Reddit 社群會偵測並懲罰這種行為）。
+- 若適合品牌，舉辦 AMA（問我任何事）。
+- 監測並回應品牌提及。
+- 建立真正有幫助、自然提及品牌專業領域的貼文。
 
-**Wikipedia Strategy:**
-- Hire a Wikipedia-knowledgeable consultant -- do NOT edit your own article (conflict of interest).
-- Build notability through press coverage, academic citations, and industry recognition first.
-- Ensure your Wikidata entry is complete even if you do not have a Wikipedia article.
-- Contribute to industry-relevant articles where your brand can be naturally cited as a source.
+**Wikipedia 策略:**
+- 聘請熟悉 Wikipedia 的顧問 —— 不要自行編輯自己的條目（利益衝突）。
+- 先透過媒體報導、學術引用與產業認可建立知名度 (Notability)。
+- 即使沒有 Wikipedia 條目，也要確保 Wikidata 項目完整。
+- 貢獻產業相關條目，讓品牌能自然地作為來源被引用。
 
-**LinkedIn Quick Wins:**
-- Optimize your company page with complete information and regular posting.
-- Encourage leadership to post thought leadership content weekly.
-- Publish LinkedIn articles on topics where your brand has unique expertise.
-- Engage with industry discussions to increase brand visibility in professional contexts.
+**LinkedIn 快速獲勝法:**
+- 使用完整資訊與定期發文最佳化公司頁面。
+- 鼓勵領導層每週發布思想領導內容。
+- 針對品牌具備獨特專業的主題發布 LinkedIn 文章。
+- 參與產業討論，提升品牌在專業脈絡中的能見度。

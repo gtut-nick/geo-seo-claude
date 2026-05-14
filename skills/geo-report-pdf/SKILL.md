@@ -1,34 +1,34 @@
 ---
 name: geo-report-pdf
-description: Generate a professional PDF report from GEO audit data using ReportLab. Creates a polished, client-ready PDF with score gauges, bar charts, platform readiness visualizations, color-coded tables, and prioritized action plans.
+description: 使用 ReportLab 從 GEO 稽核資料產生專業 PDF 報告。建立精緻、可直接交付客戶的 PDF，包含分數儀表、長條圖、平台準備度視覺化、顏色編碼表格與優先行動計畫。
 version: 1.0.0
 author: geo-seo-claude
 tags: [geo, pdf, report, client-deliverable, professional]
-allowed-tools: Read, Grep, Glob, Bash, WebFetch, Write
+allowed-tools: [Read, Grep, Glob, Bash, WebFetch, Write]
 ---
 
-# GEO PDF Report Generator
+# GEO PDF 報告產生器
 
-## Purpose
+## 目的
 
-This skill generates a professional, visually polished PDF report from GEO audit data. The PDF includes score gauges, bar charts, platform readiness visualizations, color-coded tables, and a prioritized action plan — ready to deliver directly to clients.
+此技能會從 GEO 稽核資料 (audit data) 產生視覺精緻的專業 PDF 報告。PDF 包含分數儀表 (score gauges)、長條圖、平台準備度視覺化、顏色編碼表格與優先行動計畫 (action plan)，可直接交付客戶。
 
-## Prerequisites
+## 前置條件
 
-- **ReportLab** must be installed: `pip install reportlab`
-- The PDF generation script is located at: `~/.claude/skills/geo/scripts/generate_pdf_report.py`
-- Run a full GEO audit first (using `/geo-audit`) to have data to include in the report
+- 必須安裝 **ReportLab**：`pip install reportlab`
+- PDF 產生指令碼位於：`~/.claude/skills/geo/scripts/generate_pdf_report.py`
+- 需先執行完整的 GEO 稽核（使用 `/geo-audit`），以取得報告所需的資料。
 
-## How to Generate a PDF Report
+## 如何產生 PDF 報告
 
-### Step 1: Collect Audit Data
+### Step 1：收集稽核資料 (Audit Data)
 
-After running a full `/geo-audit`, collect all scores, findings, and recommendations into a JSON structure. The JSON data must follow this schema:
+完整執行 `/geo-audit` 後，將所有分數、發現事項與建議收集成 JSON 結構。JSON 資料必須遵循此架構 (Schema)：
 
 ```json
 {
     "url": "https://example.com",
-    "brand_name": "Example Company",
+    "brand_name": "範例公司",
     "date": "2026-02-18",
     "geo_score": 65,
     "scores": {
@@ -46,119 +46,120 @@ After running a full `/geo-audit`, collect all scores, findings, and recommendat
         "Gemini": 60,
         "Bing Copilot": 50
     },
-    "executive_summary": "A 4-6 sentence summary of the audit findings...",
+    "executive_summary": "關於稽核發現的 4-6 句摘要...",
     "findings": [
         {
             "severity": "critical",
-            "title": "Finding Title",
-            "description": "Description of the finding and its impact."
+            "title": "發現事項標題",
+            "description": "該發現事項及其影響的描述。"
         }
     ],
     "quick_wins": [
-        "Action item 1",
-        "Action item 2"
+        "行動項目 1",
+        "行動項目 2"
     ],
     "medium_term": [
-        "Action item 1",
-        "Action item 2"
+        "行動項目 1",
+        "行動項目 2"
     ],
     "strategic": [
-        "Action item 1",
-        "Action item 2"
+        "行動項目 1",
+        "行動項目 2"
     ],
     "crawler_access": {
-        "GPTBot": {"platform": "ChatGPT", "status": "Allowed", "recommendation": "Keep allowed"},
-        "ClaudeBot": {"platform": "Claude", "status": "Blocked", "recommendation": "Unblock for visibility"}
+        "GPTBot": {"platform": "ChatGPT", "status": "Allowed", "recommendation": "保持允許"},
+        "ClaudeBot": {"platform": "Claude", "status": "Blocked", "recommendation": "解除封鎖以提升能見度"}
     }
 }
 ```
 
-### Step 2: Write JSON Data to a Temp File
+### Step 2：將 JSON 資料寫入暫存檔
 
-Write the collected audit data to a temporary JSON file:
+將收集到的稽核資料寫入暫存的 JSON 檔案：
 
 ```bash
-# Write audit data to temp file
+# 將稽核資料寫入暫存檔
 cat > /tmp/geo-audit-data.json << 'EOF'
-{ ... audit JSON data ... }
+{ ... 稽核 JSON 資料 ... }
 EOF
 ```
 
-### Step 3: Generate the PDF
+### Step 3：產生 PDF
 
-Run the PDF generation script:
+執行 PDF 產生指令碼：
 
 ```bash
 python3 ~/.claude/skills/geo/scripts/generate_pdf_report.py /tmp/geo-audit-data.json GEO-REPORT-[brand].pdf
 ```
 
-The script will produce a professional PDF report with:
-- **Cover Page** — Brand name, URL, date, overall GEO score with visual gauge
-- **Executive Summary** — Key findings and top recommendations
-- **Score Breakdown** — Table and bar chart of all 6 scoring categories
-- **AI Platform Readiness** — Visual horizontal bar chart per platform with scores
-- **AI Crawler Access** — Color-coded table (green=allowed, red=blocked)
-- **Key Findings** — Severity-coded findings list (critical/high/medium/low)
-- **Prioritized Action Plan** — Quick wins, medium-term, and strategic initiatives
-- **Appendix** — Methodology, data sources, and glossary
+指令碼會產生專業的 PDF 報告，內容包含：
+- **封面頁 (Cover Page)** — 品牌名稱、URL、日期、帶有視覺儀表的整體 GEO 分數。
+- **執行摘要 (Executive Summary)** — 關鍵發現與首要建議。
+- **分數細項 (Score Breakdown)** — 所有 6 個評分指標的表格與長條圖。
+- **AI 平台準備度 (AI Platform Readiness)** — 每個平台的視覺化水平長條圖與分數。
+- **AI 爬蟲存取 (AI Crawler Access)** — 顏色編碼表格（綠色=允許、紅色=封鎖）。
+- **關鍵發現 (Key Findings)** — 依嚴重程度編碼的發現事項列表（關鍵/高/中/低）。
+- **優先行動計畫 (Prioritized Action Plan)** — 快速獲勝 (Quick wins)、中期與策略性倡議。
+- **附錄 (Appendix)** — 方法論、資料來源與詞彙表。
 
-### Step 4: Return the PDF Path
+### Step 4：回傳 PDF 路徑
 
-After generation, tell the user where the PDF was saved and its file size.
+產生完成後，告知使用者 PDF 儲存位置與檔案大小。
 
-## Complete Workflow Example
+## 完整工作流範例 (Workflow Example)
 
-When the user runs this skill, follow this exact sequence:
+使用者執行此技能時，請依下列確切順序進行：
 
-1. **Check for existing audit data** — Look for recent GEO audit reports in the current directory:
+1. **檢查既有稽核資料** — 在目前目錄尋找近期的 GEO 稽核報告：
    - `GEO-CLIENT-REPORT.md`
    - `GEO-AUDIT-REPORT.md`
-   - Or any `GEO-*.md` files from a recent audit
+   - 或任何近期稽核產生的 `GEO-*.md` 檔案。
 
-2. **If no audit data exists** — Tell the user to run `/geo-audit <url>` first, then come back for the PDF.
+2. **若沒有稽核資料** — 告知使用者先執行 `/geo-audit <url>`，再回來產生 PDF。
 
-3. **If audit data exists** — Parse the markdown report to extract:
-   - Overall GEO score
-   - Category scores (citability, brand authority, content/E-E-A-T, technical, schema, platform)
-   - Platform readiness scores (Google AIO, ChatGPT, Perplexity, Gemini, Bing Copilot)
-   - AI crawler access status
-   - Key findings with severity levels
-   - Quick wins, medium-term, and strategic action items
-   - Executive summary
+3. **若有稽核資料** — 解析 Markdown 報告並擷取：
+   - 整體 GEO 分數。
+   - 類別分數（引用性、品牌權威、內容/E-E-A-T、技術、Schema、平台最佳化）。
+   - 平台準備度分數（Google AIO、ChatGPT、Perplexity、Gemini、Bing Copilot）。
+   - AI 爬蟲存取狀態。
+   - 帶有嚴重程度等級的關鍵發現。
+   - 快速獲勝、中期與策略性行動項目。
+   - 執行摘要。
 
-4. **Build the JSON** — Structure all data into the JSON schema shown above.
+4. **建立 JSON** — 依上方 JSON 架構組織所有資料。
 
-5. **Write JSON to temp file** — Save to `/tmp/geo-audit-data.json`
+5. **將 JSON 寫入暫存檔** — 儲存到 `/tmp/geo-audit-data.json`。
 
-6. **Run the PDF generator**:
+6. **執行 PDF 產生器**：
    ```bash
-   python3 ~/.claude/skills/geo/scripts/generate_pdf_report.py /tmp/geo-audit-data.json "GEO-REPORT-[brand_name].pdf"
-   ```
+   python3 ~/.claude/skills/geo/scripts/generate_pdf_report.py /tmp/geo-audit-data.json "GEO-REPORT-[品牌名稱].pdf"
 
-7. **Report success** — Tell the user the PDF was generated, its location, and file size.
+```
 
-## If the User Provides a URL
+7. **報告成功訊息** — 告知使用者 PDF 已產生、儲存位置與檔案大小。
 
-If the user runs `/geo-report-pdf https://example.com` with a URL:
-1. First run a full audit: invoke the `geo-audit` skill for that URL
-2. Then collect all the audit data from the generated report files
-3. Generate the PDF as described above
+## 如果使用者提供 URL
 
-## Parsing Markdown Audit Data
+如果使用者執行 `/geo-report-pdf https://example.com` 並提供 URL：
+1. 首先執行完整稽核：對該 URL 調用 `geo-audit` 技能。
+2. 接著從產生的報告檔案中收集所有稽核資料。
+3. 按照上述說明產生 PDF。
 
-When extracting data from existing GEO markdown reports, look for these patterns:
+## 解析 Markdown 稽核資料
 
-- **GEO Score**: Look for "GEO Score: XX/100" or "Overall: XX/100" or "GEO Readiness Score: XX"
-- **Category Scores**: Look for score tables with columns like "Component | Score | Weight"
-- **Platform Scores**: Look for tables with "Google AI Overviews", "ChatGPT", "Perplexity", etc.
-- **Crawler Status**: Look for tables with "Allowed" or "Blocked" status for crawlers like GPTBot, ClaudeBot
-- **Findings**: Look for sections titled "Key Findings", "Critical Issues", "Recommendations"
-- **Action Items**: Look for sections titled "Quick Wins", "Action Plan", "Recommendations"
+從既有的 GEO Markdown 報告擷取資料時，請尋找以下模式：
 
-## Notes
+- **GEO 分數**：尋找 "GEO Score: XX/100"、"Overall: XX/100" 或 "GEO Readiness Score: XX"。
+- **類別分數**：尋找包含 "Component | Score | Weight" 這些欄位的評分表格。
+- **平台分數**：尋找包含 "Google AI Overviews"、"ChatGPT"、"Perplexity" 等內容的表格。
+- **爬蟲狀態**：尋找 GPTBot、ClaudeBot 等爬蟲的 "Allowed" 或 "Blocked" 狀態表格。
+- **發現事項**：尋找 "Key Findings"、"Critical Issues"、"Recommendations" 章節。
+- **行動項目**：尋找 "Quick Wins"、"Action Plan"、"Recommendations" 章節。
 
-- If ReportLab is not installed, run: `pip install reportlab`
-- The PDF is designed for US Letter size (8.5" x 11")
-- Color palette: Navy primary (#1a1a2e), Blue accent (#0f3460), Coral highlight (#e94560), Green success (#00b894)
-- Each page has a header line, page numbers, "Confidential" watermark, and generation date
-- Score gauges use traffic-light colors: green (80+), blue (60-79), yellow (40-59), red (below 40)
+## 備註
+
+- 若未安裝 ReportLab，請執行：`pip install reportlab`。
+- PDF 設計為 US Letter 尺寸（8.5" x 11"）。
+- 調色盤：深藍主色 (#1a1a2e)、藍色點綴 (#0f3460)、珊瑚紅強調 (#e94560)、綠色成功色 (#00b894)。
+- 每頁皆有頁首線、頁碼、"Confidential" (機密) 浮水印與產生日期。
+- 分數儀表使用紅綠燈配色：綠色 (80+)、藍色 (60-79)、黃色 (40-59)、紅色 (40 以下)。

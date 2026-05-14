@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-GEO-SEO PDF Report Generator
-Generates professional, client-ready PDF reports from GEO audit data.
+GEO-SEO PDF 報告產生器
+從 GEO 稽核資料中產生專業的、可交付給客戶的 PDF 報告。
 
-Usage:
+用法:
     python generate_pdf_report.py <json_data_file> [output_file.pdf]
 
-The JSON data file should contain the audit results structured as:
+JSON 資料檔案應包含如下結構的稽核結果:
 {
     "url": "https://example.com",
     "brand_name": "Example Co",
@@ -17,13 +17,14 @@ The JSON data file should contain the audit results structured as:
     ...
 }
 
-Or pipe JSON data from stdin:
+或透過 stdin 傳遞 JSON 資料:
     cat audit_data.json | python generate_pdf_report.py - output.pdf
 """
 
 import sys
 import json
 import os
+import platform
 from datetime import datetime
 
 try:
@@ -43,10 +44,38 @@ try:
     from reportlab.graphics.charts.barcharts import VerticalBarChart
     from reportlab.graphics.charts.piecharts import Pie
     from reportlab.graphics import renderPDF
+
+    # 支援繁體中文的必要設定
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.lib.fonts import addMapping  # 新增：用來綁定字體家族
+
+    # 判斷作業系統，自動抓取內建字體路徑
+    system = platform.system()
+    if system == 'Windows':
+        # Windows 內建：微軟正黑體 (一般 與 粗體)
+        sys_font_path = 'C:\\Windows\\Fonts\\msjh.ttc'
+        sys_font_bold_path = 'C:\\Windows\\Fonts\\msjhbd.ttc'
+    elif system == 'Darwin':
+        # macOS 內建：蘋方體 或 黑體
+        sys_font_path = '/System/Library/Fonts/PingFang.ttc'
+        sys_font_bold_path = '/System/Library/Fonts/PingFang.ttc'
+        if not os.path.exists(sys_font_path):
+            sys_font_path = '/System/Library/Fonts/STHeiti Light.ttc'
+            sys_font_bold_path = '/System/Library/Fonts/STHeiti Medium.ttc'
+    else:
+        # Linux (通常需要安裝字體)
+        sys_font_path = '/usr/share/fonts/truetype/wqy/wqy-microhei.ttc'
+        sys_font_bold_path = sys_font_path
+
+    pdfmetrics.registerFont(TTFont('MSung-Light', sys_font_path))
+    pdfmetrics.registerFont(TTFont('MSung-Bold', sys_font_bold_path))
 except ImportError:
-    print("ERROR: Required packages not installed. Run: pip install -r requirements.txt")
+    print("錯誤：未安裝必要的套件。請執行：pip install -r requirements.txt")
     sys.exit(1)
 
+addMapping('MSung-Light', 0, 0, 'MSung-Light')    # Normal
+addMapping('MSung-Light', 1, 0, 'MSung-Bold')     # Bold
 
 # ============================================================
 # COLOR PALETTE
@@ -68,7 +97,7 @@ BLACK = black
 
 
 def get_score_color(score):
-    """Return color based on score value."""
+    """根據分數傳回顏色。"""
     if score >= 80:
         return SUCCESS
     elif score >= 60:
@@ -80,21 +109,21 @@ def get_score_color(score):
 
 
 def get_score_label(score):
-    """Return label based on score value."""
+    """根據分數傳回標籤。"""
     if score >= 85:
-        return "Excellent"
+        return "極佳"
     elif score >= 70:
-        return "Good"
+        return "良好"
     elif score >= 55:
-        return "Moderate"
+        return "中等"
     elif score >= 40:
-        return "Below Average"
+        return "低於平均"
     else:
-        return "Needs Attention"
+        return "需要注意"
 
 
 def create_score_gauge(score, width=120, height=120):
-    """Create a visual score gauge."""
+    """建立一個視覺分數表。"""
     d = Drawing(width, height)
 
     # Background circle
@@ -109,19 +138,19 @@ def create_score_gauge(score, width=120, height=120):
 
     # Score text
     d.add(String(width/2, height/2 + 5, str(score),
-                 fontSize=24, fontName='Helvetica-Bold',
+                 fontSize=24, fontName='MSung-Light',
                  fillColor=TEXT_PRIMARY, textAnchor='middle'))
 
     # Label
     d.add(String(width/2, height/2 - 12, "/100",
-                 fontSize=10, fontName='Helvetica',
+                 fontSize=10, fontName='MSung-Light',
                  fillColor=TEXT_SECONDARY, textAnchor='middle'))
 
     return d
 
 
 def create_bar_chart(data, labels, width=400, height=200):
-    """Create a horizontal bar chart for scores."""
+    """建立一個水平柱狀圖來顯示分數。"""
     d = Drawing(width, height)
 
     chart = VerticalBarChart()
@@ -133,11 +162,12 @@ def create_bar_chart(data, labels, width=400, height=200):
     chart.categoryAxis.categoryNames = labels
     chart.categoryAxis.labels.angle = 0
     chart.categoryAxis.labels.fontSize = 8
-    chart.categoryAxis.labels.fontName = 'Helvetica'
+    chart.categoryAxis.labels.fontName = 'MSung-Light'
     chart.valueAxis.valueMin = 0
     chart.valueAxis.valueMax = 100
     chart.valueAxis.valueStep = 20
     chart.valueAxis.labels.fontSize = 8
+    chart.valueAxis.labels.fontName = 'MSung-Light'
 
     # Color each bar based on score
     for i, score in enumerate(data):
@@ -151,7 +181,7 @@ def create_bar_chart(data, labels, width=400, height=200):
 
 
 def create_platform_chart(platforms, width=450, height=180):
-    """Create a chart showing platform readiness scores."""
+    """建立一個顯示平台就緒分數的圖表。"""
     d = Drawing(width, height)
 
     bar_height = 22
@@ -164,7 +194,7 @@ def create_platform_chart(platforms, width=450, height=180):
 
         # Platform name
         d.add(String(label_x, y + 5, name,
-                     fontSize=9, fontName='Helvetica',
+                     fontSize=9, fontName='MSung-Light',
                      fillColor=TEXT_PRIMARY, textAnchor='start'))
 
         # Background bar
@@ -180,19 +210,19 @@ def create_platform_chart(platforms, width=450, height=180):
 
         # Score text
         d.add(String(bar_x + bar_max_width + 10, y + 6, f"{score}/100",
-                     fontSize=9, fontName='Helvetica-Bold',
+                     fontSize=9, fontName='MSung-Light',
                      fillColor=TEXT_PRIMARY, textAnchor='start'))
 
     return d
 
 
 def build_styles():
-    """Create custom paragraph styles."""
+    """建立自訂段落樣式。"""
     styles = getSampleStyleSheet()
 
     styles.add(ParagraphStyle(
         name='ReportTitle',
-        fontName='Helvetica-Bold',
+        fontName='MSung-Light',
         fontSize=28,
         textColor=PRIMARY,
         spaceAfter=6,
@@ -201,7 +231,7 @@ def build_styles():
 
     styles.add(ParagraphStyle(
         name='ReportSubtitle',
-        fontName='Helvetica',
+        fontName='MSung-Light',
         fontSize=14,
         textColor=TEXT_SECONDARY,
         spaceAfter=20,
@@ -210,7 +240,7 @@ def build_styles():
 
     styles.add(ParagraphStyle(
         name='SectionHeader',
-        fontName='Helvetica-Bold',
+        fontName='MSung-Light',
         fontSize=18,
         textColor=PRIMARY,
         spaceBefore=20,
@@ -220,7 +250,7 @@ def build_styles():
 
     styles.add(ParagraphStyle(
         name='SubHeader',
-        fontName='Helvetica-Bold',
+        fontName='MSung-Light',
         fontSize=13,
         textColor=ACCENT,
         spaceBefore=14,
@@ -230,7 +260,7 @@ def build_styles():
 
     styles.add(ParagraphStyle(
         name='BodyText_Custom',
-        fontName='Helvetica',
+        fontName='MSung-Light',
         fontSize=10,
         textColor=TEXT_PRIMARY,
         spaceBefore=4,
@@ -241,7 +271,7 @@ def build_styles():
 
     styles.add(ParagraphStyle(
         name='SmallText',
-        fontName='Helvetica',
+        fontName='MSung-Light',
         fontSize=8,
         textColor=TEXT_SECONDARY,
         spaceBefore=2,
@@ -250,7 +280,7 @@ def build_styles():
 
     styles.add(ParagraphStyle(
         name='ScoreLabel',
-        fontName='Helvetica-Bold',
+        fontName='MSung-Light',
         fontSize=36,
         textColor=PRIMARY,
         alignment=TA_CENTER,
@@ -258,7 +288,7 @@ def build_styles():
 
     styles.add(ParagraphStyle(
         name='HighlightBox',
-        fontName='Helvetica',
+        fontName='MSung-Light',
         fontSize=10,
         textColor=TEXT_PRIMARY,
         backColor=LIGHT_BG,
@@ -270,7 +300,7 @@ def build_styles():
 
     styles.add(ParagraphStyle(
         name='CriticalFinding',
-        fontName='Helvetica-Bold',
+        fontName='MSung-Light',
         fontSize=10,
         textColor=DANGER,
         spaceBefore=4,
@@ -279,7 +309,7 @@ def build_styles():
 
     styles.add(ParagraphStyle(
         name='Recommendation',
-        fontName='Helvetica',
+        fontName='MSung-Light',
         fontSize=10,
         textColor=TEXT_PRIMARY,
         leftIndent=15,
@@ -291,7 +321,7 @@ def build_styles():
 
     styles.add(ParagraphStyle(
         name='Footer',
-        fontName='Helvetica',
+        fontName='MSung-Light',
         fontSize=8,
         textColor=TEXT_SECONDARY,
         alignment=TA_CENTER,
@@ -301,7 +331,7 @@ def build_styles():
 
 
 def header_footer(canvas, doc):
-    """Add header and footer to each page."""
+    """為每個頁面新增頁首和頁尾。"""
     canvas.saveState()
 
     # Header line
@@ -310,32 +340,32 @@ def header_footer(canvas, doc):
     canvas.line(50, letter[1] - 40, letter[0] - 50, letter[1] - 40)
 
     # Header text
-    canvas.setFont('Helvetica', 8)
+    canvas.setFont('MSung-Light', 8)
     canvas.setFillColor(TEXT_SECONDARY)
-    canvas.drawString(50, letter[1] - 35, "GEO-SEO Analysis Report")
+    canvas.drawString(50, letter[1] - 35, "GEO-SEO 分析報告")
 
     # Footer
     canvas.setStrokeColor(lightgrey)
     canvas.setLineWidth(0.5)
     canvas.line(50, 40, letter[0] - 50, 40)
 
-    canvas.setFont('Helvetica', 8)
+    canvas.setFont('MSung-Light', 8)
     canvas.setFillColor(TEXT_SECONDARY)
-    canvas.drawString(50, 28, f"Generated {datetime.now().strftime('%B %d, %Y')}")
-    canvas.drawRightString(letter[0] - 50, 28, f"Page {doc.page}")
-    canvas.drawCentredString(letter[0] / 2, 28, "Confidential")
+    canvas.drawString(50, 28, f"產生於 {datetime.now().strftime('%Y年%m月%d日')}")
+    canvas.drawRightString(letter[0] - 50, 28, f"第 {doc.page} 頁")
+    canvas.drawCentredString(letter[0] / 2, 28, "機密")
 
     canvas.restoreState()
 
 
 def make_table_style(header_color=PRIMARY):
-    """Create a consistent table style."""
+    """建立一致的表格樣式。"""
     return TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), header_color),
         ('TEXTCOLOR', (0, 0), (-1, 0), WHITE),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 0), (-1, 0), 'MSung-Light'),
         ('FONTSIZE', (0, 0), (-1, 0), 9),
-        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTNAME', (0, 1), (-1, -1), 'MSung-Light'),
         ('FONTSIZE', (0, 1), (-1, -1), 9),
         ('TEXTCOLOR', (0, 1), (-1, -1), TEXT_PRIMARY),
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
@@ -351,7 +381,7 @@ def make_table_style(header_color=PRIMARY):
 
 
 def generate_report(data, output_path="GEO-REPORT.pdf"):
-    """Generate the full PDF report from audit data."""
+    """根據審核資料產生完整的 PDF 報告。"""
 
     doc = SimpleDocTemplate(
         output_path,
@@ -405,12 +435,12 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     elements.append(Spacer(1, 100))
 
     # Title
-    elements.append(Paragraph("GEO Analysis Report", styles['ReportTitle']))
+    elements.append(Paragraph("GEO 分析報告", styles['ReportTitle']))
     elements.append(Spacer(1, 8))
 
     # Subtitle
     elements.append(Paragraph(
-        f"Generative Engine Optimization Audit for <b>{brand_name}</b>",
+        f"<b>{brand_name}</b> 的生成式引擎優化 (GEO) 稽核",
         styles['ReportSubtitle']
     ))
 
@@ -418,15 +448,15 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
 
     # Key details table
     details_data = [
-        ["Website", url],
-        ["Analysis Date", datetime.strptime(date, "%Y-%m-%d").strftime("%B %d, %Y") if "-" in date else date],
-        ["GEO Score", f"{geo_score}/100 — {get_score_label(geo_score)}"],
+        ["網站", url],
+        ["分析日期", datetime.strptime(date, "%Y-%m-%d").strftime("%Y年%m月%d日") if "-" in date else date],
+        ["GEO 分數", f"{geo_score}/100 — {get_score_label(geo_score)}"],
     ]
 
     details_table = Table(details_data, colWidths=[120, 350])
     details_table.setStyle(TableStyle([
-        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-        ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
+        ('FONTNAME', (0, 0), (0, -1), 'MSung-Light'),
+        ('FONTNAME', (1, 0), (1, -1), 'MSung-Light'),
         ('FONTSIZE', (0, 0), (-1, -1), 11),
         ('TEXTCOLOR', (0, 0), (0, -1), ACCENT),
         ('TEXTCOLOR', (1, 0), (1, -1), TEXT_PRIMARY),
@@ -457,18 +487,17 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     # ============================================================
     # EXECUTIVE SUMMARY
     # ============================================================
-    elements.append(Paragraph("Executive Summary", styles['SectionHeader']))
+    elements.append(Paragraph("執行摘要", styles['SectionHeader']))
     elements.append(HRFlowable(width="100%", thickness=1, color=ACCENT, spaceAfter=12))
 
     if executive_summary:
         elements.append(Paragraph(executive_summary, styles['BodyText_Custom']))
     else:
         elements.append(Paragraph(
-            f"This report presents the findings of a comprehensive Generative Engine Optimization (GEO) "
-            f"audit conducted on <b>{brand_name}</b> ({url}). The analysis evaluated the website's readiness "
-            f"for AI-powered search engines including Google AI Overviews, ChatGPT, Perplexity, Gemini, "
-            f"and Bing Copilot. The overall GEO Readiness Score is <b>{geo_score}/100</b>, "
-            f"placing the site in the <b>{get_score_label(geo_score)}</b> tier.",
+            f"本報告呈現對 <b>{brand_name}</b> ({url}) 進行的生成式引擎優化 (GEO) 綜合稽核結果。"
+            f"分析評估了該網站對 AI 驅動的搜尋引擎（包括 Google AI Overviews、ChatGPT、Perplexity、Gemini 及 Bing Copilot）的準備情況。"
+            f"整體 GEO 準備度分數為 <b>{geo_score}/100</b>，"
+            f"使該網站在 <b>{get_score_label(geo_score)}</b> 等級。",
             styles['BodyText_Custom']
         ))
 
@@ -477,25 +506,25 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     # ============================================================
     # SCORE BREAKDOWN
     # ============================================================
-    elements.append(Paragraph("GEO Score Breakdown", styles['SectionHeader']))
+    elements.append(Paragraph("GEO 分數解析", styles['SectionHeader']))
     elements.append(HRFlowable(width="100%", thickness=1, color=ACCENT, spaceAfter=12))
 
     score_data = [
-        ["Component", "Score", "Weight", "Weighted"],
-        ["AI Citability & Visibility", f"{ai_citability}/100", "25%", f"{round(ai_citability * 0.25, 1)}"],
-        ["Brand Authority Signals", f"{brand_authority}/100", "20%", f"{round(brand_authority * 0.20, 1)}"],
-        ["Content Quality & E-E-A-T", f"{content_eeat}/100", "20%", f"{round(content_eeat * 0.20, 1)}"],
-        ["Technical Foundations", f"{technical}/100", "15%", f"{round(technical * 0.15, 1)}"],
-        ["Structured Data", f"{schema_score}/100", "10%", f"{round(schema_score * 0.10, 1)}"],
-        ["Platform Optimization", f"{platform_optimization}/100", "10%", f"{round(platform_optimization * 0.10, 1)}"],
-        ["OVERALL", f"{geo_score}/100", "100%", f"{geo_score}"],
+        ["項目", "分數", "權重", "加權分數"],
+        ["AI 引用率與可見度", f"{ai_citability}/100", "25%", f"{round(ai_citability * 0.25, 1)}"],
+        ["品牌權威訊號", f"{brand_authority}/100", "20%", f"{round(brand_authority * 0.20, 1)}"],
+        ["內容品質與 E-E-A-T", f"{content_eeat}/100", "20%", f"{round(content_eeat * 0.20, 1)}"],
+        ["技術基礎", f"{technical}/100", "15%", f"{round(technical * 0.15, 1)}"],
+        ["結構化資料", f"{schema_score}/100", "10%", f"{round(schema_score * 0.10, 1)}"],
+        ["平台優化", f"{platform_optimization}/100", "10%", f"{round(platform_optimization * 0.10, 1)}"],
+        ["整體分數", f"{geo_score}/100", "100%", f"{geo_score}"],
     ]
 
     score_table = Table(score_data, colWidths=[200, 80, 60, 80])
     style = make_table_style()
 
     # Bold the last row
-    style.add('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold')
+    style.add('FONTNAME', (0, -1), (-1, -1), 'MSung-Light')
     style.add('BACKGROUND', (0, -1), (-1, -1), MEDIUM_BG)
 
     # Color-code score cells
@@ -511,7 +540,7 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
 
     # Score bar chart
     chart_scores = [ai_citability, brand_authority, content_eeat, technical, schema_score, platform_optimization]
-    chart_labels = ["Citability", "Brand", "Content", "Technical", "Schema", "Platform"]
+    chart_labels = ["引用率", "品牌", "內容", "技術", "結構化", "平台"]
     elements.append(create_bar_chart(chart_scores, chart_labels))
 
     elements.append(PageBreak())
@@ -519,12 +548,12 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     # ============================================================
     # AI PLATFORM READINESS
     # ============================================================
-    elements.append(Paragraph("AI Platform Readiness", styles['SectionHeader']))
+    elements.append(Paragraph("AI 平台準備度", styles['SectionHeader']))
     elements.append(HRFlowable(width="100%", thickness=1, color=ACCENT, spaceAfter=12))
 
     elements.append(Paragraph(
-        "These scores reflect how likely your content is to be cited by each AI search platform. "
-        "A score below 50 indicates significant barriers to citation on that platform.",
+        "這些分數反映了您的內容被各大 AI 搜尋平台引用的可能性。"
+        "低於 50 分表示在該平台上存在明顯的引用障礙。",
         styles['BodyText_Custom']
     ))
     elements.append(Spacer(1, 10))
@@ -536,7 +565,7 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     elements.append(Spacer(1, 10))
 
     # Platform table
-    platform_table_data = [["AI Platform", "Score", "Status"]]
+    platform_table_data = [["AI 平台", "分數", "狀態"]]
     for name, score in platforms.items():
         status = get_score_label(score)
         platform_table_data.append([name, f"{score}/100", status])
@@ -555,12 +584,12 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     # ============================================================
     # AI CRAWLER ACCESS
     # ============================================================
-    elements.append(Paragraph("AI Crawler Access Status", styles['SectionHeader']))
+    elements.append(Paragraph("AI 爬蟲存取狀態", styles['SectionHeader']))
     elements.append(HRFlowable(width="100%", thickness=1, color=ACCENT, spaceAfter=12))
 
     elements.append(Paragraph(
-        "Blocking AI crawlers prevents AI platforms from citing your content. "
-        "The table below shows which AI crawlers can currently access your site.",
+        "阻擋 AI 爬蟲會導致 AI 平台無法引用您的內容。"
+        "下表顯示目前哪些 AI 爬蟲可以存取您的網站。",
         styles['BodyText_Custom']
     ))
     elements.append(Spacer(1, 8))
@@ -568,53 +597,59 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     if crawler_access:
         # Use Paragraph objects for text wrapping in cells
         cell_style = ParagraphStyle(
-            'CrawlerCell', fontName='Helvetica', fontSize=9,
+            'CrawlerCell', fontName='MSung-Light', fontSize=9,
             textColor=TEXT_PRIMARY, leading=12,
         )
         header_cell_style = ParagraphStyle(
-            'CrawlerHeaderCell', fontName='Helvetica-Bold', fontSize=9,
+            'CrawlerHeaderCell', fontName='MSung-Light', fontSize=9,
             textColor=WHITE, leading=12,
         )
         status_style_allowed = ParagraphStyle(
-            'StatusAllowed', fontName='Helvetica-Bold', fontSize=9,
+            'StatusAllowed', fontName='MSung-Light', fontSize=9,
             textColor=SUCCESS, leading=12,
         )
         status_style_blocked = ParagraphStyle(
-            'StatusBlocked', fontName='Helvetica-Bold', fontSize=9,
+            'StatusBlocked', fontName='MSung-Light', fontSize=9,
             textColor=DANGER, leading=12,
         )
         status_style_restricted = ParagraphStyle(
-            'StatusRestricted', fontName='Helvetica-Bold', fontSize=9,
+            'StatusRestricted', fontName='MSung-Light', fontSize=9,
             textColor=WARNING, leading=12,
         )
         status_style_default = ParagraphStyle(
-            'StatusDefault', fontName='Helvetica', fontSize=9,
+            'StatusDefault', fontName='MSung-Light', fontSize=9,
             textColor=TEXT_PRIMARY, leading=12,
         )
 
         crawler_data = [[
-            Paragraph("Crawler", header_cell_style),
-            Paragraph("Platform", header_cell_style),
-            Paragraph("Status", header_cell_style),
-            Paragraph("Recommendation", header_cell_style),
+            Paragraph("爬蟲", header_cell_style),
+            Paragraph("平台", header_cell_style),
+            Paragraph("狀態", header_cell_style),
+            Paragraph("建議", header_cell_style),
         ]]
         for crawler_name, info in crawler_access.items():
             if isinstance(info, dict):
                 status_text = info.get("status", "Unknown")
+
+                # 中文化狀態文字
+                display_status = status_text
                 status_upper = status_text.upper()
                 if "ALLOW" in status_upper:
                     s_style = status_style_allowed
+                    display_status = "允許"
                 elif "BLOCK" in status_upper:
                     s_style = status_style_blocked
+                    display_status = "阻擋"
                 elif "RESTRICT" in status_upper:
                     s_style = status_style_restricted
+                    display_status = "受限"
                 else:
                     s_style = status_style_default
 
                 crawler_data.append([
                     Paragraph(crawler_name, cell_style),
                     Paragraph(info.get("platform", ""), cell_style),
-                    Paragraph(status_text, s_style),
+                    Paragraph(display_status, s_style),
                     Paragraph(info.get("recommendation", ""), cell_style),
                 ])
             else:
@@ -634,7 +669,7 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
         elements.append(ct)
     else:
         elements.append(Paragraph(
-            "<i>Run /geo crawlers to populate this section with AI crawler access data.</i>",
+            "<i>執行 /geo crawlers 以在此區塊填入 AI 爬蟲存取資料。</i>",
             styles['BodyText_Custom']
         ))
 
@@ -643,7 +678,7 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     # ============================================================
     # KEY FINDINGS
     # ============================================================
-    elements.append(Paragraph("Key Findings", styles['SectionHeader']))
+    elements.append(Paragraph("關鍵發現", styles['SectionHeader']))
     elements.append(HRFlowable(width="100%", thickness=1, color=ACCENT, spaceAfter=12))
 
     if findings:
@@ -670,7 +705,7 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
             elements.append(Spacer(1, 4))
     else:
         elements.append(Paragraph(
-            "<i>Run a full /geo audit to populate findings.</i>",
+            "<i>執行完整的 /geo 稽核以填入發現結果。</i>",
             styles['BodyText_Custom']
         ))
 
@@ -679,13 +714,13 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     # ============================================================
     # PRIORITIZED ACTION PLAN
     # ============================================================
-    elements.append(Paragraph("Prioritized Action Plan", styles['SectionHeader']))
+    elements.append(Paragraph("優先行動計畫", styles['SectionHeader']))
     elements.append(HRFlowable(width="100%", thickness=1, color=ACCENT, spaceAfter=12))
 
     # Quick Wins
-    elements.append(Paragraph("Quick Wins (This Week)", styles['SubHeader']))
+    elements.append(Paragraph("速贏方案（本週）", styles['SubHeader']))
     elements.append(Paragraph(
-        "High impact, low effort — can be implemented immediately.",
+        "高影響力、低工作量 — 可立即實施。",
         styles['SmallText']
     ))
 
@@ -698,11 +733,11 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
             elements.append(Paragraph(text, styles['Recommendation']))
     else:
         default_wins = [
-            "Allow all Tier 1 AI crawlers in robots.txt (GPTBot, ClaudeBot, PerplexityBot)",
-            "Add publication and last-updated dates to all content pages",
-            "Add author bylines with credentials to blog posts and articles",
-            "Create an llms.txt file to guide AI systems to your key content",
-            "Add sameAs properties to Organization schema linking to all platform profiles",
+            "在 robots.txt 中允許所有第一線 AI 爬蟲 (GPTBot, ClaudeBot, PerplexityBot)",
+            "在所有內容頁面加入發布及最後更新日期",
+            "在部落格文章與新聞中加入帶有資歷的作者署名",
+            "建立 llms.txt 檔案以引導 AI 系統找到您的關鍵內容",
+            "在 Organization 結構化資料中加入 sameAs 屬性，連結所有平台設定檔",
         ]
         for i, action in enumerate(default_wins, 1):
             elements.append(Paragraph(f"<b>{i}.</b> {action}", styles['Recommendation']))
@@ -710,9 +745,9 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     elements.append(Spacer(1, 12))
 
     # Medium-Term
-    elements.append(Paragraph("Medium-Term Improvements (This Month)", styles['SubHeader']))
+    elements.append(Paragraph("中期改善計畫（本月）", styles['SubHeader']))
     elements.append(Paragraph(
-        "Significant impact, moderate effort — requires content or technical changes.",
+        "顯著影響力、中等工作量 — 需要內容或技術上的修改。",
         styles['SmallText']
     ))
 
@@ -725,11 +760,11 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
             elements.append(Paragraph(text, styles['Recommendation']))
     else:
         default_medium = [
-            "Restructure top 10 pages with question-based headings and direct answer blocks",
-            "Implement comprehensive Organization + Article + Person schema markup",
-            "Optimize content blocks for AI citability (134-167 word self-contained passages)",
-            "Ensure server-side rendering for all public content pages",
-            "Implement IndexNow protocol for Bing/Copilot indexing speed",
+            "使用問題導向的標題與直接回答區塊重構前 10 大頁面",
+            "實作完整的 Organization + Article + Person 結構化資料標記",
+            "優化內容區塊以提升 AI 引用率 (134-167 字的獨立段落)",
+            "確保所有公開內容頁面皆使用伺服器端渲染 (SSR)",
+            "實作 IndexNow 協定以提升 Bing/Copilot 索引速度",
         ]
         for i, action in enumerate(default_medium, 1):
             elements.append(Paragraph(f"<b>{i}.</b> {action}", styles['Recommendation']))
@@ -737,9 +772,9 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     elements.append(Spacer(1, 12))
 
     # Strategic
-    elements.append(Paragraph("Strategic Initiatives (This Quarter)", styles['SubHeader']))
+    elements.append(Paragraph("戰略性倡議（本季）", styles['SubHeader']))
     elements.append(Paragraph(
-        "Long-term competitive advantage — requires ongoing investment.",
+        "長期競爭優勢 — 需要持續投入。",
         styles['SmallText']
     ))
 
@@ -752,11 +787,11 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
             elements.append(Paragraph(text, styles['Recommendation']))
     else:
         default_strategic = [
-            "Build Wikipedia/Wikidata entity presence through press coverage and notability",
-            "Develop active Reddit community engagement strategy in relevant subreddits",
-            "Create YouTube content strategy aligned with AI-searched queries",
-            "Establish original research/data publication program for unique citability",
-            "Build topical authority through comprehensive content clusters",
+            "透過新聞報導與知名度，建立 Wikipedia/Wikidata 實體存在感",
+            "制定相關 Reddit 子版塊的活躍社群參與策略",
+            "建立符合 AI 搜尋意圖的 YouTube 內容策略",
+            "建立原創研究/數據發布計畫，以獲得獨特的引用率",
+            "透過全面的內容叢集 (Content Clusters) 建立主題權威",
         ]
         for i, action in enumerate(default_strategic, 1):
             elements.append(Paragraph(f"<b>{i}.</b> {action}", styles['Recommendation']))
@@ -766,49 +801,49 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     # ============================================================
     # METHODOLOGY & GLOSSARY
     # ============================================================
-    elements.append(Paragraph("Appendix: Methodology", styles['SectionHeader']))
+    elements.append(Paragraph("附錄：方法論", styles['SectionHeader']))
     elements.append(HRFlowable(width="100%", thickness=1, color=ACCENT, spaceAfter=12))
 
     elements.append(Paragraph(
-        f"This GEO audit was conducted on {date} analyzing {url}. "
-        "The analysis evaluated the website across six dimensions: AI Citability & Visibility (25%), "
-        "Brand Authority Signals (20%), Content Quality & E-E-A-T (20%), Technical Foundations (15%), "
-        "Structured Data (10%), and Platform Optimization (10%).",
+        f"本次 GEO 稽核於 {date} 進行，分析目標為 {url}。"
+        "分析評估了該網站的六個維度：AI 引用率與可見度 (25%)、"
+        "品牌權威訊號 (20%)、內容品質與 E-E-A-T (20%)、技術基礎 (15%)、"
+        "結構化資料 (10%)，以及平台優化 (10%)。",
         styles['BodyText_Custom']
     ))
 
     elements.append(Spacer(1, 8))
 
     elements.append(Paragraph(
-        "<b>Platforms assessed:</b> Google AI Overviews, ChatGPT Web Search, Perplexity AI, "
-        "Google Gemini, Bing Copilot",
+        "<b>評估的平台：</b> Google AI Overviews、ChatGPT 網頁搜尋、Perplexity AI、"
+        "Google Gemini、Bing Copilot",
         styles['BodyText_Custom']
     ))
 
     elements.append(Paragraph(
-        "<b>Standards referenced:</b> Google Search Quality Rater Guidelines (Dec 2025), "
-        "Schema.org specification, Core Web Vitals (2026 thresholds), "
-        "llms.txt emerging standard, RSL 1.0 licensing framework",
+        "<b>參考標準：</b> Google 搜尋品質評分指南 (2025年12月)、"
+        "Schema.org 規範、核心網頁指標 (Core Web Vitals，2026年標準)、"
+        "llms.txt 新興標準、RSL 1.0 授權框架",
         styles['BodyText_Custom']
     ))
 
     elements.append(Spacer(1, 16))
 
     # Glossary
-    elements.append(Paragraph("Glossary", styles['SubHeader']))
+    elements.append(Paragraph("詞彙表", styles['SubHeader']))
 
     glossary = [
-        ["Term", "Definition"],
-        ["GEO", "Generative Engine Optimization — optimizing content for AI search citation"],
-        ["AIO", "AI Overviews — Google's AI-generated answer boxes in search results"],
-        ["E-E-A-T", "Experience, Expertise, Authoritativeness, Trustworthiness"],
-        ["SSR", "Server-Side Rendering — generating HTML on the server for crawler access"],
-        ["CWV", "Core Web Vitals — Google's page experience metrics (LCP, INP, CLS)"],
-        ["INP", "Interaction to Next Paint — responsiveness metric (replaced FID March 2024)"],
-        ["JSON-LD", "JavaScript Object Notation for Linked Data — preferred structured data format"],
-        ["sameAs", "Schema.org property linking an entity to its profiles on other platforms"],
-        ["llms.txt", "Proposed standard file for guiding AI systems about site content"],
-        ["IndexNow", "Protocol for instantly notifying search engines of content changes"],
+        ["術語", "定義"],
+        ["GEO", "生成式引擎優化 (Generative Engine Optimization) — 為 AI 搜尋引用優化內容"],
+        ["AIO", "AI Overviews — Google 搜尋結果中的 AI 生成答案區塊"],
+        ["E-E-A-T", "經驗 (Experience)、專業度 (Expertise)、權威性 (Authoritativeness)、可信度 (Trustworthiness)"],
+        ["SSR", "伺服器端渲染 (Server-Side Rendering) — 在伺服器上生成 HTML 以供爬蟲讀取"],
+        ["CWV", "核心網頁指標 (Core Web Vitals) — Google 的網頁體驗指標 (LCP, INP, CLS)"],
+        ["INP", "與下一個畫面的互動 (Interaction to Next Paint) — 響應速度指標 (取代 FID)"],
+        ["JSON-LD", "連結資料的 JavaScript 物件表示法 — 首選的結構化資料格式"],
+        ["sameAs", "Schema.org 的屬性，用於將實體連結至其在其他平台上的設定檔"],
+        ["llms.txt", "擬議的標準檔案，用於引導 AI 系統了解網站內容"],
+        ["IndexNow", "可立即通知搜尋引擎內容變更的協定"],
     ]
 
     gt = Table(glossary, colWidths=[80, 380])
@@ -820,9 +855,8 @@ def generate_report(data, output_path="GEO-REPORT.pdf"):
     # Footer disclaimer
     elements.append(HRFlowable(width="100%", thickness=0.5, color=lightgrey, spaceAfter=8))
     elements.append(Paragraph(
-        "This report was generated by the GEO-SEO Claude Code Analysis Tool. "
-        "Scores and recommendations are based on automated analysis and industry benchmarks. "
-        "Results should be validated with platform-specific testing.",
+        "本報告由 GEO-SEO 程式碼分析工具產生。"
+        "分數與建議基於自動化分析及業界基準。結果應透過特定平台測試進行驗證。",
         styles['SmallText']
     ))
 
@@ -857,53 +891,50 @@ if __name__ == "__main__":
                 "Bing Copilot": 45,
             },
             "executive_summary": (
-                "This report presents the findings of a comprehensive GEO audit "
-                "conducted on Example Company (https://example.com). The site achieved "
-                "an overall GEO Readiness Score of 58/100, placing it in the Moderate tier. "
-                "The strongest area is Content Quality (70/100), while Structured Data (30/100) "
-                "represents the biggest opportunity for improvement. Implementing schema markup, "
-                "allowing AI crawlers, and optimizing content structure could increase the score "
-                "to approximately 78/100 within 90 days."
+                "本報告呈現對 Example Company (https://example.com) 進行的 GEO 綜合稽核結果。"
+                "該網站的整體 GEO 準備度分數為 58/100，處於中等等級。"
+                "最強的領域是內容品質 (70/100)，而結構化資料 (30/100) 則是最大的改善機會。"
+                "實作結構化資料標記、允許 AI 爬蟲存取，並優化內容結構，預計能在 90 天內將分數提升至約 78/100。"
             ),
             "findings": [
-                {"severity": "critical", "title": "No Schema Markup Detected",
-                 "description": "The site has no JSON-LD structured data, making it difficult for AI models to understand entity relationships."},
-                {"severity": "high", "title": "JavaScript-Only Rendering",
-                 "description": "Key content pages use client-side rendering, making them invisible to AI crawlers that don't execute JavaScript."},
-                {"severity": "high", "title": "Missing llms.txt",
-                 "description": "No llms.txt file exists to guide AI systems to the most important content."},
-                {"severity": "medium", "title": "Weak Brand Entity Presence",
-                 "description": "Brand is not present on Wikipedia or Wikidata, limiting entity recognition by AI models."},
-                {"severity": "medium", "title": "Content Not Optimized for Citability",
-                 "description": "Most content blocks are either too short or too long for optimal AI citation (target: 134-167 words)."},
+                {"severity": "critical", "title": "未偵測到結構化資料標記",
+                 "description": "網站缺乏 JSON-LD 結構化資料，導致 AI 模型難以理解實體關聯。"},
+                {"severity": "high", "title": "純 JavaScript 渲染",
+                 "description": "關鍵內容頁面使用客戶端渲染，這對無法執行 JavaScript 的 AI 爬蟲來說是隱形的。"},
+                {"severity": "high", "title": "缺少 llms.txt",
+                 "description": "不存在 llms.txt 檔案來引導 AI 系統找到最重要的內容。"},
+                {"severity": "medium", "title": "品牌實體存在感薄弱",
+                 "description": "品牌未出現在 Wikipedia 或 Wikidata 上，限制了 AI 模型的實體識別能力。"},
+                {"severity": "medium", "title": "內容未針對引用率進行優化",
+                 "description": "大多數內容區塊太短或太長，不利於 AI 引用（目標：134-167 字）。"},
             ],
             "quick_wins": [
-                "Allow all Tier 1 AI crawlers in robots.txt",
-                "Add publication dates to all content pages",
-                "Create llms.txt file with key page references",
-                "Add author bylines with credentials",
-                "Fix meta descriptions on top 10 pages",
+                "在 robots.txt 中允許所有第一線 AI 爬蟲",
+                "在所有內容頁面加入發布日期",
+                "建立包含關鍵頁面參考的 llms.txt 檔案",
+                "加入帶有資歷的作者署名",
+                "修復前 10 大頁面的 meta 描述",
             ],
             "medium_term": [
-                "Implement Organization schema with sameAs linking",
-                "Add Article + Person schema to all blog posts",
-                "Restructure content with question-based H2 headings",
-                "Optimize content blocks for 134-167 word citability",
-                "Implement server-side rendering for content pages",
+                "實作帶有 sameAs 連結的 Organization 結構化資料",
+                "在所有部落格文章加入 Article + Person 結構化資料",
+                "使用問題導向的 H2 標題重構內容",
+                "優化內容區塊以符合 134-167 字的引用標準",
+                "為內容頁面實作伺服器端渲染 (SSR)",
             ],
             "strategic": [
-                "Build Wikipedia/Wikidata entity presence",
-                "Develop Reddit community engagement strategy",
-                "Create YouTube content aligned with AI search queries",
-                "Establish original research publication program",
-                "Build comprehensive topical authority content clusters",
+                "建立 Wikipedia/Wikidata 的實體存在感",
+                "制定 Reddit 社群參與策略",
+                "建立符合 AI 搜尋意圖的 YouTube 內容",
+                "建立原創研究發布計畫",
+                "建立全面的主題權威內容叢集",
             ],
             "crawler_access": {
-                "GPTBot": {"platform": "ChatGPT", "status": "Allowed", "recommendation": "Keep allowed"},
-                "ClaudeBot": {"platform": "Claude", "status": "Allowed", "recommendation": "Keep allowed"},
-                "PerplexityBot": {"platform": "Perplexity", "status": "Blocked", "recommendation": "Unblock for visibility"},
-                "Google-Extended": {"platform": "Gemini", "status": "Allowed", "recommendation": "Keep allowed"},
-                "Bingbot": {"platform": "Bing Copilot", "status": "Allowed", "recommendation": "Keep allowed"},
+                "GPTBot": {"platform": "ChatGPT", "status": "Allowed", "recommendation": "保持允許"},
+                "ClaudeBot": {"platform": "Claude", "status": "Allowed", "recommendation": "保持允許"},
+                "PerplexityBot": {"platform": "Perplexity", "status": "Blocked", "recommendation": "解除阻擋以提升可見度"},
+                "Google-Extended": {"platform": "Gemini", "status": "Allowed", "recommendation": "保持允許"},
+                "Bingbot": {"platform": "Bing Copilot", "status": "Allowed", "recommendation": "保持允許"},
             },
         }
 

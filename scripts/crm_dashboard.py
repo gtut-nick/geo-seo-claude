@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-GEO-SEO CRM Dashboard — CLI
-Visualizza il CRM dei prospect con rich.
+GEO-SEO CRM 儀表板 — CLI
+使用 rich 視覺化潛在客戶 (prospect) CRM。
 
-Usage:
-    python crm_dashboard.py                  # Vista principale
-    python crm_dashboard.py --prospect PRO-001   # Dettaglio singolo prospect
-    python crm_dashboard.py --refresh           # Aggiorna + mostra
+用法:
+    python crm_dashboard.py                  # 主視圖
+    python crm_dashboard.py --prospect PRO-001   # 單一潛在客戶詳細資訊
+    python crm_dashboard.py --refresh           # 更新 + 顯示
 """
 
 import json
@@ -31,17 +31,17 @@ try:
     from rich.style import Style
     from rich.markup import escape
 except ImportError:
-    print("ERROR: rich is required. Run: pip install rich")
+    print("錯誤：需要安裝 rich 套件。請執行：pip install rich")
     sys.exit(1)
 
-# ── Paths ─────────────────────────────────────────────────────────────
+# ── 路徑 (Paths) ─────────────────────────────────────────────────────────────
 CRM_PATH = Path.home() / ".geo-prospects" / "prospects.json"
 AUDITS_DIR = Path.home() / ".geo-prospects" / "audits"
 PROPOSALS_DIR = Path.home() / ".geo-prospects" / "proposals"
 
 console = Console()
 
-# ── Color helpers ──────────────────────────────────────────────────────
+# ── 顏色輔助函式 (Color helpers) ──────────────────────────────────────────────────────
 STATUS_STYLE = {
     "lead":     ("⬜", "dim white",       "grey50"),
     "audit":    ("🔍", "bold yellow",     "yellow"),
@@ -52,18 +52,18 @@ STATUS_STYLE = {
 }
 
 def score_style(score: int) -> tuple[str, str]:
-    """Returns (color, label) based on GEO score."""
+    """根據 GEO 分數回傳 (顏色, 標籤)。"""
     if score >= 80:
-        return "bold green",  "GOOD"
+        return "bold green",  "良好"
     elif score >= 60:
-        return "bold blue",   "MODERATE"
+        return "bold blue",   "中等"
     elif score >= 40:
-        return "bold yellow",  "POOR"
+        return "bold yellow",  "不佳"
     else:
-        return "bold red",    "CRITICAL"
+        return "bold red",    "危急"
 
 def score_bar(score: int, width: int = 20) -> Text:
-    """Renders a colored progress bar for a score."""
+    """為分數繪製彩色的進度條。"""
     filled = round((score / 100) * width)
     empty = width - filled
     color, _ = score_style(score)
@@ -79,18 +79,18 @@ def format_eur(value: int | None) -> str:
     return f"€{value:,.0f}".replace(",", ".")
 
 
-# ── Load CRM ───────────────────────────────────────────────────────────
+# ── 載入 CRM (Load CRM) ───────────────────────────────────────────────────────────
 def load_prospects() -> list[dict]:
     if not CRM_PATH.exists():
-        console.print(f"[red]CRM file not found:[/red] {CRM_PATH}")
+        console.print(f"[red]找不到 CRM 檔案：[/red] {CRM_PATH}")
         return []
     with open(CRM_PATH) as f:
         return json.load(f)
 
 
-# ── Views ──────────────────────────────────────────────────────────────
+# ── 視圖 (Views) ──────────────────────────────────────────────────────────────
 def view_summary(prospects: list[dict]):
-    """KPI summary cards at top."""
+    """頂部的 KPI 摘要卡片。"""
     total = len(prospects)
     active = sum(1 for p in prospects if p.get("status") == "active")
     pipeline = sum(p.get("monthly_value", 0) for p in prospects if p.get("status") == "proposal")
@@ -101,7 +101,7 @@ def view_summary(prospects: list[dict]):
         Panel(
             Align.center(
                 Text.from_markup(
-                    f"[bold white]{total}[/bold white]\n[dim]Total Prospects[/dim]"
+                    f"[bold white]{total}[/bold white]\n[dim]總潛在客戶數[/dim]"
                 )
             ),
             border_style="bright_blue",
@@ -110,7 +110,7 @@ def view_summary(prospects: list[dict]):
         Panel(
             Align.center(
                 Text.from_markup(
-                    f"[bold green]{active}[/bold green]\n[dim]Active Clients[/dim]"
+                    f"[bold green]{active}[/bold green]\n[dim]活躍客戶[/dim]"
                 )
             ),
             border_style="green",
@@ -119,7 +119,7 @@ def view_summary(prospects: list[dict]):
         Panel(
             Align.center(
                 Text.from_markup(
-                    f"[bold cyan]{format_eur(mrr)}[/bold cyan]\n[dim]MRR[/dim]"
+                    f"[bold cyan]{format_eur(mrr)}[/bold cyan]\n[dim]每月經常性收入 (MRR)[/dim]"
                 )
             ),
             border_style="cyan",
@@ -128,7 +128,7 @@ def view_summary(prospects: list[dict]):
         Panel(
             Align.center(
                 Text.from_markup(
-                    f"[bold yellow]{format_eur(pipeline)}[/bold yellow]\n[dim]Pipeline (proposals)[/dim]"
+                    f"[bold yellow]{format_eur(pipeline)}[/bold yellow]\n[dim]業務管道 (提案金額)[/dim]"
                 )
             ),
             border_style="yellow",
@@ -137,7 +137,7 @@ def view_summary(prospects: list[dict]):
         Panel(
             Align.center(
                 Text.from_markup(
-                    f"[bold]{avg_score}[/bold][dim]/100[/dim]\n[dim]Avg GEO Score[/dim]"
+                    f"[bold]{avg_score}[/bold][dim]/100[/dim]\n[dim]平均 GEO 分數[/dim]"
                 )
             ),
             border_style="magenta",
@@ -148,7 +148,7 @@ def view_summary(prospects: list[dict]):
 
 
 def view_prospect_table(prospects: list[dict]):
-    """Main prospects table."""
+    """主要的潛在客戶資料表。"""
     table = Table(
         title=None,
         box=box.ROUNDED,
@@ -160,13 +160,13 @@ def view_prospect_table(prospects: list[dict]):
     )
 
     table.add_column("ID",         style="dim", width=9)
-    table.add_column("Company",    style="bold white", min_width=16)
-    table.add_column("Domain",     style="cyan", min_width=18)
-    table.add_column("Status",     justify="center", min_width=12)
-    table.add_column("GEO Score",  justify="left", min_width=26)
-    table.add_column("Audit",      justify="center", min_width=12)
+    table.add_column("公司",       style="bold white", min_width=16)
+    table.add_column("網域",       style="cyan", min_width=18)
+    table.add_column("狀態",       justify="center", min_width=12)
+    table.add_column("GEO 分數",   justify="left", min_width=26)
+    table.add_column("稽核",       justify="center", min_width=12)
     table.add_column("MRR",        justify="right", min_width=10)
-    table.add_column("Proposal",   justify="center", min_width=10)
+    table.add_column("提案",       justify="center", min_width=10)
 
     for p in sorted(prospects, key=lambda x: x.get("geo_score", 0)):
         pid     = p.get("id", "—")
@@ -196,69 +196,69 @@ def view_prospect_table(prospects: list[dict]):
 
 
 def view_prospect_detail(prospects: list[dict], prospect_id: str):
-    """Detailed view of a single prospect."""
+    """單一潛在客戶的詳細視圖。"""
     p = next((x for x in prospects if x.get("id") == prospect_id), None)
     if not p:
-        console.print(f"[red]Prospect not found:[/red] {prospect_id}")
+        console.print(f"[red]找不到潛在客戶：[/red] {prospect_id}")
         return
 
     score = p.get("geo_score", 0)
     color, label = score_style(score)
 
-    # Header
+    # 標題
     console.print(Rule(f"[bold]{p['company']}[/bold] — {p['domain']}", style="bright_blue"))
     console.print()
 
-    # Score + info side by side
+    # 分數與資訊並排顯示
     score_panel = Panel(
         Align.center(
             Text.from_markup(
                 f"\n[{color}]{score}[/{color}]\n[dim]/100[/dim]\n\n[{color}]{label}[/{color}]\n"
             )
         ),
-        title="GEO Score",
+        title="GEO 分數",
         border_style=color.replace("bold ", ""),
         width=20,
     )
 
     info_lines = [
         f"[dim]ID:[/dim]          {p.get('id', '—')}",
-        f"[dim]Status:[/dim]      {p.get('status', '—').upper()}",
-        f"[dim]Industry:[/dim]    {p.get('industry', '—')}",
-        f"[dim]Country:[/dim]     {p.get('country', '—')}",
-        f"[dim]Audit Date:[/dim]  {p.get('audit_date', '—')}",
+        f"[dim]狀態:[/dim]        {p.get('status', '—').upper()}",
+        f"[dim]產業:[/dim]        {p.get('industry', '—')}",
+        f"[dim]國家/地區:[/dim]   {p.get('country', '—')}",
+        f"[dim]稽核日期:[/dim]    {p.get('audit_date', '—')}",
         f"[dim]MRR:[/dim]         {format_eur(p.get('monthly_value'))}",
-        f"[dim]Contract:[/dim]    {p.get('contract_months', '—')} months",
+        f"[dim]合約:[/dim]        {p.get('contract_months', '—')} 個月",
     ]
     if p.get("contact_name"):
-        info_lines.append(f"[dim]Contact:[/dim]     {p['contact_name']}")
+        info_lines.append(f"[dim]聯絡人:[/dim]      {p['contact_name']}")
     if p.get("contact_email"):
-        info_lines.append(f"[dim]Email:[/dim]       {p['contact_email']}")
+        info_lines.append(f"[dim]電子郵件:[/dim]    {p['contact_email']}")
 
     info_panel = Panel(
         "\n".join(info_lines),
-        title="Details",
+        title="詳細資訊",
         border_style="bright_blue",
     )
 
     console.print(Columns([score_panel, info_panel], expand=False))
     console.print()
 
-    # Files
+    # 檔案
     files = []
     if p.get("audit_file"):
         audit_path = Path(p["audit_file"].replace("~", str(Path.home())))
         exists = "✓" if audit_path.exists() else "✗"
-        files.append(f"  {exists} [cyan]Audit:[/cyan]    {p['audit_file']}")
+        files.append(f"  {exists} [cyan]稽核:[/cyan]    {p['audit_file']}")
     if p.get("proposal_file"):
         prop_path = Path(p["proposal_file"].replace("~", str(Path.home())))
         exists = "✓" if prop_path.exists() else "✗"
-        files.append(f"  {exists} [yellow]Proposal:[/yellow] {p['proposal_file']}")
+        files.append(f"  {exists} [yellow]提案:[/yellow] {p['proposal_file']}")
     if files:
-        console.print(Panel("\n".join(files), title="Files", border_style="dim"))
+        console.print(Panel("\n".join(files), title="檔案", border_style="dim"))
         console.print()
 
-    # Notes
+    # 備註
     notes = p.get("notes", [])
     if notes:
         note_text = ""
@@ -266,14 +266,14 @@ def view_prospect_detail(prospects: list[dict], prospect_id: str):
             date = note.get("date", "")[:10]
             text = escape(note.get("text", ""))
             note_text += f"[dim]{date}[/dim]  {text}\n\n"
-        console.print(Panel(note_text.rstrip(), title="Notes", border_style="dim"))
+        console.print(Panel(note_text.rstrip(), title="備註", border_style="dim"))
 
 
 def view_pipeline(prospects: list[dict]):
-    """Show pipeline by status."""
+    """依狀態顯示業務管道。"""
     statuses = ["lead", "audit", "proposal", "active", "churned", "lost"]
     console.print()
-    console.print(Rule("[bold]Pipeline by Status[/bold]", style="bright_blue"))
+    console.print(Rule("[bold]各狀態業務管道 (Pipeline)[/bold]", style="bright_blue"))
     console.print()
 
     for status in statuses:
@@ -282,7 +282,7 @@ def view_pipeline(prospects: list[dict]):
             continue
         icon, style, _ = STATUS_STYLE.get(status, ("?", "white", "white"))
         total_mrr = sum(p.get("monthly_value", 0) for p in group)
-        label = f"{icon} [bold]{status.upper()}[/bold] ({len(group)})  {format_eur(total_mrr)}/mo"
+        label = f"{icon} [bold]{status.upper()}[/bold] ({len(group)})  {format_eur(total_mrr)}/月"
         console.print(f"  {label}", style=style)
         for p in group:
             score = p.get("geo_score", 0)
@@ -293,11 +293,11 @@ def view_pipeline(prospects: list[dict]):
         console.print()
 
 
-# ── Main ───────────────────────────────────────────────────────────────
+# ── 主程式 (Main) ───────────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description="GEO-SEO CRM Dashboard")
-    parser.add_argument("--prospect", "-p", help="Show detail for a prospect ID")
-    parser.add_argument("--pipeline", action="store_true", help="Show pipeline view")
+    parser = argparse.ArgumentParser(description="GEO-SEO CRM 儀表板")
+    parser.add_argument("--prospect", "-p", help="顯示特定潛在客戶 ID 的詳細資訊")
+    parser.add_argument("--pipeline", action="store_true", help="顯示業務管道視圖")
     args = parser.parse_args()
 
     prospects = load_prospects()
@@ -328,7 +328,7 @@ def main():
         view_pipeline(prospects)
 
     console.print(
-        f"[dim]CRM: {CRM_PATH}   |   /geo audit <domain> to add prospects[/dim]\n"
+        f"[dim]CRM: {CRM_PATH}   |   輸入 /geo audit <網域> 來新增潛在客戶[/dim]\n"
     )
 
 

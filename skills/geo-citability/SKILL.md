@@ -1,6 +1,6 @@
 ---
 name: geo-citability
-description: AI citability scoring and optimization. Analyzes web page content to determine how likely AI systems (ChatGPT, Claude, Perplexity, Gemini) are to cite or quote passages from the page. Provides a citability score (0-100) with specific rewrite suggestions.
+description: AI 引用性評分（AI citability scoring）與最佳化。分析網頁內容，判斷 AI 系統（ChatGPT、Claude、Perplexity、Gemini）引用或摘錄頁面段落的可能性。提供引用性分數（citability score，0-100）與具體重寫建議（rewrite suggestions）。
 allowed-tools:
   - Read
   - Grep
@@ -10,310 +10,308 @@ allowed-tools:
   - Write
 ---
 
-# AI Citability Scoring Skill
+# AI 引用性評分技能
 
-## Core Insight
+## 核心洞察
 
-AI language models cite passages that meet specific structural criteria. Research from Princeton, Georgia Tech, and IIT Delhi (2024) found that GEO-optimized content achieves 30-115% higher visibility in AI-generated responses. The key finding: AI systems preferentially extract and cite passages that are **134-167 words long**, **self-contained** (understandable without surrounding context), **fact-rich** (containing specific statistics, dates, or named entities), and **directly answer a question** in the first 1-2 sentences.
+AI 語言模型（AI language models）會引用符合特定結構條件的段落（passages）。普林斯頓大學、喬治亞理工學院與印度理工學院德里分校（IIT Delhi，2024）的研究發現，經過 GEO 最佳化的內容（GEO-optimized content）在 AI 生成的回答中可獲得高出 30-115% 的能見度（visibility）。關鍵發現：AI 系統會優先擷取並引用 **134-167 個單字長**、**具備獨立性**（self-contained，不需前後文即可理解）、**資訊豐富**（fact-rich，包含具體統計數據、日期或命名實體），且在前 1-2 句 **直接回答問題** 的段落。
 
-This is fundamentally different from traditional SEO copywriting, which optimizes for keyword density and user engagement metrics. GEO citability optimizes for **extractability** -- the ease with which an AI system can pull a passage from your content and present it as a direct answer.
+這與傳統 SEO 文案（copywriting）根本不同；傳統 SEO 最佳化的是關鍵字密度（keyword density）與使用者互動指標（user engagement metrics）。GEO 引用性最佳化的是 **可擷取性（extractability）**，也就是 AI 系統從內容中抽出段落並作為直接回答（direct answer）呈現的容易程度。
 
 ---
 
-## Citability Scoring Rubric (0-100)
+## 引用性評分標準（Citability Scoring Rubric，0-100）
 
-### Category 1: Answer Block Quality (30% of total score)
+### 類別 1：回答區塊品質（Answer Block Quality，總分 30%）
 
-This measures whether content contains clear, quotable answer passages that AI systems can extract verbatim.
+衡量內容是否包含 AI 系統可逐字擷取的清楚、可引用回答段落。
 
-**Scoring Criteria:**
+**評分標準：**
 
-| Score | Criteria |
+| 分數 | 準則 |
 |---|---|
-| **90-100** | Every major section opens with a 1-2 sentence direct answer. Uses "X is..." or "X refers to..." patterns. First 40-60 words of each section can stand alone as a complete answer. |
-| **70-89** | Most sections have clear answer openings. Some definition patterns present. Answers are identifiable but may need minor context. |
-| **50-69** | Some sections have answer-like openings but many bury the answer in the middle or end of paragraphs. Few explicit definition patterns. |
-| **30-49** | Answers are generally buried in long paragraphs. No consistent definition patterns. Content is narrative-driven rather than answer-driven. |
-| **0-29** | No identifiable answer blocks. Content is entirely narrative, conversational, or fragmented. AI would struggle to extract any quotable passage. |
+| **90-100** | 每個主要章節（section）都以 1-2 句直接回答開頭。使用 "X is..." 或 "X refers to..." 等模式。每個章節的前 40-60 個字可獨立作為完整答案。 |
+| **70-89** | 大多數章節有清楚的回答開頭。具備部分定義模式（definition patterns）。答案可辨識，但可能需要少量上下文（context）。 |
+| **50-69** | 有些章節有類似回答的開頭，但許多答案埋在段落（paragraph）中間或結尾。很少有明確的定義模式。 |
+| **30-49** | 答案通常埋在長段落中。沒有一致的定義模式。內容是以敘事驅動（narrative-driven）而非回答驅動（answer-driven）。 |
+| **0-29** | 沒有可辨識的回答區塊。內容完全是敘事、對話式或破碎的。AI 很難擷取任何可引用段落。 |
 
-**What to look for:**
+**檢查重點：**
 
-- **Definition patterns:** "X is [definition]." / "X refers to [explanation]." / "X means [meaning]."
-- **Answer-first structure:** The answer appears in the first sentence, followed by supporting detail.
-- **Quantified answers:** "The average cost of X is $Y" rather than "Many factors affect the cost of X."
-- **Comparison answers:** "X differs from Y in three ways: [list]" rather than "X and Y are often confused."
+- **定義模式（Definition patterns）：** "X is [definition]." / "X refers to [explanation]." / "X means [meaning]."
+- **回答優先結構（Answer-first structure）：** 答案出現在第一句，接著是支持性細節（supporting detail）。
+- **量化回答（Quantified answers）：** "X 的平均成本是 $Y"，而不是 "許多因素會影響 X 的成本。"
+- **比較回答（Comparison answers）：** "X 與 Y 有三個差異：[list]"，而不是 "X 與 Y 經常被混淆。"
 
-**High-citability example:**
+**高引用性範例：**
 ```
-Content delivery networks (CDNs) are distributed server systems that cache and serve
-web content from locations geographically close to end users. A CDN reduces latency
-by 50-70% on average by serving assets from edge servers rather than a single origin
-server. The three largest CDN providers as of 2025 are Cloudflare (serving approximately
-20% of all websites), Amazon CloudFront, and Akamai Technologies.
+內容傳遞網路 (Content delivery networks, CDNs) 是分散式伺服器系統，會從地理位置接近終端使用者的節點
+快取並提供網頁內容 (web content)。CDN 透過邊緣伺服器 (edge servers) 而不是單一來源伺服器 (origin server) 提供資產，
+平均可降低 50-70% 的延遲 (latency)。截至 2025 年，三大 CDN 供應商是 Cloudflare
+（服務約 20% 的所有網站）、Amazon CloudFront 與 Akamai Technologies。
 ```
-Word count: 58. Self-contained: Yes. Facts: 3 specific data points. Definition pattern: Yes.
+字數：約 58。可獨立理解：是。事實：3 個具體數據點。定義模式：是。
 
-**Low-citability example:**
+**低引用性範例：**
 ```
-If you've ever wondered why some websites load faster than others, the answer might
-surprise you. There's this amazing technology that has been around for a while now.
-It's changed the way we think about web performance. Let me explain how it works and
-why you should care about it for your business.
+如果你曾經好奇為什麼有些網站載入速度比其他網站快，答案可能會讓你驚訝。
+有一項很棒的技術已經存在一段時間。它改變了我們思考網頁效能 (web performance) 的方式。
+讓我說明它如何運作，以及為什麼你的企業 (business) 應該重視它。
 ```
-Word count: 52. Self-contained: No (no topic identified). Facts: 0. Definition pattern: No.
+字數：約 52。可獨立理解：否（未識別主題）。事實：0。定義模式：否。
 
 ---
 
-### Category 2: Passage Self-Containment (25% of total score)
+### 類別 2：段落獨立性（Passage Self-Containment，總分 25%）
 
-This measures whether individual passages can be extracted and understood without needing the surrounding content.
+衡量個別段落（individual passages）是否能被擷取，且在不依賴周圍內容時仍可理解。
 
-**Scoring Criteria:**
+**評分標準：**
 
-| Score | Criteria |
+| 分數 | 準則 |
 |---|---|
-| **90-100** | 80%+ of content blocks are fully self-contained. Each passage names its subject explicitly. No reliance on pronouns referencing earlier content. Contains specific facts within the passage. |
-| **70-89** | 60-79% of content blocks are self-contained. Most passages name their subject. Occasional pronoun references that require context. |
-| **50-69** | 40-59% of content blocks are self-contained. Mixed use of explicit subjects and pronouns. Some passages require reading prior sections. |
-| **30-49** | 20-39% of content blocks are self-contained. Heavy reliance on pronouns and contextual references. Most passages need surrounding text. |
-| **0-29** | Under 20% self-contained. Content reads as a continuous narrative where extracting any paragraph loses meaning. |
+| **90-100** | 80% 以上的內容區塊完全獨立（self-contained）。每段都明確命名主體（subject）。沒有依賴前文的代名詞（pronouns）。段落內含具體事實。 |
+| **70-89** | 60-79% 的內容區塊獨立。大多數段落有命名主體。偶爾有需要上下文的代名詞參照。 |
+| **50-69** | 40-59% 的內容區塊獨立。明確的主體與代名詞混用。有些段落需要閱讀前面的章節。 |
+| **30-49** | 20-39% 的內容區塊獨立。高度依賴代名詞與情境參照。大多數段落需要周圍文字輔助理解。 |
+| **0-29** | 低於 20% 獨立。內容像連續的敘事，抽出任何段落都會失去意義。 |
 
-**Self-containment checklist for each passage:**
+**每個段落的獨立性檢查清單：**
 
-1. Does the passage explicitly name the subject (not "it," "this," "they")?
-2. Can someone understand the main point reading ONLY this passage?
-3. Does the passage contain at least one specific fact, statistic, or named entity?
-4. Is the passage between 50-200 words (the optimal extraction length)?
-5. Does the passage avoid starting with conjunctions ("But," "However," "And") that imply prior context?
+1. 段落是否明確命名主體（而非使用 "it," "this," "they"）？
+2. 只讀這段段落能否理解其要點（main point）？
+3. 段落是否包含至少一個具體事實、統計數據或命名實體？
+4. 段落長度是否介於 50-200 個單字（最佳擷取長度）？
+5. 段落是否避免以暗示前文的連接詞開頭（如 "But," "However," "And"）？
 
 ---
 
-### Category 3: Structural Readability (20% of total score)
+### 類別 3：結構可讀性（Structural Readability，總分 20%）
 
-This measures the structural formatting that helps AI systems parse and segment content.
+衡量協助 AI 系統解析（parse）與分割（segment）內容的結構格式。
 
-**Scoring Criteria:**
+**評分標準：**
 
-| Score | Criteria |
+| 分數 | 準則 |
 |---|---|
-| **90-100** | Clean H1 > H2 > H3 hierarchy. Question-based headings for informational content. Short paragraphs (2-4 sentences). Tables for comparisons. Ordered lists for processes. Unordered lists for features/options. |
-| **70-89** | Good heading hierarchy with minor skips. Some question-based headings. Mostly short paragraphs. Some use of tables and lists. |
-| **50-69** | Heading hierarchy present but inconsistent. Few question-based headings. Mix of short and long paragraphs. Limited tables/lists. |
-| **30-49** | Minimal heading structure. No question-based headings. Long paragraphs dominate. Rare use of tables/lists. |
-| **0-29** | No heading structure or severely broken hierarchy. Wall-of-text paragraphs. No tables or lists. |
+| **90-100** | 乾淨的 H1 > H2 > H3 階層（hierarchy）。資訊內容使用以問題為基礎的標題（question-based headings）。短段落（2-4 句）。比較資訊使用表格（tables）。程序使用編號清單（ordered lists）。特性/選項使用項目符號（unordered lists）。 |
+| **70-89** | 標題階層良好，僅有少量跳層。有一些以問題為基礎的標題。多為短段落。有使用表格與清單。 |
+| **50-69** | 有標題階層但不一致。很少以問題為基礎的標題。長短段落混合。表格/清單使用有限。 |
+| **30-49** | 極少標題結構。沒有以問題為基礎的標題。以長段落為主。很少使用表格/清單。 |
+| **0-29** | 沒有標題結構，或階層嚴重破壞。大量牆狀文字段落（Wall-of-text）。沒有表格或清單。 |
 
-**Structural best practices for AI citability:**
+**提升 AI 引用性的結構最佳實踐：**
 
-- **Heading hierarchy:** H1 (page title) > H2 (major sections) > H3 (subsections). Never skip levels.
-- **Question-based headings:** "What is [topic]?" and "How does [topic] work?" are directly matchable to AI queries.
-- **Paragraph length:** 2-4 sentences per paragraph. AI systems parse short paragraphs more reliably.
-- **Tables:** Use for any comparison of 3+ items. AI systems extract table data with high accuracy.
-- **Lists:** Use ordered lists for sequential processes, unordered lists for non-sequential items.
-- **Bold key terms:** Bold the first use of important terms. This aids AI entity recognition.
+- **標題階層（Heading hierarchy）：** H1（頁面標題）> H2（主要章節）> H3（次要章節）。不要跳層。
+- **問題式標題（Question-based headings）：** 如 "What is [topic]?" 與 "How does [topic] work?"，可直接匹配 AI 查詢。
+- **段落長度（Paragraph length）：** 每一段約 2-4 句。AI 系統能更可靠地解析短段落。
+- **表格（Tables）：** 任何 3 個項目以上的比較都應使用表格。AI 系統能高準確度地擷取表格數據。
+- **清單（Lists）：** 順序性程序使用編號清單；非順序性項目使用項目符號清單。
+- **粗體關鍵術語（Bold key terms）：** 重要術語第一次出現時使用粗體。這有助於 AI 實體識別（entity recognition）。
 
 ---
 
-### Category 4: Statistical Density (15% of total score)
+### 類別 4：統計數據密度（Statistical Density，總分 15%）
 
-This measures the presence of specific, verifiable data points that AI systems prioritize when selecting citation sources.
+衡量 AI 系統選擇引用來源時優先考量的具體、可驗證數據點。
 
-**Scoring Criteria:**
+**評分標準：**
 
-| Score | Criteria |
+| 分數 | 準則 |
 |---|---|
-| **90-100** | 5+ specific statistics per 500 words. All claims backed by named sources or dates. Uses exact numbers (not "many" or "several"). Includes percentages, dollar amounts, timeframes, and named studies. |
-| **70-89** | 3-4 statistics per 500 words. Most claims have sources. Mostly specific numbers with occasional vague quantifiers. |
-| **50-69** | 1-2 statistics per 500 words. Some claims sourced. Mix of specific and vague numbers. |
-| **30-49** | Less than 1 statistic per 500 words. Few sourced claims. Predominantly vague quantifiers. |
-| **0-29** | No statistics. No sourced claims. All quantifiers are vague ("many," "most," "a lot"). |
+| **90-100** | 每 500 個單字有 5 個以上的具體統計數據。所有主張（claims）都有命名的來源（named sources）或日期支持。使用精確數字（而非 "many" 或 "several"）。包含百分比、金額、時間範圍與研究名稱。 |
+| **70-89** | 每 500 個單字有 3-4 個統計數據。大多數主張有來源。多數為精確數字，偶爾有模糊的量詞（vague quantifiers）。 |
+| **50-69** | 每 500 個單字有 1-2 個統計數據。有些主張有來源。精確數字與模糊數字混用。 |
+| **30-49** | 每 500 個單字少於 1 個統計數據。很少有具備來源的主張。大多是模糊的量詞。 |
+| **0-29** | 沒有統計數據。沒有具備來源的主張。所有量詞都很模糊（如 "many," "most," "a lot"）。 |
 
-**What counts as a statistic:**
-- Specific percentages: "73% of marketers report..."
-- Dollar amounts: "The average cost is $4,500 per month"
-- Timeframes: "Implementation takes 6-8 weeks on average"
-- Named studies: "According to the 2025 HubSpot State of Marketing Report..."
-- Specific counts: "The platform integrates with 340+ tools"
-- Comparison data: "40% faster than the industry average"
+**哪些屬於統計數據：**
+- 具體百分比： "73% 的行銷人員報告..."
+- 金額： "平均成本為每月 $4,500"
+- 時間範圍： "實施平均需要 6-8 週"
+- 研究名稱： "根據 2025 年 HubSpot 行銷現況報告..."
+- 具體計數： "該平台整合了 340 個以上的工具"
+- 比較數據： "比產業平均快 40%"
 
-**What does NOT count:**
-- "Many companies use..." (vague)
-- "A significant percentage..." (vague)
-- "Studies show that..." (no named source)
-- "Experts agree..." (no named experts)
+**哪些不屬於：**
+- "許多公司使用..."（模糊）
+- "顯著的百分比..."（模糊）
+- "研究顯示..."（未命名來源）
+- "專家同意..."（未命名專家）
 
 ---
 
-### Category 5: Uniqueness & Original Data (10% of total score)
+### 類別 5：獨特性與原創數據（Uniqueness & Original Data，總分 10%）
 
-This measures whether the content provides information that AI systems cannot find elsewhere, making it a necessary citation source.
+衡量內容是否提供 AI 系統在其他地方找不到的資訊，使其成為必要的引用來源。
 
-**Scoring Criteria:**
+**評分標準：**
 
-| Score | Criteria |
+| 分數 | 準則 |
 |---|---|
-| **90-100** | Contains first-party research, proprietary data, original surveys, or unique datasets. Presents analysis or insights not found on any other page. Clear methodological descriptions. |
-| **70-89** | Contains some original insights or unique analysis of existing data. Offers a distinct perspective with original examples. |
-| **50-69** | Mostly synthesizes existing information but adds some unique commentary or examples. |
-| **30-49** | Largely derivative content that restates common knowledge with minimal original contribution. |
-| **0-29** | Entirely derivative. All information is available (often verbatim) on higher-authority sources. |
+| **90-100** | 包含第一手研究、專有數據、原創調查或獨特數據集。呈現其他頁面沒有的分析（analysis）或見解（insights）。研究方法描述清楚。 |
+| **70-89** | 包含部分原創見解，或對既有資料的獨特分析。提供獨特的觀點與原創範例。 |
+| **50-69** | 主要整合既有資訊，但加上一些獨特的評論（commentary）或範例。 |
+| **30-49** | 大多是衍生成分（derivative content），重述常識，原創貢獻很少。 |
+| **0-29** | 完全是衍生內容。所有資訊都可在更高權威的來源找到（通常還是逐字重複）。 |
 
-**Signals of unique content:**
-- "Our analysis of [X] data found..."
-- "We surveyed [N] [professionals] and found..."
-- "Based on our experience with [N] clients..."
-- Custom charts, graphs, or data visualizations
-- Case studies with specific named outcomes
-- Original frameworks, methodologies, or taxonomies
-
----
-
-## Analysis Procedure
-
-### Step 1: Fetch and Parse Page Content
-
-1. Use WebFetch to retrieve the target URL.
-2. Extract the main content area (exclude navigation, footer, sidebar, ads).
-3. Preserve heading structure (H1-H6 tags).
-4. Preserve paragraph boundaries, lists, and tables.
-5. Calculate total word count of main content.
-
-### Step 2: Segment Content into Blocks
-
-1. Split content at each heading (H2 or H3) to create content blocks.
-2. For each block, record:
-   - The heading text
-   - The full text content under that heading
-   - Word count of the block
-   - Number of paragraphs
-   - Number of lists and tables
-   - Number of statistics/data points
-   - Whether the block contains a definition pattern
-   - Whether the first 60 words form a standalone answer
-
-### Step 3: Score Each Block
-
-For each content block, calculate:
-- Answer Block Quality sub-score (0-100)
-- Self-Containment sub-score (0-100)
-- Structural Readability sub-score (0-100)
-- Statistical Density sub-score (0-100)
-- Uniqueness sub-score (0-100)
-
-**Block Citability Score** = (Answer * 0.30) + (SelfContain * 0.25) + (Structure * 0.20) + (Stats * 0.15) + (Unique * 0.10)
-
-### Step 4: Calculate Page-Level Score
-
-1. Calculate the average of all block scores for the page-level citability score.
-2. Identify the top 3 highest-scoring blocks (highlight as strengths).
-3. Identify the bottom 3 lowest-scoring blocks (flag for rewriting).
-4. Calculate the percentage of blocks scoring above 70 (the "citability coverage" metric).
-
-### Step 5: Generate Rewrite Suggestions
-
-For each block scoring below 60, generate a specific rewrite suggestion:
-1. Identify the primary weakness (buried answer, lack of facts, poor structure, etc.).
-2. Propose a rewritten opening sentence using a definition or answer-first pattern.
-3. Suggest specific statistics or facts that could be added.
-4. Recommend structural improvements (add list, add table, split paragraph).
+**原創內容的訊號：**
+- "我們對 [X] 數據的分析發現..."
+- "我們調查了 [N] 位 [專業人士] 並發現..."
+- "根據我們處理 [N] 個客戶的經驗..."
+- 自訂圖表（Custom charts）、圖表（graphs）或數據視覺化（data visualizations）
+- 包含具體命名成果的案例研究（case studies）
+- 原創框架（Original frameworks）、方法論（methodologies）或分類法（taxonomies）
 
 ---
 
-## Output Format
+## 分析流程
 
-Generate a file called `GEO-CITABILITY-SCORE.md`:
+### Step 1：擷取並解析頁面內容 (Fetch and Parse)
+
+1. 使用 WebFetch 取得目標 URL。
+2. 擷取主要內容區域（排除導覽、頁尾、側邊欄、廣告）。
+3. 保留標題結構（H1-H6 標籤）。
+4. 保留段落邊界、清單與表格。
+5. 計算主要內容的總字數。
+
+### Step 2：將內容分割為區塊 (Segment into Blocks)
+
+1. 在每個標題（H2 或 H3）切分內容，建立內容區塊（content blocks）。
+2. 對每個區塊記錄：
+   - 標題文字
+   - 該標題下的完整文字內容
+   - 區塊字數
+   - 段落數量
+   - 清單與表格數量
+   - 統計數據/數據點數量
+   - 是否包含定義模式
+   - 前 60 個字是否形成獨立答案（standalone answer）
+
+### Step 3：為每個區塊評分 (Score Each Block)
+
+對每個內容區塊計算：
+- 回答區塊品質子分數（0-100）
+- 獨立性子分數（0-100）
+- 結構可讀性子分數（0-100）
+- 統計數據密度子分數（0-100）
+- 獨特性子分數（0-100）
+
+**區塊引用性分數 (Block Citability Score)** = (回答 * 0.30) + (獨立性 * 0.25) + (結構 * 0.20) + (統計 * 0.15) + (獨特 * 0.10)
+
+### Step 4：計算頁面層級分數 (Page-Level Score)
+
+1. 計算所有區塊分數的平均，作為頁面層級引用性分數。
+2. 找出前 3 個得分最高的區塊（列為優勢亮點）。
+3. 找出後 3 個得分最低的區塊（標記為重寫優先）。
+4. 計算得分超過 70 分的區塊百分比（"引用性覆蓋率 (citability coverage)" 指標）。
+
+### Step 5：產生重寫建議 (Rewrite Suggestions)
+
+對每個低於 60 分的區塊，產生具體重寫建議：
+1. 找出主要弱點（如：埋沒答案、缺乏事實、結構不良等）。
+2. 使用定義或回答優先模式提出重寫後的開場句。
+3. 建議可加入的具體統計數據或事實。
+4. 建議結構改善方案（如：增加表格、增加清單、分割長段落）。
+
+---
+
+## 輸出格式
+
+產生名為 `GEO-CITABILITY-SCORE.md` 的檔案：
 
 ```markdown
-# AI Citability Analysis: [Page Title]
+# AI 引用性分析：[Page Title]
 
 **URL:** [URL]
-**Analysis Date:** [Date]
-**Overall Citability Score: [X]/100**
-**Citability Coverage:** [X]% of content blocks score above 70
+**分析日期:** [Date]
+**總體引用性分數: [X]/100**
+**引用性覆蓋率:** [X]% 的內容區塊得分超過 70
 
 ---
 
-## Score Summary
+## 分數摘要
 
-| Category | Score | Weight | Weighted |
+| 類別 | 分數 | 權重 | 加權得分 |
 |---|---|---|---|
-| Answer Block Quality | [X]/100 | 30% | [X] |
-| Passage Self-Containment | [X]/100 | 25% | [X] |
-| Structural Readability | [X]/100 | 20% | [X] |
-| Statistical Density | [X]/100 | 15% | [X] |
-| Uniqueness & Original Data | [X]/100 | 10% | [X] |
-| **Overall** | | | **[X]/100** |
+| 回答區塊品質 | [X]/100 | 30% | [X] |
+| 段落獨立性 | [X]/100 | 25% | [X] |
+| 結構可讀性 | [X]/100 | 20% | [X] |
+| 統計數據密度 | [X]/100 | 15% | [X] |
+| 獨特性與原創數據 | [X]/100 | 10% | [X] |
+| **總計** | | | **[X]/100** |
 
 ---
 
-## Strongest Content Blocks
+## 最強內容區塊
 
-### 1. "[Heading]" -- Score: [X]/100
-> [First 2 sentences of the block]
+### 1. "[Heading]" -- 分數: [X]/100
+> [該區塊的前兩句]
 
-**Why it works:** [Explanation]
+**成功原因:** [說明]
 
-### 2. "[Heading]" -- Score: [X]/100
-> [First 2 sentences of the block]
+### 2. "[Heading]" -- 分數: [X]/100
+> [該區塊的前兩句]
 
-**Why it works:** [Explanation]
-
----
-
-## Weakest Content Blocks (Rewrite Priority)
-
-### 1. "[Heading]" -- Score: [X]/100
-
-**Current opening:**
-> [First 2 sentences as they exist]
-
-**Problem:** [Specific issue -- buried answer, no facts, etc.]
-
-**Suggested rewrite:**
-> [Rewritten opening 2-3 sentences with answer-first pattern and facts]
-
-**Additional improvements:**
-- [Add table comparing X, Y, Z]
-- [Include statistic about ...]
-- [Split long paragraph into 2-3 shorter ones]
+**成功原因:** [說明]
 
 ---
 
-## Quick Win Reformatting Recommendations
+## 最弱內容區塊 (重寫優先)
 
-1. **[Specific recommendation]** -- Expected citability lift: +[X] points
-2. **[Specific recommendation]** -- Expected citability lift: +[X] points
-3. **[Specific recommendation]** -- Expected citability lift: +[X] points
-4. **[Specific recommendation]** -- Expected citability lift: +[X] points
-5. **[Specific recommendation]** -- Expected citability lift: +[X] points
+### 1. "[Heading]" -- 分數: [X]/100
+
+**目前的開場:**
+> [現有的前兩句]
+
+**問題:** [具體問題 —— 如：答案被埋沒、缺乏事實等]
+
+**建議重寫內容:**
+> [使用回答優先模式並加入事實後，重寫的前 2-3 句]
+
+**其他改善建議:**
+- [增加比較 X, Y, Z 的表格]
+- [加入關於 ... 的統計數據]
+- [將長段落拆分為 2-3 個短段落]
 
 ---
 
-## Per-Section Scores
+## 快速獲勝 (Quick Win) 重新格式化建議
 
-| Section Heading | Words | Answer Quality | Self-Contained | Structure | Stats | Unique | Overall |
+1. **[具體建議]** -- 預計引用性提升: +[X] 分
+2. **[具體建議]** -- 預計引用性提升: +[X] 分
+3. **[具體建議]** -- 預計引用性提升: +[X] 分
+4. **[具體建議]** -- 預計引用性提升: +[X] 分
+5. **[具體建議]** -- 預計引用性提升: +[X] 分
+
+---
+
+## 各章節分數 (Per-Section Scores)
+
+| 章節標題 | 字數 | 回答品質 | 獨立性 | 結構 | 統計數據 | 獨特性 | 總分 |
 |---|---|---|---|---|---|---|---|
-| [H2 heading] | [N] | [X] | [X] | [X] | [X] | [X] | [X] |
+| [H2 標題] | [N] | [X] | [X] | [X] | [X] | [X] | [X] |
 ```
 
 ---
 
-## Reference Data
+## 參考資料
 
-### Optimal Passage Characteristics (from GEO Research)
+### 最佳段落特性（源自 GEO 研究）
 
-- **Optimal length for AI citation:** 134-167 words (Bortolato 2025 analysis of AI Overview passages)
-- **Definition patterns increase citation rate by:** 2.1x (Georgia Tech 2024)
-- **Adding statistics to passages increases citation by:** 40% (Princeton GEO study 2024)
-- **Adding quotations from authorities increases citation by:** 115% in certain categories (IIT Delhi 2024)
-- **Fluency optimization increases visibility by:** 30% on average across all query types
-- **Content with source citations is cited:** 20-25% more often by Perplexity and ChatGPT search
+- **AI 引用的最佳長度：** 134-167 個單字（Bortolato 2025 對 AI Overview 段落的分析）。
+- **定義模式提升引用率：** 2.1 倍（喬治亞理工學院，2024）。
+- **在段落中加入統計數據提升引用率：** 40%（普林斯頓 GEO 研究，2024）。
+- **加入權威人士的引言提升引用率：** 在某些類別中提升達 115%（IIT 德里分校，2024）。
+- **流暢度最佳化（Fluency optimization）提升能見度：** 所有查詢類型平均提升 30%。
+- **包含來源引用的內容被引用機率：** 在 Perplexity 與 ChatGPT 搜尋中增加 20-25%。
 
-### AI System Citation Preferences
+### AI 系統引用偏好
 
-| AI System | Citation Preference |
+| AI 系統 | 引用偏好 |
 |---|---|
-| **ChatGPT (Search)** | Prefers passages with explicit definitions, named sources, and recent dates. Tends to cite 2-4 sources per response. |
-| **Perplexity** | Heavily favors fact-dense passages with statistics. Cites 4-8 sources per response. Values recency highly. |
-| **Claude** | Prefers well-structured, comprehensive passages. Values nuance and accuracy over brevity. |
-| **Gemini (AI Overviews)** | Prefers concise answer blocks (40-60 words). Values content already ranking in top 10 organic results. |
-| **Copilot (Bing)** | Similar to Gemini. Prefers passages from high-authority domains with clear factual claims. |
+| **ChatGPT (搜尋)** | 偏好包含明確定義、命名來源與近期日期的段落。每次回答傾向引用 2-4 個來源。 |
+| **Perplexity** | 強烈偏好包含統計數據、事實密集的段落。每次回答引用 4-8 個來源。高度重視新近性（Recency）。 |
+| **Claude** | 偏好結構良好、詳盡的段落。重視細微差別（nuance）與準確性多於簡潔度。 |
+| **Gemini (AI Overviews)** | 偏好簡潔的回答區塊（40-60 個單字）。重視已排入前 10 名自然搜尋結果的內容。 |
+| **Copilot (Bing)** | 與 Gemini 類似。偏好高權威網域中包含清晰事實主張的段落。 |

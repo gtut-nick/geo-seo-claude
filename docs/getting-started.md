@@ -1,15 +1,15 @@
-# Getting Started
+# 開始使用
 
-## Prerequisites
+## 需求
 
-| Requirement | Why it's needed |
+| 需求 | 為什麼需要 |
 |---|---|
-| Python 3.8+ | Runs the utility scripts (page fetching, citability scoring, PDF generation, etc.) |
-| Claude Code CLI | The skills and agents are loaded and invoked through Claude Code |
-| Git | Used by the installer to clone the repository |
-| Playwright (optional) | Enables screenshot capture; install separately after the main install |
+| Python 3.8+ | 執行工具 scripts（頁面抓取、引用性評分、PDF 產生等） |
+| Claude Code CLI | 技能與 agents 會透過 Claude Code 載入並呼叫 |
+| Git | 安裝程式會用它 clone repository |
+| Playwright（選用） | 啟用截圖擷取；主安裝完成後另行安裝 |
 
-Install Claude Code if you haven't already:
+如果尚未安裝 Claude Code：
 
 ```bash
 npm install -g @anthropic-ai/claude-code
@@ -17,15 +17,15 @@ npm install -g @anthropic-ai/claude-code
 
 ---
 
-## Installation
+## 安裝
 
-### macOS / Linux — one-liner
+### macOS / Linux — 一行指令
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/zubair-trabzada/geo-seo-claude/main/install.sh | bash
 ```
 
-### macOS / Linux — manual
+### macOS / Linux — 手動
 
 ```bash
 git clone https://github.com/zubair-trabzada/geo-seo-claude.git
@@ -35,41 +35,41 @@ cd geo-seo-claude
 
 ### Windows — Git Bash
 
-PowerShell and Command Prompt are not supported. You must use [Git Bash](https://git-scm.com/downloads) (included with Git for Windows).
+不支援 PowerShell 與 Command Prompt。你必須使用 [Git Bash](https://git-scm.com/downloads)（Git for Windows 內含）。
 
 ```bash
-# One-liner (run from Git Bash)
+# 一行指令（從 Git Bash 執行）
 curl -fsSL https://raw.githubusercontent.com/zubair-trabzada/geo-seo-claude/main/install-win.sh | bash
 
-# Manual
+# 手動
 git clone https://github.com/zubair-trabzada/geo-seo-claude.git
 cd geo-seo-claude
 ./install-win.sh
 ```
 
-Right-click the cloned folder and choose "Open Git Bash here", or navigate to it inside an existing Git Bash session.
+在 clone 後的資料夾上按右鍵並選擇「Open Git Bash here」，或在既有 Git Bash session 中切換到該目錄。
 
-### What the installer does
+### 安裝程式會做什麼
 
-- Copies the `geo` orchestrator skill to `~/.claude/skills/geo/`
-- Copies 13 sub-skills to `~/.claude/skills/geo-*/`
-- Copies 5 subagent definitions to `~/.claude/agents/`
-- Installs Python dependencies via `pip install --user`
-- Optionally installs the Playwright Chromium browser for screenshots
+- 將 `geo` 協調器技能複製到 `~/.claude/skills/geo/`
+- 將 13 個 sub-skill 複製到 `~/.claude/skills/geo-*/`
+- 將 5 個 subagent 定義複製到 `~/.claude/agents/`
+- 透過 `pip install --user` 安裝 Python 相依套件
+- 選擇性安裝 Playwright Chromium browser 以支援截圖
 
 ---
 
-## Verify the Install
+## 驗證安裝
 
-After installation, open Claude Code in any project directory and run:
+安裝後，在任意專案目錄開啟 Claude Code 並執行：
 
 ```
 /geo quick https://example.com
 ```
 
-If the skill is wired up correctly, Claude Code will start a 60-second GEO visibility snapshot. If you see "unknown command" or nothing happens, restart Claude Code — it reads skills and agents at startup.
+如果技能已正確接上，Claude Code 會啟動 60 秒 GEO 可見度快照。如果看到 "unknown command" 或沒有反應，請重新啟動 Claude Code，因為它會在啟動時讀取技能與 agents。
 
-To confirm the files landed in the right place:
+確認檔案已放到正確位置：
 
 ```bash
 ls ~/.claude/skills/geo/
@@ -79,94 +79,94 @@ ls ~/.claude/agents/ | grep geo
 
 ---
 
-## Your First Audit
+## 你的第一次稽核
 
-### Quick path — 60-second snapshot
+### 快速路徑 — 60 秒快照
 
 ```
 /geo quick https://yoursite.com
 ```
 
-Returns a high-level GEO visibility score and the top issues. Good for a first look or a fast client check.
+回傳高層級 GEO 可見度分數與最主要問題。適合第一次查看，或快速檢查客戶。
 
-### Full path — complete audit
+### 完整路徑 — 完整稽核
 
 ```
 /geo audit https://yoursite.com
 ```
 
-Launches 5 parallel subagents covering AI visibility, platform optimization, technical SEO, content quality, and structured data. Produces a prioritized action plan with a composite GEO score (0–100).
+啟動 5 個平行 subagent，涵蓋 AI 可見度、平台最佳化、技術 SEO、內容品質與結構化資料。產生含綜合 GEO score（0–100）的優先行動計畫。
 
-The full audit takes several minutes depending on the site. See [scoring-methodology.md](scoring-methodology.md) for how the score is calculated and [commands-reference.md](commands-reference.md) for all available commands.
+完整稽核耗時取決於網站，通常需要數分鐘。分數計算方式請見 [scoring-methodology.md](scoring-methodology.md)，所有可用指令請見 [commands-reference.md](commands-reference.md)。
 
 ---
 
-## Troubleshooting
+## 疑難排解
 
-**Python not found during install**
-- Symptom: installer exits with `Python 3.8+ is required but not found`
-- Cause: Python is not installed or not on `PATH`
-- Fix: install from [python.org](https://www.python.org/downloads/); on Windows check "Add Python to PATH" during setup; then reopen your terminal
+**安裝期間找不到 Python**
+- 症狀：安裝程式以 `Python 3.8+ is required but not found` 結束
+- 原因：未安裝 Python，或 Python 不在 `PATH` 上
+- 修正：從 [python.org](https://www.python.org/downloads/) 安裝；Windows 安裝時勾選 "Add Python to PATH"；接著重新開啟終端機
 
-**Claude Code CLI not found**
-- Symptom: installer warns `Claude Code CLI not found in PATH`
-- Cause: `claude` is not installed or not on `PATH`
-- Fix: `npm install -g @anthropic-ai/claude-code`; confirm with `claude --version`
+**找不到 Claude Code CLI**
+- 症狀：安裝程式警告 `Claude Code CLI not found in PATH`
+- 原因：未安裝 `claude`，或它不在 `PATH` 上
+- 修正：執行 `npm install -g @anthropic-ai/claude-code`；用 `claude --version` 確認
 
-**Skills not showing up in Claude Code**
-- Symptom: `/geo quick` produces "unknown command" or no response
-- Cause: Claude Code reads skills at startup; it won't see files added after launch
-- Fix: fully quit and reopen Claude Code
+**Claude Code 中沒有顯示技能**
+- 症狀：`/geo quick` 產生 "unknown command" 或沒有回應
+- 原因：Claude Code 只在啟動時讀取技能；啟動後新增的檔案不會被看到
+- 修正：完整退出並重新開啟 Claude Code
 
-**Permission denied on `./install.sh`**
-- Symptom: `bash: ./install.sh: Permission denied`
-- Cause: execute bit not set
-- Fix: `chmod +x install.sh && ./install.sh`
+**執行 `./install.sh` 時 Permission denied**
+- 症狀：`bash: ./install.sh: Permission denied`
+- 原因：未設定可執行 bit
+- 修正：`chmod +x install.sh && ./install.sh`
 
-**Wrong shell on Windows**
-- Symptom: `curl` not recognized, or script syntax errors
-- Cause: running `install-win.sh` in PowerShell or Command Prompt
-- Fix: use Git Bash only — right-click the folder, "Open Git Bash here"
+**Windows 上使用了錯誤 shell**
+- 症狀：`curl` 無法辨識，或 script 語法錯誤
+- 原因：在 PowerShell 或 Command Prompt 中執行 `install-win.sh`
+- 修正：只使用 Git Bash，於資料夾按右鍵選擇「Open Git Bash here」
 
-**Playwright not available / screenshots missing**
-- Symptom: screenshot-related steps silently skip or error
-- Cause: Playwright was skipped during install (non-interactive or answered no)
-- Fix: install it manually:
+**Playwright 不可用 / 缺少截圖**
+- 症狀：截圖相關步驟靜默跳過或出錯
+- 原因：安裝時跳過 Playwright（非互動模式或回答 no）
+- 修正：手動安裝：
   ```bash
   python3 -m playwright install chromium
   ```
 
-**Python dependencies failed during install**
-- Symptom: installer prints `Some Python dependencies failed to install`
-- Cause: pip error (network, permissions, or virtualenv conflict)
-- Fix: run manually from the cloned repo or from `~/.claude/skills/geo/`:
+**安裝期間 Python 相依套件失敗**
+- 症狀：安裝程式印出 `Some Python dependencies failed to install`
+- 原因：pip 錯誤（網路、權限或 virtualenv 衝突）
+- 修正：從 clone 後的 repo 或 `~/.claude/skills/geo/` 手動執行：
   ```bash
   python3 -m pip install --user -r requirements.txt
   ```
 
 ---
 
-## Uninstall
+## 解除安裝
 
 ### Scripted
 
-Run from the cloned repository directory:
+從 clone 後的 repository 目錄執行：
 
 ```bash
 ./uninstall.sh
 ```
 
-This removes `~/.claude/skills/geo/`, all `~/.claude/skills/geo-*/` sub-skills, and all `~/.claude/agents/geo-*.md` agent files. Python packages are not removed.
+這會移除 `~/.claude/skills/geo/`、所有 `~/.claude/skills/geo-*/` sub-skills，以及所有 `~/.claude/agents/geo-*.md` agent 檔案。Python packages 不會被移除。
 
-### Manual
+### 手動
 
 ```bash
 rm -rf ~/.claude/skills/geo ~/.claude/skills/geo-* ~/.claude/agents/geo-*.md
 ```
 
-### Runtime data
+### 執行期資料
 
-The directory `~/.geo-prospects/` (used by `/geo prospect`, `/geo proposal`, and `/geo compare`) is **not** removed by the uninstaller. Delete it manually if you no longer need the data:
+`~/.geo-prospects/` 目錄（由 `/geo prospect`、`/geo proposal` 與 `/geo compare` 使用）**不會**被解除安裝程式移除。如果不再需要資料，請手動刪除：
 
 ```bash
 rm -rf ~/.geo-prospects
@@ -174,4 +174,4 @@ rm -rf ~/.geo-prospects
 
 ---
 
-See also: [architecture.md](architecture.md) | [commands-reference.md](commands-reference.md) | [scoring-methodology.md](scoring-methodology.md) | [skills-and-agents.md](skills-and-agents.md)
+另請參閱：[architecture.md](architecture.md) | [commands-reference.md](commands-reference.md) | [scoring-methodology.md](scoring-methodology.md) | [skills-and-agents.md](skills-and-agents.md)

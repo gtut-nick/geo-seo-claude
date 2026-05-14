@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-GEO-SEO CRM — Web UI (Flask + HTMX)
-Usage:
+GEO-SEO CRM — 網頁介面 (Flask + HTMX)
+用法:
     pip install flask
     python app.py
-    open http://localhost:5050
+    打開 http://localhost:5050
 """
 
 import json
@@ -26,7 +26,7 @@ PROPOSALS_DIR = Path.home() / ".geo-prospects" / "proposals"
 AUDITS_DIR = Path.home() / ".geo-prospects" / "audits"
 
 
-# ── Helpers ────────────────────────────────────────────────────────────
+# ── 輔助函式 (Helpers) ────────────────────────────────────────────────────────────
 
 def load_prospects() -> list[dict]:
     if not CRM_PATH.exists():
@@ -45,10 +45,10 @@ def score_tier(score: int) -> str:
     return "critical"
 
 def score_label(score: int) -> str:
-    if score >= 80: return "Good"
-    if score >= 60: return "Moderate"
-    if score >= 40: return "Poor"
-    return "Critical"
+    if score >= 80: return "良好"
+    if score >= 60: return "中等"
+    if score >= 40: return "不佳"
+    return "危急"
 
 def format_eur(value) -> str:
     if not value:
@@ -72,26 +72,26 @@ def crm_stats(prospects: list[dict]) -> dict:
     }
 
 def find_pdf(prospect: dict) -> Path | None:
-    """Find the PDF file for a prospect."""
+    """尋找特定潛在客戶的 PDF 檔案。"""
     domain = prospect.get("domain", "")
     for f in sorted(PROPOSALS_DIR.glob(f"{domain}*.pdf"), reverse=True):
         return f
     return None
 
 
-# ── Template filters ────────────────────────────────────────────────────
+# ── 模板過濾器 (Template filters) ────────────────────────────────────────────────────
 
 app.jinja_env.filters["score_tier"] = score_tier
 app.jinja_env.filters["score_label"] = score_label
 app.jinja_env.filters["format_eur"] = format_eur
 
 STATUS_META = {
-    "lead":     {"icon": "⬜", "badge": "secondary",  "label": "Lead"},
-    "audit":    {"icon": "🔍", "badge": "warning",    "label": "Audit"},
-    "proposal": {"icon": "📄", "badge": "info",       "label": "Proposal"},
-    "active":   {"icon": "✅", "badge": "success",    "label": "Active"},
-    "churned":  {"icon": "❌", "badge": "danger",     "label": "Churned"},
-    "lost":     {"icon": "💀", "badge": "dark",       "label": "Lost"},
+    "lead":     {"icon": "⬜", "badge": "secondary",  "label": "潛在客戶"},
+    "audit":    {"icon": "🔍", "badge": "warning",    "label": "稽核"},
+    "proposal": {"icon": "📄", "badge": "info",       "label": "提案"},
+    "active":   {"icon": "✅", "badge": "success",    "label": "活躍"},
+    "churned":  {"icon": "❌", "badge": "danger",     "label": "已流失"},
+    "lost":     {"icon": "💀", "badge": "dark",       "label": "未成交"},
 }
 
 @app.template_filter("status_meta")
@@ -99,7 +99,7 @@ def status_meta_filter(status: str) -> dict:
     return STATUS_META.get(status, {"icon": "?", "badge": "secondary", "label": status})
 
 
-# ── Routes ─────────────────────────────────────────────────────────────
+# ── 路由 (Routes) ─────────────────────────────────────────────────────────────
 
 @app.route("/")
 def dashboard():
@@ -151,7 +151,7 @@ def prospect_detail(pid):
 
 @app.route("/prospect/<pid>/note", methods=["POST"])
 def add_note(pid):
-    """HTMX endpoint — returns updated notes fragment."""
+    """HTMX 端點 — 回傳更新後的備註片段。"""
     prospects = load_prospects()
     p = next((x for x in prospects if x.get("id") == pid), None)
     if not p:
@@ -173,7 +173,7 @@ def add_note(pid):
 
 @app.route("/prospect/<pid>/status", methods=["POST"])
 def update_status(pid):
-    """HTMX endpoint — update status, returns badge fragment."""
+    """HTMX 端點 — 更新狀態，回傳徽章片段。"""
     prospects = load_prospects()
     p = next((x for x in prospects if x.get("id") == pid), None)
     if not p:
@@ -208,7 +208,7 @@ def download_pdf(pid):
     )
 
 
-# ── Run ─────────────────────────────────────────────────────────────────
+# ── 執行 (Run) ─────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"

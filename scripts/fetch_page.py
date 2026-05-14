@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Fetch and parse web pages for GEO analysis.
-Extracts HTML, text content, meta tags, headers, and structured data.
+抓取與解析網頁以進行 GEO 分析。
+提取 HTML、文字內容、meta 標籤、標頭 (headers) 與結構化資料。
 """
 
 import sys
@@ -13,10 +13,10 @@ try:
     import requests
     from bs4 import BeautifulSoup
 except ImportError:
-    print("ERROR: Required packages not installed. Run: pip install -r requirements.txt")
+    print("錯誤：未安裝必要的套件。請執行：pip install -r requirements.txt")
     sys.exit(1)
 
-# Common AI crawler user agents for testing
+# 用於測試的常見 AI 爬蟲 User-Agent
 AI_CRAWLERS = {
     "GPTBot": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; GPTBot/1.2; +https://openai.com/gptbot)",
     "ClaudeBot": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; ClaudeBot/1.0; +https://www.anthropic.com/claude-bot)",
@@ -34,7 +34,7 @@ DEFAULT_HEADERS = {
 
 
 def fetch_page(url: str, timeout: int = 30) -> dict:
-    """Fetch a page and return structured analysis data."""
+    """抓取頁面並回傳結構化的分析資料。"""
     result = {
         "url": url,
         "status_code": None,
@@ -59,7 +59,7 @@ def fetch_page(url: str, timeout: int = 30) -> dict:
 
     parsed_url = urlparse(url)
     if parsed_url.scheme not in ("http", "https"):
-        result["errors"].append(f"Unsupported URL scheme: {parsed_url.scheme!r}. Only http and https are allowed.")
+        result["errors"].append(f"不支援的 URL 通訊協定：{parsed_url.scheme!r}。僅允許 http 與 https。")
         return result
 
     try:
@@ -70,7 +70,7 @@ def fetch_page(url: str, timeout: int = 30) -> dict:
             allow_redirects=True,
         )
 
-        # Track redirects
+        # 追蹤重新導向 (Redirects)
         if response.history:
             result["redirect_chain"] = [
                 {"url": r.url, "status": r.status_code} for r in response.history
@@ -79,7 +79,7 @@ def fetch_page(url: str, timeout: int = 30) -> dict:
         result["status_code"] = response.status_code
         result["headers"] = dict(response.headers)
 
-        # Security headers check
+        # 檢查安全性標頭 (Security headers)
         security_headers = [
             "Strict-Transport-Security",
             "Content-Security-Policy",
@@ -91,14 +91,14 @@ def fetch_page(url: str, timeout: int = 30) -> dict:
         for header in security_headers:
             result["security_headers"][header] = response.headers.get(header, None)
 
-        # Parse HTML
+        # 解析 HTML
         soup = BeautifulSoup(response.text, "lxml")
 
-        # Title
+        # 標題
         title_tag = soup.find("title")
         result["title"] = title_tag.get_text(strip=True) if title_tag else None
 
-        # Meta tags
+        # Meta 標籤
         for meta in soup.find_all("meta"):
             name = meta.get("name", meta.get("property", ""))
             content = meta.get("content", "")
@@ -107,11 +107,11 @@ def fetch_page(url: str, timeout: int = 30) -> dict:
                 if name.lower() == "description":
                     result["description"] = content
 
-        # Canonical
+        # 標準網址 (Canonical)
         canonical = soup.find("link", rel="canonical")
         result["canonical"] = canonical.get("href") if canonical else None
 
-        # Headings
+        # 標題結構 (Headings)
         for level in range(1, 7):
             for heading in soup.find_all(f"h{level}"):
                 text = heading.get_text(strip=True)
@@ -119,21 +119,21 @@ def fetch_page(url: str, timeout: int = 30) -> dict:
                 if level == 1:
                     result["h1_tags"].append(text)
 
-        # Structured data (JSON-LD) — extract before decompose() mutates the tree
+        # 結構化資料 (JSON-LD) — 在 decompose() 改變樹狀結構前提取
         for script in soup.find_all("script", type="application/ld+json"):
             try:
                 data = json.loads(script.string)
                 result["structured_data"].append(data)
             except (json.JSONDecodeError, TypeError):
-                result["errors"].append("Invalid JSON-LD detected")
+                result["errors"].append("偵測到無效的 JSON-LD")
 
-        # SSR check — must run BEFORE decompose() mutates the tree
+        # SSR 檢查 — 必須在 decompose() 改變樹狀結構前執行
         js_app_roots = soup.find_all(
             id=re.compile(r"(app|root|__next|__nuxt)", re.I)
         )
 
-        # Check SSR by measuring content inside framework root divs
-        # before decompose() strips elements from the tree
+        # 透過測量框架根 div 內的內容來檢查 SSR，
+        # 在 decompose() 從樹狀結構中剝離元素前進行
         ssr_check_results = []
         for root_el in js_app_roots:
             inner_text = root_el.get_text(strip=True)
@@ -142,14 +142,14 @@ def fetch_page(url: str, timeout: int = 30) -> dict:
                 "text_length": len(inner_text),
             })
 
-        # Text content — decompose non-content elements (destructive)
+        # 文字內容 — 分解非內容元素（破壞性操作）
         for element in soup.find_all(["script", "style", "nav", "footer", "header"]):
             element.decompose()
         text = soup.get_text(separator=" ", strip=True)
         result["text_content"] = text
         result["word_count"] = len(text.split())
 
-        # Links
+        # 連結
         parsed_url = urlparse(url)
         base_domain = parsed_url.netloc
         for link in soup.find_all("a", href=True):
@@ -161,7 +161,7 @@ def fetch_page(url: str, timeout: int = 30) -> dict:
             elif parsed_href.scheme in ("http", "https"):
                 result["external_links"].append({"url": href, "text": link_text})
 
-        # Images
+        # 圖片
         for img in soup.find_all("img"):
             img_data = {
                 "src": img.get("src", ""),
@@ -172,34 +172,33 @@ def fetch_page(url: str, timeout: int = 30) -> dict:
             }
             result["images"].append(img_data)
 
-        # SSR assessment — use pre-decompose measurements + overall content
+        # SSR 評估 — 使用 decompose 前的測量結果 + 整體內容
         if js_app_roots:
             for check in ssr_check_results:
-                # Only flag as client-rendered if both the root div has
-                # minimal content AND the overall page has little text.
-                # Sites using SSR/prerendering (WordPress, LiteSpeed Cache,
-                # Prerender.io) will have substantial text despite having
-                # framework-style root divs.
+                # 只有當根 div 內容極少，且整體頁面文字也很少時，
+                # 才標記為僅使用客戶端渲染。
+                # 使用 SSR/預渲染的網站 (如 WordPress、LiteSpeed Cache、Prerender.io)
+                # 儘管有類似框架的根 div，仍會包含大量文字。
                 if check["text_length"] < 50 and result["word_count"] < 200:
                     result["has_ssr_content"] = False
                     result["errors"].append(
-                        f"Possible client-side only rendering detected: "
-                        f"#{check['id']} has minimal server-rendered content "
-                        f"({result['word_count']} words on page)"
+                        f"偵測到可能僅使用客戶端渲染 (Client-side rendering)："
+                        f"#{check['id']} 只有極少的伺服器渲染內容 "
+                        f"(頁面共 {result['word_count']} 字)"
                     )
 
     except requests.exceptions.Timeout:
-        result["errors"].append(f"Timeout after {timeout} seconds")
+        result["errors"].append(f"在 {timeout} 秒後發生逾時 (Timeout)")
     except requests.exceptions.ConnectionError as e:
-        result["errors"].append(f"Connection error: {str(e)}")
+        result["errors"].append(f"連線錯誤：{str(e)}")
     except Exception as e:
-        result["errors"].append(f"Unexpected error: {str(e)}")
+        result["errors"].append(f"發生未預期的錯誤：{str(e)}")
 
     return result
 
 
 def fetch_robots_txt(url: str, timeout: int = 15) -> dict:
-    """Fetch and parse robots.txt for AI crawler directives."""
+    """抓取並解析 robots.txt 以取得 AI 爬蟲指令。"""
     parsed = urlparse(url)
     robots_url = f"{parsed.scheme}://{parsed.netloc}/robots.txt"
 
@@ -236,7 +235,7 @@ def fetch_robots_txt(url: str, timeout: int = 15) -> dict:
             result["exists"] = True
             result["content"] = response.text
 
-            # Parse for each AI crawler
+            # 為每個 AI 爬蟲進行解析
             lines = response.text.split("\n")
             current_agent = None
             agent_rules = {}
@@ -259,12 +258,12 @@ def fetch_robots_txt(url: str, timeout: int = 15) -> dict:
                     )
                 elif line.lower().startswith("sitemap:"):
                     sitemap_url = line.split(":", 1)[1].strip()
-                    # Handle case where "Sitemap:" splits off the "http"
+                    # 處理 "Sitemap:" 將 "http" 截斷的情況
                     if not sitemap_url.startswith("http"):
                         sitemap_url = "http" + sitemap_url
                     result["sitemaps"].append(sitemap_url)
 
-            # Determine status for each AI crawler
+            # 判斷每個 AI 爬蟲的狀態
             for crawler in ai_crawlers:
                 if crawler in agent_rules:
                     rules = agent_rules[crawler]
@@ -292,22 +291,22 @@ def fetch_robots_txt(url: str, timeout: int = 15) -> dict:
                     result["ai_crawler_status"][crawler] = "NOT_MENTIONED"
 
         elif response.status_code == 404:
-            result["errors"].append("No robots.txt found (404)")
+            result["errors"].append("找不到 robots.txt (404)")
             for crawler in ai_crawlers:
                 result["ai_crawler_status"][crawler] = "NO_ROBOTS_TXT"
         else:
             result["errors"].append(
-                f"Unexpected status code: {response.status_code}"
+                f"未預期的 HTTP 狀態碼：{response.status_code}"
             )
 
     except Exception as e:
-        result["errors"].append(f"Error fetching robots.txt: {str(e)}")
+        result["errors"].append(f"抓取 robots.txt 時發生錯誤：{str(e)}")
 
     return result
 
 
 def fetch_llms_txt(url: str, timeout: int = 15) -> dict:
-    """Check for llms.txt file."""
+    """檢查是否存在 llms.txt 檔案。"""
     parsed = urlparse(url)
     llms_url = f"{parsed.scheme}://{parsed.netloc}/llms.txt"
     llms_full_url = f"{parsed.scheme}://{parsed.netloc}/llms-full.txt"
@@ -327,23 +326,23 @@ def fetch_llms_txt(url: str, timeout: int = 15) -> dict:
                 result[key]["exists"] = True
                 result[key]["content"] = response.text
         except Exception as e:
-            result["errors"].append(f"Error checking {check_url}: {str(e)}")
+            result["errors"].append(f"檢查 {check_url} 時發生錯誤：{str(e)}")
 
     return result
 
 
 def extract_content_blocks(html: str) -> list:
-    """Extract content blocks for citability analysis."""
+    """提取內容區塊以進行引用率 (citability) 分析。"""
     soup = BeautifulSoup(html, "lxml")
 
-    # Remove non-content elements
+    # 移除非內容元素
     for element in soup.find_all(
         ["script", "style", "nav", "footer", "header", "aside"]
     ):
         element.decompose()
 
     blocks = []
-    # Extract content sections (between headings)
+    # 提取內容區塊（位於標題之間）
     current_heading = None
     current_content = []
 
@@ -353,7 +352,7 @@ def extract_content_blocks(html: str) -> list:
         tag = element.name
 
         if tag.startswith("h"):
-            # Save previous block
+            # 儲存前一個區塊
             if current_content:
                 text = " ".join(current_content)
                 word_count = len(text.split())
@@ -381,7 +380,7 @@ def extract_content_blocks(html: str) -> list:
             if text:
                 current_content.append(text)
 
-    # Don't forget the last block
+    # 別忘了最後一個區塊
     if current_content:
         text = " ".join(current_content)
         blocks.append(
@@ -396,7 +395,7 @@ def extract_content_blocks(html: str) -> list:
 
 
 def crawl_sitemap(url: str, max_pages: int = 50, timeout: int = 15) -> list:
-    """Crawl sitemap.xml to discover pages."""
+    """爬取 sitemap.xml 以探索頁面。"""
     parsed = urlparse(url)
     sitemap_urls = [
         f"{parsed.scheme}://{parsed.netloc}/sitemap.xml",
@@ -414,11 +413,11 @@ def crawl_sitemap(url: str, max_pages: int = 50, timeout: int = 15) -> list:
             if response.status_code == 200:
                 soup = BeautifulSoup(response.text, "lxml")
 
-                # Check for sitemap index
+                # 檢查 Sitemap 索引
                 for sitemap in soup.find_all("sitemap"):
                     loc = sitemap.find("loc")
                     if loc:
-                        # Fetch child sitemap
+                        # 抓取子 Sitemap
                         try:
                             child_resp = requests.get(
                                 loc.text.strip(),
@@ -438,7 +437,7 @@ def crawl_sitemap(url: str, max_pages: int = 50, timeout: int = 15) -> list:
                     if len(discovered_pages) >= max_pages:
                         break
 
-                # Direct URL entries
+                # 直接 URL 項目
                 for url_tag in soup.find_all("url"):
                     loc = url_tag.find("loc")
                     if loc:
@@ -457,8 +456,8 @@ def crawl_sitemap(url: str, max_pages: int = 50, timeout: int = 15) -> list:
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python fetch_page.py <url> [mode]")
-        print("Modes: page (default), robots, llms, sitemap, blocks, full")
+        print("用法: python fetch_page.py <url> [mode]")
+        print("模式: page (預設), robots, llms, sitemap, blocks, full")
         sys.exit(1)
 
     target_url = sys.argv[1]
@@ -484,7 +483,7 @@ if __name__ == "__main__":
             "sitemap": crawl_sitemap(target_url),
         }
     else:
-        print(f"Unknown mode: {mode}")
+        print(f"未知的模式：{mode}")
         sys.exit(1)
 
     print(json.dumps(data, indent=2, default=str))

@@ -1,64 +1,64 @@
-# Frequently Asked Questions
+# 常見問題
 
 ---
 
-## General
+## 一般問題
 
-### What is GEO and how is it different from SEO?
+### 什麼是 GEO？它和 SEO 有什麼不同？
 
-SEO (Search Engine Optimization) targets ranking in traditional search engines like Google's blue-link results. GEO (Generative Engine Optimization) targets visibility inside AI-generated answers from systems like ChatGPT, Perplexity, Claude, Gemini, and Google AI Overviews. The two disciplines overlap — technical foundations and content quality matter for both — but GEO adds concerns specific to AI retrieval: citability scoring, brand mention density, llms.txt, and entity recognition across AI-cited platforms.
+SEO（Search Engine Optimization）目標是在 Google 藍色連結結果等傳統搜尋引擎中取得排名。GEO（Generative Engine Optimization）目標是在 ChatGPT、Perplexity、Claude、Gemini 與 Google AI Overviews 等系統產生的 AI 答案中提高可見度。兩者有所重疊，技術基礎與內容品質都很重要，但 GEO 額外關注 AI retrieval 特有的議題：引用性評分、品牌提及密度、llms.txt，以及 AI 引用平台上的實體識別。
 
-### Is this a paid tool or service?
+### 這是付費工具或服務嗎？
 
-The tool itself is free and MIT-licensed. It runs entirely within your own Claude Code session using your existing Anthropic subscription. There is no separate API key, usage meter, or subscription for the skill bundle itself.
+工具本身免費，採 MIT 授權。它完全在你自己的 Claude Code session 中執行，使用既有 Anthropic subscription。技能套件本身沒有額外 API key、用量計或訂閱費。
 
-### Who is this for?
+### 這適合誰使用？
 
-GEO agencies running client audits, in-house marketing teams monitoring AI search visibility, content creators optimizing individual pages for AI citations, and developers building or maintaining web properties who want actionable GEO and SEO feedback without a SaaS subscription.
+適合執行客戶稽核的 GEO 代理商、監控 AI 搜尋可見度的內部行銷團隊、為 AI 引用最佳化單頁內容的內容創作者，以及想取得可行 GEO 與 SEO 回饋、但不想訂閱 SaaS 的網站開發與維護者。
 
-### Does this replace my existing SEO stack?
+### 這會取代我現有的 SEO 工具組嗎？
 
-No. It complements existing tools. The `/geo technical` command covers technical SEO foundations, but the tool does not replace crawlers like Screaming Frog, keyword research platforms, or rank trackers. Its primary value is the GEO layer — AI citability, crawler access, brand signals, and platform readiness — that most traditional SEO tools do not cover.
-
----
-
-## Installation & Setup
-
-### Why do I need Claude Code CLI?
-
-The skill bundle is implemented as Claude Code slash commands. All commands (`/geo audit`, `/geo quick`, etc.) are routed through Claude Code's skill and agent system. The CLI is the runtime; without it, there is nothing to execute the skill files. Install it with `npm install -g @anthropic-ai/claude-code`.
-
-### Can I run this on Windows without WSL?
-
-Yes, but you must use Git Bash, not PowerShell or Command Prompt. The Windows installer is `install-win.sh` and requires Git for Windows (which bundles Git Bash). Right-click the repo folder and select "Open Git Bash here", then run `./install-win.sh`. WSL is not required.
-
-### What does `install.sh` actually do?
-
-It checks for Git, Python 3.8+, and Claude Code CLI, then copies files into your Claude configuration directory (`~/.claude/`). Specifically: the main skill goes to `~/.claude/skills/geo/`, each of the 13 sub-skills goes to `~/.claude/skills/geo-<name>/`, and the 5 agent files go to `~/.claude/agents/`. It then installs Python dependencies from `requirements.txt` using `pip install --user`. If you run it interactively, it also offers to install the Playwright Chromium browser for screenshot support. The installer works both from a cloned local directory and via a `curl | bash` pipe from the repository URL.
-
-### Do I need Playwright?
-
-Playwright is optional. The installer prompts you to install it (`python3 -m playwright install chromium`). Without it, screenshot-based features are unavailable but all other audit and analysis commands function normally. You can install it later at any time.
+不會。它是補充既有工具。`/geo technical` 指令涵蓋技術 SEO 基礎，但本工具不會取代 Screaming Frog 這類 crawler、關鍵字研究平台或排名追蹤工具。它的主要價值在 GEO layer，也就是多數傳統 SEO 工具尚未涵蓋的 AI 引用性、爬蟲存取、品牌訊號與平台準備度。
 
 ---
 
-## Usage
+## 安裝與設定
 
-### What is the difference between `/geo quick` and `/geo audit`?
+### 為什麼我需要 Claude Code CLI？
 
-`/geo quick` produces a 60-second inline visibility snapshot and writes no output file. It is useful for a fast read on a URL before committing to a full run. `/geo audit` is the full workflow: it fetches the site, detects the business type, launches 5 parallel subagents, aggregates scores across all categories, and writes a `GEO-AUDIT-REPORT.md` with a prioritized action plan. See [commands-reference.md](commands-reference.md) for the complete command list.
+技能套件是以 Claude Code slash commands 實作。所有指令（`/geo audit`、`/geo quick` 等）都透過 Claude Code 的 skill 與 agent 系統路由。CLI 是執行環境；沒有它，就沒有東西能執行技能檔案。請用 `npm install -g @anthropic-ai/claude-code` 安裝。
 
-### Where does the composite GEO Score come from?
+### 我可以在沒有 WSL 的 Windows 上執行嗎？
 
-The score (0-100) is a weighted aggregate across six categories: AI Citability & Visibility (25%), Brand Authority Signals (20%), Content Quality & E-E-A-T (20%), Technical Foundations (15%), Structured Data (10%), and Platform Optimization (10%). See [scoring-methodology.md](scoring-methodology.md) for how individual signals within each category are measured.
+可以，但你必須使用 Git Bash，而不是 PowerShell 或 Command Prompt。Windows 安裝程式是 `install-win.sh`，需要 Git for Windows（內含 Git Bash）。在 repo 資料夾上按右鍵選擇「Open Git Bash here」，再執行 `./install-win.sh`。不需要 WSL。
 
-### How do the parallel subagents work?
+### `install.sh` 實際上會做什麼？
 
-During a full audit, five subagents run simultaneously after the initial discovery phase: `geo-ai-visibility`, `geo-platform-analysis`, `geo-technical`, `geo-content`, and `geo-schema`. Each maps to an agent definition file in `~/.claude/agents/` and is responsible for a distinct slice of the analysis. Claude Code's agent system handles the parallel dispatch; the orchestrator then collects all five reports and synthesizes the composite score. See [architecture.md](architecture.md) for the full flow.
+它會檢查 Git、Python 3.8+ 與 Claude Code CLI，接著將檔案複製到你的 Claude 設定目錄（`~/.claude/`）。具體來說：主技能會放到 `~/.claude/skills/geo/`，13 個 sub-skill 各自放到 `~/.claude/skills/geo-<name>/`，5 個 agent 檔案放到 `~/.claude/agents/`。接著使用 `pip install --user` 從 `requirements.txt` 安裝 Python 相依套件。如果你以互動模式執行，它也會詢問是否安裝 Playwright Chromium browser 以支援截圖。安裝程式可從 clone 後的本機目錄執行，也可透過 repository URL 的 `curl | bash` pipe 執行。
 
-### Where is prospect, proposal, and report data stored?
+### 我需要 Playwright 嗎？
 
-Data from `/geo prospect`, `/geo proposal`, and `/geo compare` is written to `~/.geo-prospects/` outside the Claude Code directory. The structure is:
+Playwright 是選用。安裝程式會提示是否安裝它（`python3 -m playwright install chromium`）。沒有它時，截圖型功能不可用，但其他所有稽核與分析指令都能正常運作。你可以稍後隨時安裝。
+
+---
+
+## 使用方式
+
+### `/geo quick` 和 `/geo audit` 有什麼差別？
+
+`/geo quick` 會產生 60 秒 inline 可見度快照，不寫入任何輸出檔。它適合在投入完整執行前快速判讀 URL，或用於快速客戶檢查。`/geo audit` 是完整流程：抓取網站、偵測商業類型、啟動 5 個平行 subagent、彙總所有類別分數，並寫出含優先行動計畫的 `GEO-AUDIT-REPORT.md`。完整指令列表請見 [commands-reference.md](commands-reference.md)。
+
+### 綜合 GEO Score 從哪裡來？
+
+分數（0-100）是六個類別的加權彙總：AI Citability & Visibility（25%）、Brand Authority Signals（20%）、Content Quality & E-E-A-T（20%）、Technical Foundations（15%）、Structured Data（10%）與 Platform Optimization（10%）。每個類別內的個別訊號如何衡量，請見 [scoring-methodology.md](scoring-methodology.md)。
+
+### 平行 subagents 如何運作？
+
+完整稽核時，初始探索階段完成後，五個 subagent 會同時執行：`geo-ai-visibility`、`geo-platform-analysis`、`geo-technical`、`geo-content` 與 `geo-schema`。每個 subagent 對應 `~/.claude/agents/` 中的一個 agent definition file，負責分析的不同切片。Claude Code 的 agent 系統負責平行 dispatch；orchestrator 之後收集五份報告並彙整成綜合分數。完整流程請見 [architecture.md](architecture.md)。
+
+### prospect、proposal 與 report 資料儲存在哪裡？
+
+`/geo prospect`、`/geo proposal` 與 `/geo compare` 的資料會寫入 Claude Code 目錄之外的 `~/.geo-prospects/`。結構如下：
 
 ```
 ~/.geo-prospects/
@@ -67,32 +67,32 @@ Data from `/geo prospect`, `/geo proposal`, and `/geo compare` is written to `~/
 └── reports/<domain>-monthly-<YYYY-MM>.md
 ```
 
-This directory is intentionally not removed by `uninstall.sh`. Delete it manually with `rm -rf ~/.geo-prospects` if you want to discard your prospect data.
+此目錄刻意不會被 `uninstall.sh` 移除。如果想丟棄潛在客戶資料，請用 `rm -rf ~/.geo-prospects` 手動刪除。
 
 ---
 
-## Contributing
+## 貢獻
 
-### How do I add a new sub-skill?
+### 如何新增 sub-skill？
 
-Create a new directory under `skills/` following the naming pattern `geo-<skill-name>/`. Add a `SKILL.md` inside it that defines the skill's name, description, and logic. If the skill should participate in the full audit, register it in the appropriate agent file under `agents/`. Follow the structure of an existing sub-skill such as `skills/geo-citability/` as a reference. See [skills-and-agents.md](skills-and-agents.md) for a map of how skills and agents relate.
+在 `skills/` 底下依 `geo-<skill-name>/` 命名模式建立新目錄。於其中加入 `SKILL.md`，定義該技能的名稱、描述與邏輯。如果該技能應參與完整稽核，請在 `agents/` 底下適當的 agent 檔案中註冊它。可參考既有 sub-skill，例如 `skills/geo-citability/` 的結構。技能與 agents 的關係圖請見 [skills-and-agents.md](skills-and-agents.md)。
 
-### How do I test my changes before opening a PR?
+### 開 PR 前如何測試我的變更？
 
-Run `./install.sh` from your local clone — the script detects a local `geo/SKILL.md` and installs from the working directory rather than cloning from GitHub. Open Claude Code and exercise the affected commands against a real URL. Verify that all status checks pass before submitting your pull request, as noted in `CONTRIBUTING.md`.
+從本機 clone 執行 `./install.sh`，script 會偵測本機 `geo/SKILL.md` 並從 working directory 安裝，而不是從 GitHub clone。開啟 Claude Code，針對真實 URL 執行受影響的指令。提交 pull request 前，確認所有狀態檢查都已通過，這點也記載於 `CONTRIBUTING.md`。
 
-### Where do I report bugs or request features?
+### 我要在哪裡回報 bug 或提出功能請求？
 
-Open an issue on GitHub. For bugs, include a clear description, the URL you were auditing if relevant, and any error output. For feature requests, explain the use case and why it matters. Search existing issues first to avoid duplicates. Both are tracked under the repository's Issues tab.
+請在 GitHub 開 issue。Bug 請包含清楚描述、你稽核的 URL（若相關），以及任何錯誤輸出。功能請求請說明使用情境與它的重要性。請先搜尋既有 issues 以避免重複。兩者都在 repository 的 Issues tab 中追蹤。
 
 ---
 
-## Limitations
+## 限制
 
-### Can this tool guarantee AI citations or rankings?
+### 這個工具能保證 AI 引用或排名嗎？
 
-No. The tool audits signals that correlate with AI visibility and provides recommendations to improve them, but no tool can guarantee that any AI system will cite or surface a specific domain. AI retrieval is probabilistic and varies by query, platform, and model version.
+不能。此工具稽核與 AI 可見度相關的訊號，並提供改善建議，但沒有任何工具能保證任何 AI 系統會引用或顯示特定網域。AI retrieval 具有機率性，會依 query、平台與模型版本而變化。
 
-### Does it submit anything to third-party services?
+### 它會把資料提交到第三方服務嗎？
 
-The skill uses `WebFetch` and `Bash` (via `curl`) to fetch the URLs you provide, and the brand mention scanner checks publicly accessible platforms (YouTube, Reddit, Wikipedia, LinkedIn, and others) for brand signals. No audit data is sent to any Anthropic-operated or third-party analytics endpoint. Your data stays within your Claude Code session and your local filesystem.
+技能會使用 `WebFetch` 與 `Bash`（透過 `curl`）抓取你提供的 URL，品牌提及掃描器也會檢查公開可存取平台（YouTube、Reddit、Wikipedia、LinkedIn 等）的品牌訊號。沒有稽核資料會被送到 Anthropic-operated 或第三方 analytics endpoint。你的資料會留在你的 Claude Code session 與本機檔案系統中。

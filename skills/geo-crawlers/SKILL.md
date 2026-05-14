@@ -1,6 +1,6 @@
 ---
 name: geo-crawlers
-description: AI crawler access analysis. Checks robots.txt, meta tags, and HTTP headers to determine which AI crawlers can access the site. Provides a complete access map and recommendations for maximizing AI visibility while maintaining appropriate control.
+description: AI 爬蟲存取分析 (AI crawler access analysis)。檢查 robots.txt、Meta 標籤與 HTTP 標頭，以判斷哪些 AI 爬蟲能存取網站。提供完整的存取地圖與建議，在維持適當控制的同時最大化 AI 能見度 (AI visibility)。
 allowed-tools:
   - Read
   - Grep
@@ -10,165 +10,165 @@ allowed-tools:
   - Write
 ---
 
-# AI Crawler Access Analysis Skill
+# AI 爬蟲存取分析技能
 
-## Purpose
+## 目的
 
-This skill analyzes a website's accessibility to AI crawlers -- the bots that AI companies use to discover, index, and train on web content. If AI crawlers are blocked, the site's content cannot appear in AI-generated responses regardless of its quality. Crawler access is the foundational technical requirement for GEO.
+此技能分析網站對 AI 爬蟲 (AI crawlers) 的可存取性。AI 爬蟲是 AI 公司用來發現、索引 (index) 與訓練網頁內容的機器人 (bots)。若 AI 爬蟲被封鎖，無論網站內容品質多高，都無法出現在 AI 生成的回答 (AI-generated responses) 中。爬蟲存取是 GEO (生成式引擎最佳化) 的基礎技術需求。
 
-## Key Insight
+## 核心洞察
 
-As of early 2026, many websites inadvertently block AI crawlers through overly aggressive robots.txt rules, inherited from legacy SEO configurations. An Originality.ai 2025 study found that over 35% of the top 1,000 websites block at least one major AI crawler, and 5-10% block all AI crawlers. Blocking AI crawlers is the single fastest way to become invisible in AI-generated search results.
+截至 2026 年初，許多網站因繼承傳統 SEO 設定中過度激進的 robots.txt 規則，而意外封鎖了 AI 爬蟲。Originality.ai 2025 年的研究發現，前 1,000 大網站中超過 35% 至少封鎖了一個主要 AI 爬蟲，5-10% 封鎖了所有 AI 爬蟲。封鎖 AI 爬蟲是在 AI 生成的搜尋結果中變得「不可見」最快的方式。
 
 ---
 
-## Complete AI Crawler Reference
+## 完整 AI 爬蟲參考
 
-### Tier 1: Critical for AI Search Visibility (RECOMMEND: ALLOW)
+### 第一梯隊 (Tier 1)：AI 搜尋能見度的關鍵（建議：允許 ALLOW）
 
-These crawlers power the AI search products where users actively look for answers. Blocking them directly reduces your visibility in AI-generated responses.
+這些爬蟲支援使用者主動尋找答案的 AI 搜尋產品。封鎖它們會直接降低你在 AI 生成回答中的能見度。
 
 #### GPTBot
-- **Operator:** OpenAI
-- **User-Agent:** `GPTBot`
-- **Full User-Agent String:** `Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; GPTBot/1.2; +https://openai.com/gptbot)`
-- **Purpose:** Fetches content for ChatGPT's web browsing, plugins, and search features. Content accessed by GPTBot may be used to improve OpenAI models.
-- **Impact of Blocking:** Content will NOT appear in ChatGPT Search results or be accessible when users ask ChatGPT to browse the web. This is the highest-impact AI crawler to allow.
-- **Recommendation:** **ALLOW** -- ChatGPT has 300M+ weekly active users as of 2025. Blocking GPTBot removes your content from one of the largest AI search surfaces.
+- **操作者：** OpenAI
+- **使用者代理 (User-Agent)：** `GPTBot`
+- **完整 User-Agent 字串：** `Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; GPTBot/1.2; +https://openai.com/gptbot)`
+- **目的：** 抓取 ChatGPT 網頁瀏覽 (web browsing)、外掛程式與搜尋功能的內容。GPTBot 存取的內容可能用於改善 OpenAI 模型。
+- **封鎖影響：** 內容不會出現在 ChatGPT 搜尋結果中，也無法在使用者要求 ChatGPT 瀏覽網頁時被存取。這是最應允許的高影響力 AI 爬蟲。
+- **建議：** **允許 (ALLOW)** — ChatGPT 在 2025 年擁有超過 3 億週活躍用戶。封鎖 GPTBot 會讓內容離開最大的 AI 搜尋介面之一。
 
 #### OAI-SearchBot
-- **Operator:** OpenAI
-- **User-Agent:** `OAI-SearchBot`
-- **Full User-Agent String:** `Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; OAI-SearchBot/1.0; +https://docs.openai.com/bots/overview)`
-- **Purpose:** Specifically powers ChatGPT's search feature. Unlike GPTBot, content accessed by OAI-SearchBot is NOT used for model training -- only for live search results.
-- **Impact of Blocking:** Content will not appear in ChatGPT's search results even if GPTBot is allowed.
-- **Recommendation:** **ALLOW** -- This is a search-only crawler with no training implications. There is no strategic reason to block it.
+- **操作者：** OpenAI
+- **使用者代理 (User-Agent)：** `OAI-SearchBot`
+- **完整 User-Agent 字串：** `Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; OAI-SearchBot/1.0; +https://docs.openai.com/bots/overview)`
+- **目的：** 專門支援 ChatGPT 搜尋功能。不同於 GPTBot，OAI-SearchBot 存取的內容**不**用於模型訓練，僅用於即時搜尋結果。
+- **封鎖影響：** 即使允許 GPTBot，內容仍不會出現在 ChatGPT 搜尋結果中。
+- **建議：** **允許 (ALLOW)** — 這是僅限搜尋的爬蟲，不涉及訓練問題。沒有策略性的封鎖理由。
 
 #### ChatGPT-User
-- **Operator:** OpenAI
-- **User-Agent:** `ChatGPT-User`
-- **Full User-Agent String:** `Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; ChatGPT-User/1.0; +https://openai.com/bot)`
-- **Purpose:** Used when a ChatGPT user explicitly asks the model to visit a specific URL. Acts like a browser agent on behalf of the user.
-- **Impact of Blocking:** ChatGPT cannot visit your pages when users ask it to read or summarize them. This prevents direct user-initiated traffic.
-- **Recommendation:** **ALLOW** -- Blocking this bot prevents users who are actively trying to engage with your content from accessing it through ChatGPT.
+- **操作者：** OpenAI
+- **使用者代理 (User-Agent)：** `ChatGPT-User`
+- **完整 User-Agent 字串：** `Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; ChatGPT-User/1.0; +https://openai.com/bot)`
+- **目的：** 當 ChatGPT 使用者明確要求模型存取特定 URL 時使用。它代表使用者像瀏覽器代理一樣行動。
+- **封鎖影響：** 使用者要求 ChatGPT 閱讀或摘要頁面時，ChatGPT 無法訪問。這會阻止使用者發起的直接流量。
+- **建議：** **允許 (ALLOW)** — 封鎖此機器人會阻止正嘗試透過 ChatGPT 使用你內容的使用者。
 
 #### ClaudeBot
-- **Operator:** Anthropic
-- **User-Agent:** `ClaudeBot`
-- **Full User-Agent String:** `ClaudeBot/1.0; +https://www.anthropic.com/claude-bot`
-- **Purpose:** Fetches web content for Claude's features including web search, citations, and analysis tools.
-- **Impact of Blocking:** Content will not be accessible to Claude for web search or when users ask Claude to analyze specific URLs.
-- **Recommendation:** **ALLOW** -- Claude is a major AI assistant with growing market share. Blocking ClaudeBot reduces your AI search footprint.
+- **操作者：** Anthropic
+- **使用者代理 (User-Agent)：** `ClaudeBot`
+- **完整 User-Agent 字串：** `ClaudeBot/1.0; +https://www.anthropic.com/claude-bot`
+- **目的：** 抓取 Claude 功能所需的網頁內容，包括網頁搜尋、引用與分析工具。
+- **封鎖影響：** Claude 無法在網頁搜尋或使用者要求分析特定 URL 時存取內容。
+- **建議：** **允許 (ALLOW)** — Claude 是重要且市佔成長中的 AI 助手。封鎖 ClaudeBot 會降低 AI 搜尋足跡。
 
 #### PerplexityBot
-- **Operator:** Perplexity AI
-- **User-Agent:** `PerplexityBot`
-- **Full User-Agent String:** `Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; PerplexityBot/1.0; +https://perplexity.ai/perplexitybot)`
-- **Purpose:** Powers Perplexity's AI search engine, which provides sourced answers with direct citations and links back to source pages.
-- **Impact of Blocking:** Content will not appear in Perplexity search results. Perplexity is one of the best referral traffic sources among AI search products because it always displays source links.
-- **Recommendation:** **ALLOW** -- Perplexity drives actual referral traffic and always attributes sources. High-value AI crawler for publishers and businesses.
+- **操作者：** Perplexity AI
+- **使用者代理 (User-Agent)：** `PerplexityBot`
+- **完整 User-Agent 字串：** `Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; PerplexityBot/1.0; +https://perplexity.ai/perplexitybot)`
+- **目的：** 支援 Perplexity AI 搜尋引擎，提供帶有來源引用與回連原始頁面的具名回答。
+- **封鎖影響：** 內容不會出現在 Perplexity 搜尋結果中。Perplexity 是 AI 搜尋產品中最好的推薦流量 (referral traffic) 來源之一，因為它始終顯示來源連結。
+- **建議：** **允許 (ALLOW)** — Perplexity 會帶來實際推薦流量，且總是會標註引用來源。對發布者與企業來說是高價值的 AI 爬蟲。
 
 ---
 
-### Tier 2: Important for Broader AI Ecosystem (RECOMMEND: ALLOW)
+### 第二梯隊 (Tier 2)：較廣大 AI 生態系統的重要爬蟲（建議：允許 ALLOW）
 
-These crawlers serve large AI platforms or search ecosystems. Allowing them increases your content's reach.
+這些爬蟲服務於大型 AI 平台或搜尋生態系統。允許它們會增加內容的觸及率。
 
 #### Google-Extended
-- **Operator:** Google
-- **User-Agent:** `Google-Extended`
-- **Purpose:** Controls whether Google uses your content for Gemini model training and AI Overviews improvement. **CRITICAL NOTE:** Blocking Google-Extended does NOT affect your Google Search rankings or your appearance in Google Search results. That is controlled by the standard Googlebot.
-- **Impact of Blocking:** Content may not be used for Gemini training or to improve AI Overviews. However, your content can still appear in AI Overviews based on standard search indexing.
-- **Recommendation:** **ALLOW** -- Blocking provides minimal content protection upside while reducing your presence in Google's AI features. Since it does not affect standard search ranking, the only reason to block is philosophical objection to training data usage.
+- **操作者：** Google
+- **使用者代理 (User-Agent)：** `Google-Extended`
+- **目的：** 控制 Google 是否使用你的內容進行 Gemini 模型訓練與 AI Overviews 改良。**關鍵註記：** 封鎖 Google-Extended **不會**影響 Google 搜尋排名或在 Google 搜尋結果中的呈現；該部分由標準 Googlebot 控制。
+- **封鎖影響：** 內容可能不會用於 Gemini 訓練或改良 AI Overviews。然而，你的內容仍可基於標準搜尋索引出現在 AI Overviews 中。
+- **建議：** **允許 (ALLOW)** — 封鎖提供的內容保護價值極小，卻會降低在 Google AI 功能中的能見度。既然不影響標準搜尋排名，唯一封鎖理由通常是對訓練數據使用的哲學性反對。
 
 #### GoogleOther
-- **Operator:** Google
-- **User-Agent:** `GoogleOther`
-- **Purpose:** Used by Google for various non-search-ranking purposes including research, one-off crawls, and AI-related data collection.
-- **Impact of Blocking:** Minimal impact on search rankings. May reduce presence in Google's AI research and experimental features.
-- **Recommendation:** **ALLOW** -- Low risk, moderate potential benefit for AI feature inclusion.
+- **操作者：** Google
+- **使用者代理 (User-Agent)：** `GoogleOther`
+- **目的：** Google 用於各種非搜尋排名目的，包括研究、一次性抓取與 AI 相關數據收集。
+- **封鎖影響：** 對搜尋排名影響很小。可能降低在 Google AI 研究與實驗性功能中的能見度。
+- **建議：** **允許 (ALLOW)** — 低風險，對被納入 AI 功能有中度的潛在效益。
 
 #### Applebot-Extended
-- **Operator:** Apple
-- **User-Agent:** `Applebot-Extended`
-- **Purpose:** Used by Apple to train and improve Apple Intelligence features, Siri, and Apple's AI products. Separate from standard Applebot (which powers Siri search and Spotlight Suggestions).
-- **Impact of Blocking:** Content may not be used in Apple Intelligence features. Standard Siri and Spotlight functionality is unaffected (controlled by Applebot).
-- **Recommendation:** **ALLOW** -- Apple Intelligence is integrated into all Apple devices (2B+ active devices). Presence in Apple's AI features has growing strategic value.
+- **操作者：** Apple
+- **使用者代理 (User-Agent)：** `Applebot-Extended`
+- **目的：** Apple 用來訓練與改善 Apple Intelligence 功能、Siri 與 Apple AI 產品。與標準 Applebot（支援 Siri 搜尋與 Spotlight 建議）分開。
+- **封鎖影響：** 內容可能不會被用於 Apple Intelligence 功能。標準 Siri 與 Spotlight 功能不受影響（由 Applebot 控制）。
+- **建議：** **允許 (ALLOW)** — Apple Intelligence 整合到所有 Apple 裝置（超過 20 億台活躍裝置）。在 Apple AI 功能中存在的策略價值正在增加。
 
 #### Amazonbot
-- **Operator:** Amazon
-- **User-Agent:** `Amazonbot`
-- **Full User-Agent String:** `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.5 (KHTML, like Gecko) Version/8.0.2 Safari/600.2.5 (compatible; Amazonbot/0.1; +https://developer.amazon.com/support/amazonbot)`
-- **Purpose:** Indexes content for Alexa answers and Amazon's AI features.
-- **Impact of Blocking:** Content will not appear in Alexa voice responses or Amazon's AI-powered search features.
-- **Recommendation:** **ALLOW** -- Relevant for voice search optimization. Lower priority than Tier 1 crawlers but no downside to allowing.
+- **操作者：** Amazon
+- **使用者代理 (User-Agent)：** `Amazonbot`
+- **完整 User-Agent 字串：** `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.5 (KHTML, like Gecko) Version/8.0.2 Safari/600.2.5 (compatible; Amazonbot/0.1; +https://developer.amazon.com/support/amazonbot)`
+- **目的：** 為 Alexa 回答與 Amazon AI 功能索引內容。
+- **封鎖影響：** 內容不會出現在 Alexa 語音回答或 Amazon AI 驅動的搜尋功能中。
+- **建議：** **允許 (ALLOW)** — 與語音搜尋最佳化 (Voice Search Optimization) 相關。優先級低於第一梯隊爬蟲，但允許它沒有壞處。
 
 #### FacebookBot
-- **Operator:** Meta
-- **User-Agent:** `FacebookBot`
-- **Purpose:** Used by Meta for AI features across Facebook, Instagram, WhatsApp, and Meta AI assistant.
-- **Impact of Blocking:** Content may not be accessible to Meta AI. Link previews on Facebook/Instagram are handled by a different crawler and are unaffected.
-- **Recommendation:** **ALLOW** -- Meta AI is embedded in apps with 3B+ combined users. Growing importance for AI visibility.
+- **操作者：** Meta
+- **使用者代理 (User-Agent)：** `FacebookBot`
+- **目的：** Meta 用於 Facebook、Instagram、WhatsApp 與 Meta AI 助手的 AI 功能。
+- **封鎖影響：** 內容可能無法供 Meta AI 存取。Facebook/Instagram 的連結預覽 (link previews) 由不同爬蟲處理，不受影響。
+- **建議：** **允許 (ALLOW)** — Meta AI 嵌入在總計超過 30 億用戶的應用程式中。對 AI 能見度的重要性日益增加。
 
 ---
 
-### Tier 3: Training-Only Crawlers (ALLOW or BLOCK Based on Strategy)
+### 第三梯隊 (Tier 3)：僅限訓練的爬蟲（依策略 允許 或 封鎖）
 
-These crawlers are primarily used for AI model training rather than live search features. Blocking them does not affect AI search visibility.
+這些爬蟲主要用於 AI 模型訓練，而非即時搜尋功能。封鎖它們不影響 AI 搜尋能見度。
 
 #### CCBot
-- **Operator:** Common Crawl (nonprofit)
-- **User-Agent:** `CCBot`
-- **Full User-Agent String:** `CCBot/2.0 (https://commoncrawl.org/faq/)`
-- **Purpose:** Builds the Common Crawl dataset, which is used as training data by many AI companies (Google, Meta, Stability AI, and others).
-- **Impact of Blocking:** Content will not appear in future Common Crawl datasets. Does NOT affect any live AI search product.
-- **Recommendation:** **CONTEXT-DEPENDENT** -- Allow if you want maximum long-term AI training presence. Block if you want to control training data usage. No impact on search visibility.
+- **操作者：** Common Crawl（非營利組織）
+- **使用者代理 (User-Agent)：** `CCBot`
+- **完整 User-Agent 字串：** `CCBot/2.0 (https://commoncrawl.org/faq/)`
+- **目的：** 建立 Common Crawl 數據集，被許多 AI 公司（Google、Meta、Stability AI 等）用作訓練數據。
+- **封鎖影響：** 內容不會出現在未來的 Common Crawl 數據集中。不影響任何即時 AI 搜尋產品。
+- **建議：** **視情況而定 (CONTEXT-DEPENDENT)** — 若想最大化長期 AI 訓練能見度，請允許。若想控制訓練數據使用，請封鎖。對搜尋能見度無影響。
 
 #### anthropic-ai
-- **Operator:** Anthropic
-- **User-Agent:** `anthropic-ai`
-- **Purpose:** Used by Anthropic for AI safety research and Claude model training. Separate from ClaudeBot (which powers live features).
-- **Impact of Blocking:** Content will not be used for Claude training. Does NOT affect Claude's live search or web browsing features (controlled by ClaudeBot).
-- **Recommendation:** **CONTEXT-DEPENDENT** -- Similar to CCBot. Allow for training presence, block for training data control. No impact on live AI search.
+- **操作者：** Anthropic
+- **使用者代理 (User-Agent)：** `anthropic-ai`
+- **目的：** Anthropic 用於 AI 安全研究與 Claude 模型訓練。與支援即時功能的 ClaudeBot 分開。
+- **封鎖影響：** 內容不會用於 Claude 訓練。不影響 Claude 即時搜尋或網頁瀏覽功能（由 ClaudeBot 控制）。
+- **建議：** **視情況而定 (CONTEXT-DEPENDENT)** — 類似 CCBot。允許以取得訓練能見度，或封鎖以控制訓練數據。對即時 AI 搜尋無影響。
 
 #### Bytespider
-- **Operator:** ByteDance
-- **User-Agent:** `Bytespider`
-- **Purpose:** Used by ByteDance for various AI products including TikTok's AI features and Doubao (their ChatGPT competitor in China).
-- **Impact of Blocking:** Content will not be used for ByteDance AI products. Minimal impact for Western-market businesses.
-- **Recommendation:** **BLOCK** for most Western businesses (aggressive crawling behavior reported, minimal search visibility benefit). **ALLOW** if targeting Chinese/Asian markets.
+- **操作者：** 字節跳動 (ByteDance)
+- **使用者代理 (User-Agent)：** `Bytespider`
+- **目的：** 字節跳動用於各種 AI 產品，包括 TikTok AI 功能與豆包 (Doubao，其在中國的 ChatGPT 競爭對手)。
+- **封鎖影響：** 內容不會用於字節跳動 AI 產品。對西方市場企業影響很小。
+- **建議：** 多數西方企業 **封鎖 (BLOCK)**（據報有激進抓取行為、能見度效益小）。若目標是中國/亞洲市場則 **允許 (ALLOW)**。
 
 #### cohere-ai
-- **Operator:** Cohere
-- **User-Agent:** `cohere-ai`
-- **Purpose:** Used by Cohere for model training. Cohere powers enterprise AI solutions and the Coral chat product.
-- **Impact of Blocking:** Content will not be used for Cohere model training. Minimal direct consumer-facing impact.
-- **Recommendation:** **CONTEXT-DEPENDENT** -- Low priority. Allow or block based on general training data stance.
+- **操作者：** Cohere
+- **使用者代理 (User-Agent)：** `cohere-ai`
+- **目的：** Cohere 用於模型訓練。Cohere 支援企業 AI 解決方案與 Coral 對話產品。
+- **封鎖影響：** 內容不會用於 Cohere 模型訓練。對直接面向消費者的影響很小。
+- **建議：** **視情況而定 (CONTEXT-DEPENDENT)** — 低優先級。依據對訓練數據使用的一般立場來決定允許或封鎖。
 
 ---
 
-## Recommendation Matrix Summary
+## 建議矩陣摘要
 
-| Crawler | Tier | Recommendation | Reason |
+| 爬蟲 (Crawler) | 梯隊 | 建議 | 原因 |
 |---|---|---|---|
-| GPTBot | 1 | **ALLOW** | Powers ChatGPT Search (300M+ users) |
-| OAI-SearchBot | 1 | **ALLOW** | Search-only, no training use |
-| ChatGPT-User | 1 | **ALLOW** | User-initiated browsing |
-| ClaudeBot | 1 | **ALLOW** | Claude web search and analysis |
-| PerplexityBot | 1 | **ALLOW** | Best referral traffic AI search |
-| Google-Extended | 2 | **ALLOW** | Gemini features; no search rank impact |
-| GoogleOther | 2 | **ALLOW** | Google AI research |
-| Applebot-Extended | 2 | **ALLOW** | Apple Intelligence (2B+ devices) |
-| Amazonbot | 2 | **ALLOW** | Alexa and Amazon AI |
-| FacebookBot | 2 | **ALLOW** | Meta AI (3B+ app users) |
-| CCBot | 3 | Context | Training data only |
-| anthropic-ai | 3 | Context | Training data only |
-| Bytespider | 3 | **BLOCK** | Aggressive crawler, low benefit |
-| cohere-ai | 3 | Context | Training data only |
+| GPTBot | 1 | **允許 (ALLOW)** | 支援 ChatGPT 搜尋（3 億以上用戶） |
+| OAI-SearchBot | 1 | **允許 (ALLOW)** | 僅限搜尋，不用於訓練 |
+| ChatGPT-User | 1 | **允許 (ALLOW)** | 使用者啟動的瀏覽 |
+| ClaudeBot | 1 | **允許 (ALLOW)** | Claude 網頁搜尋與分析 |
+| PerplexityBot | 1 | **允許 (ALLOW)** | 最佳推薦流量 AI 搜尋 |
+| Google-Extended | 2 | **允許 (ALLOW)** | Gemini 功能；不影響搜尋排名 |
+| GoogleOther | 2 | **允許 (ALLOW)** | Google AI 研究 |
+| Applebot-Extended | 2 | **允許 (ALLOW)** | Apple Intelligence（20 億台裝置） |
+| Amazonbot | 2 | **允許 (ALLOW)** | Alexa 與 Amazon AI |
+| FacebookBot | 2 | **允許 (ALLOW)** | Meta AI（30 億 App 用戶） |
+| CCBot | 3 | 視情況 | 僅限訓練數據 |
+| anthropic-ai | 3 | 視情況 | 僅限訓練數據 |
+| Bytespider | 3 | **封鎖 (BLOCK)** | 激進爬蟲，效益低 |
+| cohere-ai | 3 | 視情況 | 僅限訓練數據 |
 
-### Maximum AI Visibility Configuration (robots.txt)
+### 最大化 AI 能見度設定 (robots.txt)
 
-For sites wanting maximum AI search visibility:
+適合想最大化 AI 搜尋能見度的網站：
 
 ```
 # AI Crawlers - ALLOWED for AI search visibility
@@ -215,163 +215,163 @@ Disallow: /
 
 ---
 
-## Analysis Procedure
+## 分析流程
 
-### Step 1: Fetch and Parse robots.txt
+### Step 1：抓取並解析 robots.txt
 
-1. Use WebFetch to retrieve `[domain]/robots.txt`.
-2. Parse all User-agent directives and their associated Allow/Disallow rules.
-3. For each AI crawler in the reference list above:
-   - Check if there is a specific User-agent block for that crawler
-   - Check if there is a wildcard (`User-agent: *`) block that would apply
-   - Determine effective access: **Allowed**, **Blocked**, or **Not Mentioned** (inherits wildcard rules)
-4. Note any `Crawl-delay` directives that may slow AI crawler access.
-5. Check for `Sitemap` directives (AI crawlers use these for discovery).
+1. 使用 WebFetch 取得 `[網域]/robots.txt`。
+2. 解析所有 User-agent 指令與其關聯的 Allow/Disallow 規則。
+3. 對參考清單中的每個 AI 爬蟲：
+   - 檢查是否有該爬蟲特定的 User-agent 封鎖。
+   - 檢查是否有適用的萬用字元（`User-agent: *`）封鎖。
+   - 判斷有效存取：**允許 (Allowed)**、**封鎖 (Blocked)** 或 **未提及 (Not Mentioned)**（繼承萬用字元規則）。
+4. 記錄任何會拖慢 AI 爬蟲存取速度的 `Crawl-delay` 指令。
+5. 檢查 `Sitemap` 指令（AI 爬蟲會用它們來進行探索）。
 
-### Step 2: Check Meta Robots Tags
+### Step 2：檢查 Meta Robots 標籤
 
-1. For a sample of 5-10 key pages, fetch the HTML and check for:
-   - `<meta name="robots" content="noindex">` -- blocks all bots
-   - `<meta name="robots" content="nofollow">` -- prevents link following
-   - `<meta name="robots" content="noai">` -- emerging tag to block AI use
-   - `<meta name="robots" content="noimageai">` -- blocks AI image training
-   - Bot-specific meta tags: `<meta name="GPTBot" content="noindex">`
-2. Record any page-level overrides of the robots.txt directives.
+1. 對 5-10 個關鍵頁面抽樣抓取 HTML 並檢查：
+   - `<meta name="robots" content="noindex">` -- 封鎖所有機器人。
+   - `<meta name="robots" content="nofollow">` -- 阻止追蹤連結。
+   - `<meta name="robots" content="noai">` -- 封鎖 AI 使用的新興標籤。
+   - `<meta name="robots" content="noimageai">` -- 封鎖 AI 圖片訓練。
+   - 特定機器人標籤：`<meta name="GPTBot" content="noindex">`
+2. 記錄任何會覆寫 robots.txt 指令的頁面級設定。
 
-### Step 3: Check HTTP Headers
+### Step 3：檢查 HTTP 標頭 (HTTP Headers)
 
-1. For the same sample pages, check response headers for:
-   - `X-Robots-Tag: noindex` -- HTTP header equivalent of meta noindex
-   - `X-Robots-Tag: noai` -- HTTP header to block AI use
-   - `X-Robots-Tag: noimageai` -- blocks AI image training
-   - Bot-specific headers: `X-Robots-Tag: GPTBot: noindex`
-2. Note that HTTP headers override meta tags and apply to non-HTML resources too.
+1. 對相同的抽樣頁面檢查回應標頭：
+   - `X-Robots-Tag: noindex` -- 相當於 Meta noindex 的 HTTP 標頭。
+   - `X-Robots-Tag: noai` -- 封鎖 AI 使用的 HTTP 標頭。
+   - `X-Robots-Tag: noimageai` -- 封鎖 AI 圖片訓練。
+   - 特定機器人標頭：`X-Robots-Tag: GPTBot: noindex`
+2. 註記：HTTP 標頭會覆寫 Meta 標籤，也適用於非 HTML 資源。
 
-### Step 4: Check for AI-Specific Files
+### Step 4：檢查 AI 專用檔案
 
-1. Check for `/llms.txt` (emerging standard for AI crawler guidance).
-2. Check for `/.well-known/ai-plugin.json` (OpenAI plugin manifest).
-3. Check for `/ai.txt` (proposed standard, similar to ads.txt for AI).
-4. Record presence/absence and quality of each file.
+1. 檢查 `/llms.txt`（AI 爬蟲引導的新興標準）。
+2. 檢查 `/.well-known/ai-plugin.json`（OpenAI 外掛程式宣告檔）。
+3. 檢查 `/ai.txt`（提案中的標準，類似 AI 版的 ads.txt）。
+4. 記錄每個檔案的存在與品質。
 
-### Step 5: Assess JavaScript Rendering Requirements
+### Step 5：評估 JavaScript 渲染需求
 
-1. Check if the site is a Single Page Application (SPA) or heavily JavaScript-rendered.
-2. AI crawlers vary in their JavaScript rendering capabilities:
-   - GPTBot: Limited JS rendering
-   - ClaudeBot: Limited JS rendering
-   - PerplexityBot: Limited JS rendering
-   - Googlebot: Full JS rendering (but Google-Extended inherits this)
-3. If critical content requires JS rendering, flag this as a potential issue.
-4. Check for Server-Side Rendering (SSR) or Static Site Generation (SSG) as mitigations.
+1. 檢查網站是否為單頁應用程式 (SPA) 或高度依賴 JavaScript 渲染。
+2. 不同 AI 爬蟲的 JavaScript 渲染能力各異：
+   - GPTBot：JS 渲染能力有限。
+   - ClaudeBot：JS 渲染能力有限。
+   - PerplexityBot：JS 渲染能力有限。
+   - Googlebot：具備完整 JS 渲染能力（Google-Extended 繼承此能力）。
+3. 若關鍵內容需要 JS 渲染才能顯示，將其標記為潛在問題。
+4. 檢查是否有伺服器端渲染 (SSR) 或靜態網站生成 (SSG) 作為緩解措施。
 
-### Step 6: Parse Content Signals
+### Step 6：解析內容訊號 (Content Signals)
 
-Using the already-fetched robots.txt from Step 1, scan for `Content-Signal:` directives (IETF draft `draft-romm-aipref-contentsignals`).
+使用 Step 1 已抓取的 robots.txt，掃描 `Content-Signal:` 指令 (IETF 草案 `draft-romm-aipref-contentsignals`)。
 
-1. Scan every line for a line starting with `Content-Signal:` (case-insensitive).
-2. If found:
-   - Parse all key=value pairs (split on `,` then on `=`).
-   - Validate keys against the known set: `ai-train`, `search`, `ai-personalization`, `ai-retrieval`.
-   - Validate values: only `yes` and `no` are valid.
-   - Flag any unknown keys or invalid values as a warning — the spec is still an IETF draft.
-   - Record the result as **Pass** and surface parsed values with plain-English meaning.
-3. If absent: record as **Recommendation** — the site has not declared AI usage preferences.
+1. 掃描每一行，找出以 `Content-Signal:` 開頭的行（不分大小寫）。
+2. 若找到：
+   - 解析所有鍵值對 (key=value pairs)（先以 `,` 分割，再以 `=` 分割）。
+   - 依已知集合驗證鍵 (keys)：`ai-train`、`search`、`ai-personalization`、`ai-retrieval`。
+   - 驗證值 (values)：僅 `yes` 與 `no` 有效。
+   - 將任何未知鍵或無效值標記為警告，因為規格仍處於 IETF 草案階段。
+   - 將結果記錄為 **通過 (Pass)**，並以口語意義顯示解析後的值。
+3. 若不存在：記錄為 **建議 (Recommendation)** — 該網站尚未宣告其 AI 使用偏好。
 
-No additional HTTP request is needed. robots.txt is already fetched in Step 1.
+不需要額外的 HTTP 請求。robots.txt 已在 Step 1 抓取。
 
 ---
 
-## Output Format
+## 輸出格式
 
-Generate a file called `GEO-CRAWLER-ACCESS.md`:
+產生名為 `GEO-CRAWLER-ACCESS.md` 的檔案：
 
 ```markdown
-# AI Crawler Access Report: [Domain]
+# AI 爬蟲存取報告：[網域]
 
-**Analysis Date:** [Date]
-**Domain:** [Domain]
-**robots.txt Status:** [Found/Not Found/Error]
+**分析日期：** [Date]
+**網域：** [Domain]
+**robots.txt 狀態：** [Found/Not Found/Error]
 
 ---
 
-## Crawler Access Summary
+## 爬蟲存取摘要
 
-| Crawler | Operator | Tier | Status | Impact |
+| 爬蟲 (Crawler) | 操作者 | 梯隊 | 狀態 | 影響 |
 |---|---|---|---|---|
-| GPTBot | OpenAI | 1 | [Allowed/Blocked/Not Mentioned] | [Impact description] |
-| OAI-SearchBot | OpenAI | 1 | [Status] | [Impact] |
-| ChatGPT-User | OpenAI | 1 | [Status] | [Impact] |
-| ClaudeBot | Anthropic | 1 | [Status] | [Impact] |
-| PerplexityBot | Perplexity | 1 | [Status] | [Impact] |
-| Google-Extended | Google | 2 | [Status] | [Impact] |
-| GoogleOther | Google | 2 | [Status] | [Impact] |
-| Applebot-Extended | Apple | 2 | [Status] | [Impact] |
-| Amazonbot | Amazon | 2 | [Status] | [Impact] |
-| FacebookBot | Meta | 2 | [Status] | [Impact] |
-| CCBot | Common Crawl | 3 | [Status] | [Impact] |
-| anthropic-ai | Anthropic | 3 | [Status] | [Impact] |
-| Bytespider | ByteDance | 3 | [Status] | [Impact] |
-| cohere-ai | Cohere | 3 | [Status] | [Impact] |
+| GPTBot | OpenAI | 1 | [允許/封鎖/未提及] | [影響描述] |
+| OAI-SearchBot | OpenAI | 1 | [狀態] | [影響] |
+| ChatGPT-User | OpenAI | 1 | [狀態] | [影響] |
+| ClaudeBot | Anthropic | 1 | [狀態] | [影響] |
+| PerplexityBot | Perplexity | 1 | [狀態] | [影響] |
+| Google-Extended | Google | 2 | [狀態] | [影響] |
+| GoogleOther | Google | 2 | [狀態] | [影響] |
+| Applebot-Extended | Apple | 2 | [狀態] | [影響] |
+| Amazonbot | Amazon | 2 | [狀態] | [影響] |
+| FacebookBot | Meta | 2 | [狀態] | [影響] |
+| CCBot | Common Crawl | 3 | [狀態] | [影響] |
+| anthropic-ai | Anthropic | 3 | [狀態] | [影響] |
+| Bytespider | ByteDance | 3 | [狀態] | [影響] |
+| cohere-ai | Cohere | 3 | [狀態] | [影響] |
 
-## AI Visibility Score: [X]/100
+## AI 能見度分數：[X]/100
 
-**Tier 1 Access:** [X/5 crawlers allowed]
-**Tier 2 Access:** [X/5 crawlers allowed]
-**Tier 3 Access:** [X/4 crawlers allowed]
+**第一梯隊存取：** [X/5 個爬蟲已允許]
+**第二梯隊存取：** [X/5 個爬蟲已允許]
+**第三梯隊存取：** [X/4 個爬蟲已允許]
 
 ---
 
-## Critical Issues
+## 關鍵問題
 
-[List any Tier 1 crawlers that are blocked]
+[列出任何被封鎖的第一梯隊爬蟲]
 
-## Recommendations
+## 建議
 
-### Immediate Actions
-[Specific robots.txt changes needed]
+### 立即行動
+[需要對 robots.txt 進行的具體變更]
 
-### robots.txt Recommendation
+### 建議的 robots.txt
 ```
-[Complete recommended robots.txt content for AI crawlers]
+[針對 AI 爬蟲最佳化的完整建議 robots.txt 內容]
 ```
 
-### Additional Technical Findings
-- **Meta Robots Tags:** [Findings]
-- **X-Robots-Tag Headers:** [Findings]
-- **JavaScript Rendering:** [Assessment]
-- **llms.txt:** [Present/Absent]
-- **Sitemap Accessibility:** [Assessment]
+### 其他技術發現
+- **Meta Robots 標籤：** [發現內容]
+- **X-Robots-Tag 標頭：** [發現內容]
+- **JavaScript 渲染：** [評估結果]
+- **llms.txt：** [存在/不存在]
+- **Sitemap 可存取性：** [評估結果]
 
-### Content Signals (IETF Draft)
+### 內容訊號 (Content Signals - IETF 草案)
 
-**Status:** Present / Absent
+**狀態：** 存在 / 不存在
 
-<!-- If present: -->
-| Signal Key | Value | Meaning |
+<!-- 若存在： -->
+| 訊號鍵 (Signal Key) | 值 | 意義 |
 |---|---|---|
-| ai-train | no | Opted out of AI model training |
-| search | yes | Permits use in AI-powered search results |
+| ai-train | no | 已選擇退出 AI 模型訓練 |
+| search | yes | 允許用於 AI 驅動的搜尋結果 |
 
-<!-- If absent: -->
-**Recommendation:** Add a `Content-Signal:` directive to robots.txt to declare AI usage preferences explicitly. Example:
+<!-- 若不存在： -->
+**建議：** 在 robots.txt 中加入 `Content-Signal:` 指令，以明確宣告 AI 使用偏好。例如：
 
 `Content-Signal: ai-train=no, search=yes, ai-retrieval=yes`
 
-See https://contentsignals.org/ for the full specification.
+完整規格請參閱 [https://contentsignals.org/](https://contentsignals.org/)。
 ```
 
 ---
 
-## Scoring for Crawler Access
+## 爬蟲存取評分
 
-The AI Crawler Access Score is calculated as:
+AI 爬蟲存取分數 (AI Crawler Access Score) 計算方式如下：
 
-| Component | Weight | Scoring |
+| 組成部分 | 權重 | 評分方式 |
 |---|---|---|
-| Tier 1 Crawlers Allowed | 50% | 20 points per Tier 1 crawler allowed (5 crawlers = 100 points max, scaled to 50) |
-| Tier 2 Crawlers Allowed | 25% | 20 points per Tier 2 crawler allowed (5 crawlers = 100 points max, scaled to 25) |
-| No Blanket AI Blocks | 15% | Full points if no `User-agent: *` Disallow: / and no noai meta tags |
-| AI-Specific Files Present | 10% | 5 points for llms.txt, 5 points for sitemap accessible to AI crawlers |
+| 允許第一梯隊爬蟲 | 50% | 每個允許的第一梯隊爬蟲得 20 分（5 個爬蟲滿分 100 分，依比例調整至 50 分） |
+| 允許第二梯隊爬蟲 | 25% | 每個允許的第二梯隊爬蟲得 20 分（5 個爬蟲滿分 100 分，依比例調整至 25 分） |
+| 無地毯式 AI 封鎖 | 15% | 沒有 `User-agent: *` 配合 Disallow: / 且沒有 noai Meta 標籤即得滿分 |
+| 具備 AI 專用檔案 | 10% | 有 llms.txt 得 5 分，AI 爬蟲可存取 Sitemap 得 5 分 |
 
-Final score = sum of all weighted components, capped at 100.
+最終分數 = 所有權重組件加總，最高 100 分。
